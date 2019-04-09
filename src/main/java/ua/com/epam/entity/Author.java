@@ -35,9 +35,6 @@ public class Author {
     @Column(length = 30)
     private String nationality;
 
-    @Column(name = "author_country", length = 50)
-    private String country;
-
     @Column(name = "birth_date")
     private Date birthDate;
 
