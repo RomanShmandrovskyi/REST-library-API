@@ -1,5 +1,6 @@
 package ua.com.epam.entity.dto.author;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import javax.validation.constraints.Size;
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class NameDto {
 
     @NotBlank(message = "Value 'name.first' is required!")
