@@ -1,5 +1,6 @@
 package ua.com.epam.entity.dto.author;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -7,6 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 public class AuthorGetDto {
 
     private long authorId;
@@ -14,5 +16,5 @@ public class AuthorGetDto {
     private String nationality;
     private BirthDto birth;
     private String description;
-    private int booksCount;
+    private long booksCount;
 }

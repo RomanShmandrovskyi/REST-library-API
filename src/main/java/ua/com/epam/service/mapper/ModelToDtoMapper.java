@@ -1,8 +1,8 @@
-package ua.com.epam.assembler.mapper;
+package ua.com.epam.service.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
-import ua.com.epam.assembler.mapper.converter.AuthorToAuthorGetDto;
+import ua.com.epam.service.mapper.converter.AuthorToAuthorGetDto;
 import ua.com.epam.entity.Author;
 import ua.com.epam.entity.dto.author.AuthorGetDto;
 
@@ -15,7 +15,7 @@ public class ModelToDtoMapper {
         modelMapper.addConverter(new AuthorToAuthorGetDto());
     }
 
-    public AuthorGetDto getAuthorGetDtoFromModel(Author author) {
+    public AuthorGetDto mapAuthorModelToDto_GET(Author author) {
         return modelMapper.map(author, AuthorGetDto.class);
     }
 }

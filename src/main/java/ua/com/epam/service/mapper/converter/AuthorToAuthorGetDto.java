@@ -1,4 +1,4 @@
-package ua.com.epam.assembler.mapper.converter;
+package ua.com.epam.service.mapper.converter;
 
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
