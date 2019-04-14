@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import ua.com.epam.entity.ExceptionResponse;
 import ua.com.epam.entity.exception.AuthorNotFoundException;
 import ua.com.epam.entity.exception.InvalidOrderTypeException;
+import ua.com.epam.entity.exception.InvalidLimitFormatException;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 
 import java.text.SimpleDateFormat;
@@ -36,14 +37,14 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
+    @ExceptionHandler(value = {MethodArgumentTypeMismatchException.class})
     public ResponseEntity<ExceptionResponse> handleNumberFormat(MethodArgumentTypeMismatchException matme) {
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_GATEWAY.getReasonPhrase(),
-                        "'" + matme.getName() + "' value must be a number of long type!"),
+                        "'" + matme.getName() + "' value must be a number!"),
                 HttpStatus.BAD_REQUEST);
     }
 
@@ -55,7 +56,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        "Entity hasn't property like '" + nsjpe.getPropName() + "'!"),
+                        "Invalid property name - '" + nsjpe.getPropName() + "'!"),
                 HttpStatus.BAD_REQUEST);
     }
 
@@ -67,7 +68,19 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        "Order type must be 'asc' or 'desc' instead " + iote.getInvalidOrder()),
+                        "Order type must be 'asc' or 'desc' instead '" + iote.getInvalidOrder() + "'"),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = InvalidLimitFormatException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidNumberFormat() {
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        "'limit' value must be a number!"),
                 HttpStatus.BAD_REQUEST);
     }
 }

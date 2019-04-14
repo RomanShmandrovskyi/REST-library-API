@@ -1,5 +1,7 @@
 package ua.com.epam.repository;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum JsonKeysConformity {
@@ -44,8 +46,35 @@ public enum JsonKeysConformity {
                 .modelPropertyName;
     }
 
-    public static boolean ifJsonKeyExists(String jsonKey) {
-        return Stream.of(JsonKeysConformity.values())
+    public static boolean ifJsonKeyExistsInGroup(String jsonKey, JsonKeysConformity.Group group) {
+        return JsonKeysConformity.Group.getGroup(group)
+                .stream()
                 .anyMatch(k -> k.jsonPropertyKey.equals(jsonKey));
+    }
+
+    public enum Group {
+        AUTHOR("author"),
+        GENRE("genre"),
+        BOOK("book");
+
+        private final String value;
+
+        Group(String value) {
+            this.value = value;
+        }
+
+        private static String getGroupByName(String name) {
+            return Stream.of(Group.values())
+                    .filter(g -> g.value.equals(name))
+                    .findFirst()
+                    .get()
+                    .toString();
+        }
+
+        private static List<JsonKeysConformity> getGroup(JsonKeysConformity.Group group) {
+            return Stream.of(JsonKeysConformity.values())
+                    .filter(jc -> jc.toString().startsWith(Group.getGroupByName(group.value)))
+                    .collect(Collectors.toList());
+        }
     }
 }
