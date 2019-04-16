@@ -1,13 +1,15 @@
 package ua.com.epam.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ua.com.epam.service.util.deserializer.CustomDateDeserializer;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -19,10 +21,10 @@ public class Author implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "author_id", unique = true, nullable = false)
-    private long authorId;
+    private Long authorId;
 
     @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;

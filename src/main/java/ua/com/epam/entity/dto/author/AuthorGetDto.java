@@ -10,11 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthorGetDto {
-
-    private long authorId;
+    private Long authorId;
     private NameDto authorName;
     private String nationality;
     private BirthDto birth;
     private String description;
-    private long booksCount;
+    private int booksCount;
 }

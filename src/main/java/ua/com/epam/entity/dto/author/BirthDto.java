@@ -1,12 +1,16 @@
 package ua.com.epam.entity.dto.author;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ua.com.epam.service.util.deserializer.CustomDateDeserializer;
+import ua.com.epam.service.util.deserializer.CustomStringDeserializer;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Setter
@@ -15,12 +19,16 @@ import java.util.Date;
 @AllArgsConstructor
 public class BirthDto {
 
-    @PastOrPresent(message = "Value 'birth.date' must be past or present!")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @JsonDeserialize(using = CustomDateDeserializer.class)
+    @PastOrPresent(message = "Value 'date' must be past or present!")
     private Date date;
 
-    @Max(value = 50, message = "Value 'birth.country' is too long!")
-    private String country;
+    @JsonDeserialize(using = CustomStringDeserializer.class)
+    @Size(max = 50, message = "Value 'country' cannot be longer than 50 characters!")
+    private String country = "";
 
-    @Max(value = 50, message = "Value 'birth.city' is too long!")
-    private String city;
+    @JsonDeserialize(using = CustomStringDeserializer.class)
+    @Size(max = 50, message = "Value 'city' cannot be longer than 50 characters!")
+    private String city = "";
 }

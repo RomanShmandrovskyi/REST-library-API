@@ -5,11 +5,14 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
 import ua.com.epam.entity.dto.author.AuthorGetDto;
+import ua.com.epam.entity.dto.author.AuthorPostDto;
+import ua.com.epam.entity.exception.AuthorAlreadyExistsException;
 import ua.com.epam.entity.exception.AuthorNotFoundException;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.repository.AuthorRepository;
 import ua.com.epam.repository.JsonKeysConformity;
 import ua.com.epam.repository.SqlQueryBuilder;
+import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
 import java.util.HashMap;
@@ -29,6 +32,9 @@ public class AuthorService {
 
     @Autowired
     private ModelToDtoMapper toDtoMapper;
+
+    @Autowired
+    private DtoToModelMapper toModelMapper;
 
     public AuthorGetDto findAuthorByAuthorId(long authorId) {
         Optional<Author> author = authorRepository.getAuthorByAuthorId(authorId);
@@ -76,5 +82,15 @@ public class AuthorService {
         return filtered.stream()
                 .map(toDtoMapper::mapAuthorModelToDto_GET)
                 .collect(Collectors.toList());
+    }
+
+    public AuthorPostDto addNewAuthor(AuthorPostDto author) {
+        if (authorRepository.existsByAuthorId(author.getAuthorId())) {
+            throw new AuthorAlreadyExistsException();
+        }
+
+        Author toPost = toModelMapper.mapAuthorDtoToAuthor(author);
+        Author response = authorRepository.save(toPost);
+        return toDtoMapper.mapAuthorModelToDto_POST(response);
     }
 }

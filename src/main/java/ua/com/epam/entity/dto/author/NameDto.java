@@ -1,9 +1,11 @@
 package ua.com.epam.entity.dto.author;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ua.com.epam.service.util.deserializer.CustomStringDeserializer;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -14,11 +16,13 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class NameDto {
 
-    @NotBlank(message = "Value 'name.first' is required!")
-    @Size(min = 1, max = 50, message = "Value 'name.first' is too long!")
+    @JsonDeserialize(using = CustomStringDeserializer.class)
+    @NotBlank(message = "Value 'first' is required!")
+    @Size(min = 1, max = 50, message = "Value 'first' cannot be longer than 50 characters!")
     private String first;
 
-    @NotBlank(message = "Value 'name.second' is required!")
-    @Size(min = 1, max = 50, message = "Value 'name.second' is too long!")
+    @JsonDeserialize(using = CustomStringDeserializer.class)
+    @NotBlank(message = "Value 'second' is required!")
+    @Size(min = 1, max = 50, message = "Value 'second' cannot be longer than 50 characters!")
     private String second;
 }

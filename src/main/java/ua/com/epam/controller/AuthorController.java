@@ -6,12 +6,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.author.AuthorGetDto;
-import ua.com.epam.entity.exception.InvalidOrderTypeException;
-import ua.com.epam.entity.exception.InvalidLimitFormatException;
+import ua.com.epam.entity.dto.author.AuthorPostDto;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
+import ua.com.epam.entity.exception.type.InvalidLimitFormatException;
+import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
 import ua.com.epam.repository.JsonKeysConformity;
 import ua.com.epam.service.AuthorService;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
@@ -60,10 +62,10 @@ public class AuthorController {
      * parameter, limit response array size and set order type.
      * All unsuitable parameters will produce fault
      *
-     * @param params not required -> will be parsed to Map<String, String>
-     * @param sortBy not required, by default 'authorId' -> String value
+     * @param params    not required -> will be parsed to Map<String, String>
+     * @param sortBy    not required, by default 'authorId' -> String value
      * @param orderType not required, by default 'asc' -> String value
-     * @param limit not required, by default '10' -> int value
+     * @param limit     not required, by default '10' -> int value
      * @return -> Response with array of Authors, empty array or 400 - Bed Request
      */
     @GetMapping(value = "/authors", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -91,7 +93,7 @@ public class AuthorController {
      * By default sort in ascending order. Descending order is available too.
      * Any others query params (expect 'sortBy' and 'order') will be ignored.
      *
-     * @param sortBy not required, by default 'authorId' -> String value
+     * @param sortBy    not required, by default 'authorId' -> String value
      * @param orderType not required, by default 'asc' -> String value
      * @return -> ResponseEntity with array of authors or 400 - Bad Request
      */
@@ -103,5 +105,12 @@ public class AuthorController {
         checkOrdering(orderType);
         List<AuthorGetDto> authors = authorService.getAllAuthorsSortedBy(sortBy, orderType);
         return new ResponseEntity<>(authors, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/author/new", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> addNewAuthor(
+            @RequestBody @Valid AuthorPostDto postAuthor) {
+        AuthorPostDto response = authorService.addNewAuthor(postAuthor);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

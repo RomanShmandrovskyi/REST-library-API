@@ -1,30 +1,38 @@
 package ua.com.epam.entity.dto.author;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ua.com.epam.service.util.deserializer.CustomLongDeserializer;
+import ua.com.epam.service.util.deserializer.CustomStringDeserializer;
 
-import javax.validation.constraints.Max;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
+import javax.validation.constraints.Size;
 
 @Setter
 @Getter
 @NoArgsConstructor
 public class AuthorPostDto {
 
+    @JsonDeserialize(using = CustomLongDeserializer.class)
     @NotNull(message = "Value 'authorId' is required!")
     @PositiveOrZero(message = "Value 'authorId' must be positive!")
-    private long authorId;
+    private Long authorId;
 
-    @NotNull(message = "Value 'name' can not be null!")
+    @Valid
     private NameDto authorName;
 
-    @Max(value = 30, message = "Value 'nationality' is too long!")
-    private String nationality;
+    @JsonDeserialize(using = CustomStringDeserializer.class)
+    @Size(max = 30, message = "Value 'nationality' cannot be longer than 30 characters!")
+    private String nationality = "";
 
+    @Valid
     private BirthDto birth;
 
-    @Max(value = 1000, message = "Value 'description' is too long!")
-    private String description;
+    @JsonDeserialize(using = CustomStringDeserializer.class)
+    @Size(max = 1000, message = "Value 'description' cannot be longer than 1000 characters!")
+    private String description = "";
 }
