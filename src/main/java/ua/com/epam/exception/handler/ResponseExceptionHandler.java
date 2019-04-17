@@ -19,6 +19,7 @@ import ua.com.epam.entity.exception.type.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 @ControllerAdvice
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
@@ -128,12 +129,12 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
             message = "Request JSON is invalid!";
         } else if (cause instanceof InvalidDateTypeException) {
             InvalidDateTypeException e = (InvalidDateTypeException) cause;
-            message = "Date value '" + e.getValue() + "' in '" + e.getKey() + "' parameter is invalid!";
+            message = "Value '" + e.getValue() + "' in '" + e.getKey() + "' is invalid! Valid format is: yyyy-MM-dd!";
         } else if (cause instanceof InvalidTypeException) {
             InvalidTypeException e = (InvalidTypeException) cause;
-            message = "Value '" + e.getValue() + "' in '" + e.getKey() + "' parameter require to be of '" + e.getClazz().getSimpleName() + "' type!";
+            message = "Value '" + e.getValue() + "' in '" + e.getKey() + "' is require to be of '" + e.getClazz().getSimpleName() + "' type!";
         } else {
-            message = ex.getMessage();
+            message = Objects.requireNonNull(ex.getMessage()).split(": ")[0];
         }
 
         return new ResponseEntity<>(
@@ -143,5 +144,17 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
                         message),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = IdMismatchException.class)
+    public ResponseEntity<ExceptionResponse> handleIdMismatch() {
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        "Entity id in path must be the same as in body!"),
+                HttpStatus.CONFLICT);
     }
 }

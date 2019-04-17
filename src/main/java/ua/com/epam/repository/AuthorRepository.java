@@ -16,6 +16,8 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
 
     boolean existsByAuthorId(long authorId);
 
+    Optional<Author> getOneByAuthorId(long authorId);
+
     @Query(value = "SELECT a FROM Author a")
     List<Author> findAllOrderBy(Sort sort);
 }

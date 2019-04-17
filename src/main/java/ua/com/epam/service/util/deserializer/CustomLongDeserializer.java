@@ -19,11 +19,11 @@ public class CustomLongDeserializer extends StdDeserializer<Long> {
 
     @Override
     public Long deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
-        Long val = null;
+        Long val;
 
         try {
-            val = jsonParser.getLongValue();
-        } catch (IOException e) {
+            val = new Long(jsonParser.getText());
+        } catch (NumberFormatException | IOException e) {
             throw new InvalidTypeException(jsonParser.getCurrentName(), jsonParser.getText(), Long.class);
         }
 

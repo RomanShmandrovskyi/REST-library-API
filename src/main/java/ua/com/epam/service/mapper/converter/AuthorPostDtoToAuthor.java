@@ -3,13 +3,13 @@ package ua.com.epam.service.mapper.converter;
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
 import ua.com.epam.entity.Author;
-import ua.com.epam.entity.dto.author.AuthorPostDto;
+import ua.com.epam.entity.dto.author.AuthorDto;
 
-public class AuthorPostDtoToAuthor implements Converter<AuthorPostDto, Author> {
+public class AuthorPostDtoToAuthor implements Converter<AuthorDto, Author> {
 
     @Override
-    public Author convert(MappingContext<AuthorPostDto, Author> mappingContext) {
-        AuthorPostDto source = mappingContext.getSource();
+    public Author convert(MappingContext<AuthorDto, Author> mappingContext) {
+        AuthorDto source = mappingContext.getSource();
 
         Author author = new Author();
         author.setAuthorId(source.getAuthorId());

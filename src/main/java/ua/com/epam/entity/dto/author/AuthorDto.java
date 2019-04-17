@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 @Setter
 @Getter
 @NoArgsConstructor
-public class AuthorPostDto {
+public class AuthorDto {
 
     @JsonDeserialize(using = CustomLongDeserializer.class)
     @NotNull(message = "Value 'authorId' is required!")
@@ -23,6 +23,7 @@ public class AuthorPostDto {
     private Long authorId;
 
     @Valid
+    @NotNull(message = "Value 'authorName' is required!")
     private NameDto authorName;
 
     @JsonDeserialize(using = CustomStringDeserializer.class)
@@ -30,7 +31,7 @@ public class AuthorPostDto {
     private String nationality = "";
 
     @Valid
-    private BirthDto birth;
+    private BirthDto birth = new BirthDto();
 
     @JsonDeserialize(using = CustomStringDeserializer.class)
     @Size(max = 1000, message = "Value 'description' cannot be longer than 1000 characters!")

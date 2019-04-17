@@ -1,11 +1,9 @@
 package ua.com.epam.entity;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ua.com.epam.service.util.deserializer.CustomDateDeserializer;
 
 import javax.persistence.*;
 import java.io.Serializable;
