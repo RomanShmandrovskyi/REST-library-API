@@ -37,7 +37,7 @@ public class JsonUtils {
                 .toString();
     }
 
-    public String parseParamMapToJsonPathFilter(Map<String, String> params) {
+    private String parseParamMapToJsonPathFilter(Map<String, String> params) {
         String prefix = "$.[?", beforeFilter = "@.", suffix = "]";
 
         List<String> andFilters = new ArrayList<>();

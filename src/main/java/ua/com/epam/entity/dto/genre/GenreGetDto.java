@@ -11,8 +11,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GenreGetDto {
 
-    private long genreId;
+    private Long genreId;
     private String genreName;
     private String description;
-    private long booksCount;
+    private int booksCount;
 }

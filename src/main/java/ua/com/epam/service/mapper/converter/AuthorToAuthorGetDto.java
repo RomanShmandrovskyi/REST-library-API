@@ -7,9 +7,6 @@ import ua.com.epam.entity.dto.author.AuthorGetDto;
 import ua.com.epam.entity.dto.author.BirthDto;
 import ua.com.epam.entity.dto.author.NameDto;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
 public class AuthorToAuthorGetDto implements Converter<Author, AuthorGetDto> {
 
     @Override
@@ -22,7 +19,7 @@ public class AuthorToAuthorGetDto implements Converter<Author, AuthorGetDto> {
         authorDto.setNationality(source.getNationality());
         authorDto.setBirth(new BirthDto(source.getBirthDate(), source.getBirthCountry(), source.getBirthCity()));
         authorDto.setDescription(source.getDescription());
-        authorDto.setBooksCount(source.getBooksCount());
+        authorDto.setBooksCount(source.getBooks().size());
         return authorDto;
     }
 }

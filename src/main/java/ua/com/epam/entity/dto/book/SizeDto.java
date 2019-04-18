@@ -10,7 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SizeDto {
-    private double height;
-    private double width;
-    private double length;
+    private Double height = 0.0;
+    private Double width = 0.0;
+    private Double length = 0.0;
 }

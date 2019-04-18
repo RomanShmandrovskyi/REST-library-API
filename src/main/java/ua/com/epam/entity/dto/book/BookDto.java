@@ -13,7 +13,7 @@ import javax.validation.constraints.Min;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookDto {
-    private long bookId;
+    private Long bookId = 0L;
 
     private String bookName;
 
@@ -23,5 +23,5 @@ public class BookDto {
 
     @Min(value = 1950, message = "Publication year must be higher then 1950")
     @Max(value = 2019, message = "Publication year must be lower then 2019")
-    private int publicationYear;
+    private Integer publicationYear = 0;
 }

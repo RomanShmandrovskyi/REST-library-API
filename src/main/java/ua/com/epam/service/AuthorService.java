@@ -6,9 +6,10 @@ import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
 import ua.com.epam.entity.dto.author.AuthorDto;
 import ua.com.epam.entity.dto.author.AuthorGetDto;
-import ua.com.epam.entity.exception.AuthorAlreadyExistsException;
-import ua.com.epam.entity.exception.AuthorNotFoundException;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
+import ua.com.epam.entity.exception.author.AuthorAlreadyExistsException;
+import ua.com.epam.entity.exception.author.AuthorNotFoundException;
+import ua.com.epam.entity.exception.author.BooksInAuthorIsPresentException;
 import ua.com.epam.entity.exception.type.IdMismatchException;
 import ua.com.epam.repository.AuthorRepository;
 import ua.com.epam.repository.JsonKeysConformity;
@@ -38,7 +39,7 @@ public class AuthorService {
     private DtoToModelMapper toModelMapper;
 
     public AuthorGetDto findAuthorByAuthorId(long authorId) {
-        Optional<Author> exist = authorRepository.getAuthorByAuthorId(authorId);
+        Optional<Author> exist = authorRepository.getOneByAuthorId(authorId);
 
         if (!exist.isPresent()) {
             throw new AuthorNotFoundException(authorId);
@@ -116,7 +117,25 @@ public class AuthorService {
         return toDtoMapper.mapAuthorModelToGetDto(updated);
     }
 
-/*    public AuthorGetDto deleteExistedAuthorWithBooks(long authorId, boolean force) {
+    public void deleteExistedAuthor(long authorId, boolean forcibly) {
+        Optional<Author> opt = authorRepository.getOneByAuthorId(authorId);
 
-    }*/
+        if (!opt.isPresent()) {
+            throw new AuthorNotFoundException(authorId);
+        }
+
+        Author toDelete = opt.get();
+        long booksCount = toDelete.getBooks().size();
+
+        if (booksCount == 0) {
+            authorRepository.deleteByAuthorId(authorId);
+            return;
+        }
+
+        if (!forcibly) {
+            throw new BooksInAuthorIsPresentException(authorId, booksCount);
+        }
+
+        authorRepository.deleteByAuthorId(authorId);
+    }
 }

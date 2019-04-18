@@ -15,6 +15,9 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ua.com.epam.entity.ExceptionResponse;
 import ua.com.epam.entity.exception.*;
+import ua.com.epam.entity.exception.author.AuthorAlreadyExistsException;
+import ua.com.epam.entity.exception.author.AuthorNotFoundException;
+import ua.com.epam.entity.exception.author.BooksInAuthorIsPresentException;
 import ua.com.epam.entity.exception.type.*;
 
 import java.text.SimpleDateFormat;
@@ -32,48 +35,52 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = AuthorNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleAuthorNotFound(AuthorNotFoundException enfe) {
+        String message = "Author with 'authorId' = '%d' doesn't exist!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
                         HttpStatus.NOT_FOUND.value(),
                         HttpStatus.NOT_FOUND.getReasonPhrase(),
-                        "Author with 'authorId' = " + enfe.getAuthorId() + " not found!"),
+                         String.format(message, enfe.getAuthorId())),
                 HttpStatus.NOT_FOUND);
     }
 
     @ResponseBody
     @ExceptionHandler(value = MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ExceptionResponse> handleNumberFormat(MethodArgumentTypeMismatchException matme) {
+        String message = "'%s' value must be of '%s' type!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_GATEWAY.getReasonPhrase(),
-                        "'" + matme.getName() + "' value must be a number!"),
+                        String.format(message, matme.getName(), matme.getParameter().getParameterType().getSimpleName())),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ResponseBody
     @ExceptionHandler(value = NoSuchJsonKeyException.class)
     public ResponseEntity<ExceptionResponse> handleNoSuchJsonProperty(NoSuchJsonKeyException nsjpe) {
+        String message = "Invalid property name - '%s'!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        "Invalid property name - '" + nsjpe.getPropName() + "'!"),
+                        String.format(message, nsjpe.getPropName())),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ResponseBody
     @ExceptionHandler(value = InvalidOrderTypeException.class)
     public ResponseEntity<ExceptionResponse> handleInvalidOrderType(InvalidOrderTypeException iote) {
+        String message = "Order type must be 'asc' or 'desc' instead '%s'!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        "Order type must be 'asc' or 'desc' instead '" + iote.getInvalidOrder() + "'"),
+                        String.format(message, iote.getInvalidOrder())),
                 HttpStatus.BAD_REQUEST);
     }
 
@@ -123,7 +130,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Throwable cause = ex.getMostSpecificCause();
-        String message = "";
+        String message;
 
         if (cause instanceof JsonParseException) {
             message = "Request JSON is invalid!";
@@ -132,7 +139,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
             message = "Value '" + e.getValue() + "' in '" + e.getKey() + "' is invalid! Valid format is: yyyy-MM-dd!";
         } else if (cause instanceof InvalidTypeException) {
             InvalidTypeException e = (InvalidTypeException) cause;
-            message = "Value '" + e.getValue() + "' in '" + e.getKey() + "' is require to be of '" + e.getClazz().getSimpleName() + "' type!";
+            message = "'" + e.getKey() + "' is require to be of '" + e.getClazz().getSimpleName() + "' type!";
         } else {
             message = Objects.requireNonNull(ex.getMessage()).split(": ")[0];
         }
@@ -154,7 +161,20 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        "Entity id in path must be the same as in body!"),
+                        "Entity ID in URL must be the same as in body!"),
+                HttpStatus.CONFLICT);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = BooksInAuthorIsPresentException.class)
+    public ResponseEntity<ExceptionResponse> handleBooksIsPresent(BooksInAuthorIsPresentException biaip) {
+        String message = "Author with 'authorId' = '%d' has '%d' books! To delete - set 'forcibly' parameter to 'true'!";
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        String.format(message, biaip.getAuthorId(), biaip.getBooksCount())),
                 HttpStatus.CONFLICT);
     }
 }

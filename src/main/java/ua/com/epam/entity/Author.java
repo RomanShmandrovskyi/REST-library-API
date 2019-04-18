@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -45,9 +46,6 @@ public class Author implements Serializable {
     @Column(name = "birth_city", length = 50)
     private String birthCity;
 
-    @Column(name = "books_count")
-    private int booksCount;
-
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
-    private List<Book> books;
+    private List<Book> books = new ArrayList<>();
 }

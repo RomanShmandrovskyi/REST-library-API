@@ -22,7 +22,7 @@ public class CustomLongDeserializer extends StdDeserializer<Long> {
         Long val;
 
         try {
-            val = new Long(jsonParser.getText());
+            val = jsonParser.getLongValue();
         } catch (NumberFormatException | IOException e) {
             throw new InvalidTypeException(jsonParser.getCurrentName(), jsonParser.getText(), Long.class);
         }

@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdditionalDto {
-    private long pageCount;
-    private SizeDto size;
+    private Long pageCount = 0L;
+    private SizeDto size = new SizeDto();
 }

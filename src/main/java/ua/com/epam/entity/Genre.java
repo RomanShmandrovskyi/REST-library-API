@@ -29,9 +29,6 @@ public class Genre implements Serializable {
     @Column(name = "genre_descr" , length = 1000)
     private String genreDescription;
 
-    @Column(name = "books_count")
-    private int booksCount;
-
     @OneToMany(mappedBy = "genre", cascade = CascadeType.ALL)
     private List<Book> books;
 }

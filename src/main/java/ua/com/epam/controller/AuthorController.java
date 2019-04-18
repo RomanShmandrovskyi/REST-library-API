@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.author.AuthorDto;
 import ua.com.epam.entity.dto.author.AuthorGetDto;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
-import ua.com.epam.entity.exception.type.InvalidLimitFormatException;
 import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
 import ua.com.epam.repository.JsonKeysConformity;
 import ua.com.epam.service.AuthorService;
@@ -33,14 +32,6 @@ public class AuthorController {
     private void checkSortByKeyInGroup(String sortBy) {
         if (!JsonKeysConformity.ifJsonKeyExistsInGroup(sortBy, JsonKeysConformity.Group.AUTHOR)) {
             throw new NoSuchJsonKeyException(sortBy);
-        }
-    }
-
-    private void checkLimit(String limit) {
-        try {
-            Integer.parseInt(limit);
-        } catch (NumberFormatException nfe) {
-            throw new InvalidLimitFormatException();
         }
     }
 
@@ -74,15 +65,13 @@ public class AuthorController {
             @RequestParam Map<String, String> params,
             @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType,
-            @RequestParam(name = "limit", defaultValue = "10") String limit) {
+            @RequestParam(name = "limit", defaultValue = "10") Integer limit) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
 
         params.putIfAbsent("sortBy", sortBy);
         params.putIfAbsent("orderType", orderType);
-        params.putIfAbsent("limit", limit);
-
-        checkLimit(params.get("limit"));
+        params.putIfAbsent("limit", String.valueOf(limit));
 
         List<AuthorGetDto> authorsFiltered = authorService.filterAuthors(params);
         return new ResponseEntity<>(authorsFiltered, HttpStatus.OK);
@@ -125,8 +114,8 @@ public class AuthorController {
 
     /**
      * Update existed Author. Consume full object with updated JSON fields.
-     * Path param 'authorId' must be the same as in body to update. In other way
-     * will be thrown exception.
+     * Path param 'authorId' must be the same as in body to update. In other
+     * way will be thrown exception.
      *
      * @param authorId      -> long value
      * @param updatedAuthor -> JSON body with Author object to update
@@ -140,10 +129,11 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-/*    @DeleteMapping(value = "/author/{authorId}/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/author/{authorId}/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAuthor(
             @PathVariable long authorId,
             @RequestParam(name = "forcibly", defaultValue = "false") boolean forcibly) {
-
-    }*/
+        authorService.deleteExistedAuthor(authorId, forcibly);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }

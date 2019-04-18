@@ -14,10 +14,10 @@ import javax.validation.constraints.PositiveOrZero;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GenrePostDto {
+public class GenreDto {
     @NotNull(message = "Value 'genreId' is required!")
     @PositiveOrZero(message = "Value 'genreId' must be positive!")
-    private long genreId;
+    private Long genreId;
 
     @NotBlank(message = "Value 'genreName' is required!")
     @Max(value = 50, message = "Value 'genreName' is too long!")
