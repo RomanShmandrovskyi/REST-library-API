@@ -48,13 +48,9 @@ public class Book implements Serializable {
     @Column(name = "publication_year")
     private int publicationYear;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "author_id", nullable = false, referencedColumnName = "author_id")
-    private Author author;
+    @Column(name = "author_id")
+    private Long authorId;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "genre_id", nullable = false, referencedColumnName = "genre_id")
-    private Genre genre;
+    @Column(name = "genre_id")
+    private Long genreId;
 }

@@ -1,4 +1,4 @@
-package ua.com.epam.entity.dto.genre;
+package ua.com.epam.entity.dto.book;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,10 +9,8 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GenreGetDto {
-
-    private Long genreId;
-    private String genreName;
+public class SimpleBookDto {
+    private Long id;
+    private String name;
     private String description;
-    private int booksCount;
 }

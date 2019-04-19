@@ -1,4 +1,4 @@
-package ua.com.epam.entity.dto.book;
+package ua.com.epam.entity.dto.book.nested;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,8 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AdditionalDto {
-    private Long pageCount = 0L;
-    private SizeDto size = new SizeDto();
+public class SizeDto {
+    private Double height = 0.0;
+    private Double width = 0.0;
+    private Double length = 0.0;
 }

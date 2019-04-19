@@ -6,7 +6,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.author.AuthorDto;
-import ua.com.epam.entity.dto.author.AuthorGetDto;
+import ua.com.epam.entity.dto.author.SimpleAuthorWithBooksDto;
+import ua.com.epam.entity.dto.author.SimpleAuthorWithGenresDto;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
 import ua.com.epam.repository.JsonKeysConformity;
@@ -39,20 +40,21 @@ public class AuthorController {
      * Get Author entity by authorId
      *
      * @param authorId -> long value
-     * @return -> Response with Author Json Dto or 404 - Not Found
+     * @return -> Response with Author Json Dto or 404 - Author Not Found
      */
     @GetMapping(value = "/author/{authorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthor(
-            @PathVariable long authorId) {
-        AuthorGetDto author = authorService.findAuthorByAuthorId(authorId);
+            @PathVariable Long authorId) {
+        AuthorDto author = authorService.findAuthorByAuthorId(authorId);
         return new ResponseEntity<>(author, HttpStatus.OK);
     }
 
     /**
-     * Get array of Authors in JSON. Can apply different filters after '?'
-     * Example: '?p1=v1&p2=v2.1,v2.2'; It is possible to set custom 'sortBy'
-     * parameter, limit response array size and set order type.
-     * All unsuitable parameters will produce a fault
+     * Get array of Authors in JSON. Can apply different filters using query
+     * parameters after '?'. Example: '?p1=v1&p2=v2.1,v2.2'. It is possible
+     * to set custom 'sortBy' parameter, but only one per one request, limit
+     * response array size and set order type (ascending or descending). All
+     * unsuitable parameters will produce a fault.
      *
      * @param params    not required -> will be parsed to Map<String, String>
      * @param sortBy    not required, by default 'authorId' -> String value
@@ -73,8 +75,8 @@ public class AuthorController {
         params.putIfAbsent("orderType", orderType);
         params.putIfAbsent("limit", String.valueOf(limit));
 
-        List<AuthorGetDto> authorsFiltered = authorService.filterAuthors(params);
-        return new ResponseEntity<>(authorsFiltered, HttpStatus.OK);
+        List<AuthorDto> response = authorService.filterAuthors(params);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
@@ -93,8 +95,37 @@ public class AuthorController {
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
-        List<AuthorGetDto> authors = authorService.getAllAuthorsSortedBy(sortBy, orderType);
-        return new ResponseEntity<>(authors, HttpStatus.OK);
+
+        List<AuthorDto> response = authorService.getAllAuthorsSortedBy(sortBy, orderType);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Find all Genres of Author. Will return Simple info about Author with
+     * array of Simple Genre objects with next values: 'genreId' and 'genreName'.
+     *
+     * @param authorId required -> long value
+     * @return -> ResponseEntity with array of genres or 404 - Author Not Found
+     */
+    @GetMapping(value = "/author/{authorId}/genres", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAuthorGenres(
+            @PathVariable Long authorId) {
+        SimpleAuthorWithGenresDto response = authorService.getAuthorWithAllItGenres(authorId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Find all Books of Author. Will return Simple info about Author with
+     * array of Book objects with next values: 'bookId', 'bookName' and 'bookDescription'.
+     *
+     * @param authorId required -> long value
+     * @return -> ResponseEntity with array of books or 404 - Author Not Found
+     */
+    @GetMapping(value = "/author/{authorId}/books", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAuthorBooks(
+            @PathVariable Long authorId) {
+        SimpleAuthorWithBooksDto response = authorService.getAuthorWithAllItBooks(authorId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
@@ -108,7 +139,7 @@ public class AuthorController {
     @PostMapping(value = "/author/new", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewAuthor(
             @RequestBody @Valid AuthorDto postAuthor) {
-        AuthorGetDto response = authorService.addNewAuthor(postAuthor);
+        AuthorDto response = authorService.addNewAuthor(postAuthor);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -117,23 +148,33 @@ public class AuthorController {
      * Path param 'authorId' must be the same as in body to update. In other
      * way will be thrown exception.
      *
-     * @param authorId      -> long value
+     * @param authorId      required -> long value
      * @param updatedAuthor -> JSON body with Author object to update
      * @return -> Response with updated Author or 404 - Not Found
      */
     @PutMapping(value = "/author/{authorId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateAuthor(
-            @PathVariable long authorId,
+            @PathVariable Long authorId,
             @RequestBody @Valid AuthorDto updatedAuthor) {
-        AuthorGetDto response = authorService.updateExistedAuthor(authorId, updatedAuthor);
+        AuthorDto response = authorService.updateExistedAuthor(authorId, updatedAuthor);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/author/{authorId}/delete", consumes = MediaType.APPLICATION_JSON_VALUE)
+    /**
+     * Delete existed Author by authorId. If Author with such authorId doesn't exist
+     * it will produce 404 - Not Found. If Author has some related Books and 'forcibly'
+     * is 'false' you will be informed, that Author has some Books. If 'forcibly'
+     * indicator defining as 'true' it will delete Author and all related Books.
+     *
+     * @param authorId required -> long value
+     * @param forcibly not required, by default 'false' -> boolean value
+     * @return -> deleted Author object
+     */
+    @DeleteMapping(value = "/author/{authorId}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAuthor(
-            @PathVariable long authorId,
+            @PathVariable Long authorId,
             @RequestParam(name = "forcibly", defaultValue = "false") boolean forcibly) {
-        authorService.deleteExistedAuthor(authorId, forcibly);
-        return new ResponseEntity<>(HttpStatus.OK);
+        AuthorDto response = authorService.deleteExistedAuthor(authorId, forcibly);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

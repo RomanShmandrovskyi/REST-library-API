@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ua.com.epam.entity.dto.author.nested.BirthDto;
+import ua.com.epam.entity.dto.author.nested.NameDto;
 import ua.com.epam.service.util.deserializer.CustomLongDeserializer;
 import ua.com.epam.service.util.deserializer.CustomStringDeserializer;
 

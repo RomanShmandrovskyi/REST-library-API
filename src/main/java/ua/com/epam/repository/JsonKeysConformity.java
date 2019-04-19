@@ -13,12 +13,10 @@ public enum JsonKeysConformity {
     AUTHOR_ID("authorId", "authorId"),
     AUTHOR_DESCRIPTION("description", "description"),
     AUTHOR_NATIONALITY("nationality", "nationality"),
-    AUTHOR_BOOKS_COUNT("booksCount", "booksCount"),
 
     GENRE_ID("genreId", "genreId"),
     GENRE_NAME("genreName", "genreName"),
     GENRE_DESCRIPTION("genreDescription", "genreDescription"),
-    GENRE_BOOKS_COUNT("booksCount", "booksCount"),
 
     BOOK_ID("bookId", "bookId"),
     BOOK_NAME("bookName", "bookName"),

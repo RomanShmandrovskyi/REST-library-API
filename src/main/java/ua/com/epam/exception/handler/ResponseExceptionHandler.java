@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -108,6 +109,31 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.CONFLICT);
     }
 
+    @ResponseBody
+    @ExceptionHandler(value = IdMismatchException.class)
+    public ResponseEntity<ExceptionResponse> handleIdMismatch() {
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        "Entity ID in URL must be the same as in body!"),
+                HttpStatus.CONFLICT);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = BooksInAuthorIsPresentException.class)
+    public ResponseEntity<ExceptionResponse> handleBooksIsPresent(BooksInAuthorIsPresentException biaip) {
+        String message = "Author with 'authorId' = '%d' has '%d' books! To delete - set 'forcibly' parameter to 'true'!";
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        String.format(message, biaip.getAuthorId(), biaip.getBooksCount())),
+                HttpStatus.CONFLICT);
+    }
+
     @Override
     @ResponseBody
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
@@ -128,6 +154,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
+    @ResponseBody
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         Throwable cause = ex.getMostSpecificCause();
         String message;
@@ -153,28 +180,16 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @Override
     @ResponseBody
-    @ExceptionHandler(value = IdMismatchException.class)
-    public ResponseEntity<ExceptionResponse> handleIdMismatch() {
+    protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        String message = "Method '%s' by '%s' not supported!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
-                        HttpStatus.BAD_REQUEST.value(),
-                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        "Entity ID in URL must be the same as in body!"),
-                HttpStatus.CONFLICT);
-    }
-
-    @ResponseBody
-    @ExceptionHandler(value = BooksInAuthorIsPresentException.class)
-    public ResponseEntity<ExceptionResponse> handleBooksIsPresent(BooksInAuthorIsPresentException biaip) {
-        String message = "Author with 'authorId' = '%d' has '%d' books! To delete - set 'forcibly' parameter to 'true'!";
-        return new ResponseEntity<>(
-                new ExceptionResponse(
-                        generateDate(),
-                        HttpStatus.BAD_REQUEST.value(),
-                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        String.format(message, biaip.getAuthorId(), biaip.getBooksCount())),
-                HttpStatus.CONFLICT);
+                        HttpStatus.METHOD_NOT_ALLOWED.value(),
+                        HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase(),
+                        String.format(message, ex.getMethod(), request.getDescription(false))),
+                HttpStatus.METHOD_NOT_ALLOWED);
     }
 }

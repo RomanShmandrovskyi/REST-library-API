@@ -15,7 +15,8 @@ public class SqlQueryBuilder {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public <T> List<T> getFilteredEntities(Map<String, String> params, String orderBy, String orderType, String limit, Class<T> clazz) {
+    public <T> List<T> getFilteredEntities(
+            Map<String, String> params, String orderBy, String orderType, String limit, Class<T> clazz) {
         StringBuilder query = new StringBuilder();
 
         String queryPrefix = "SELECT t FROM %s t ";

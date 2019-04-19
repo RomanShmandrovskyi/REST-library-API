@@ -1,11 +1,11 @@
-package ua.com.epam.service.mapper.converter;
+package ua.com.epam.service.mapper.converter.author;
 
 import org.modelmapper.Converter;
 import org.modelmapper.spi.MappingContext;
 import ua.com.epam.entity.Author;
 import ua.com.epam.entity.dto.author.AuthorDto;
 
-public class AuthorPostDtoToAuthor implements Converter<AuthorDto, Author> {
+public class AuthorDtoToAuthor implements Converter<AuthorDto, Author> {
 
     @Override
     public Author convert(MappingContext<AuthorDto, Author> mappingContext) {
