@@ -15,5 +15,4 @@ public class AuthorGetDto {
     private String nationality;
     private BirthDto birth;
     private String description;
-    private int booksCount;
 }

@@ -5,12 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GenreGetDto {
+public class AuthorGenreDto {
     private Long genreId;
     private String genreName;
-    private String description;
 }

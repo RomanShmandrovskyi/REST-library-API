@@ -6,14 +6,14 @@ import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
 import ua.com.epam.entity.dto.author.AuthorDto;
 import ua.com.epam.entity.dto.author.AuthorGetDto;
+import ua.com.epam.entity.dto.book.AuthorBookDto;
+import ua.com.epam.entity.dto.genre.AuthorGenreDto;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.author.AuthorAlreadyExistsException;
 import ua.com.epam.entity.exception.author.AuthorNotFoundException;
 import ua.com.epam.entity.exception.author.BooksInAuthorIsPresentException;
 import ua.com.epam.entity.exception.type.IdMismatchException;
-import ua.com.epam.repository.AuthorRepository;
-import ua.com.epam.repository.JsonKeysConformity;
-import ua.com.epam.repository.SqlQueryBuilder;
+import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
@@ -28,6 +28,12 @@ public class AuthorService {
 
     @Autowired
     private AuthorRepository authorRepository;
+
+    @Autowired
+    private GenreRepository genreRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
 
     @Autowired
     private SqlQueryBuilder queryBuilder;
@@ -47,6 +53,28 @@ public class AuthorService {
 
         Author toGet = exist.get();
         return toDtoMapper.mapAuthorModelToGetDto(toGet);
+    }
+
+    public List<AuthorGenreDto> getAllGenresOfAuthor(long authorId) {
+        if (!authorRepository.existsByAuthorId(authorId)) {
+            throw new AuthorNotFoundException(authorId);
+        }
+
+        return genreRepository.getAuthorGenres(authorId)
+                .stream()
+                .map(toDtoMapper::mapGenreToAuthorGenreDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<AuthorBookDto> getAllBooksOfAuthor(long authorId) {
+        if (!authorRepository.existsByAuthorId(authorId)) {
+            throw new AuthorNotFoundException(authorId);
+        }
+
+        return bookRepository.getAuthorBooksByAuthorId(authorId)
+                .stream()
+                .map(toDtoMapper::mapBookToAuthorBookDto)
+                .collect(Collectors.toList());
     }
 
     public List<AuthorGetDto> getAllAuthorsSortedBy(String sortBy, String order) {
@@ -117,7 +145,7 @@ public class AuthorService {
         return toDtoMapper.mapAuthorModelToGetDto(updated);
     }
 
-    public void deleteExistedAuthor(long authorId, boolean forcibly) {
+    public AuthorGetDto deleteExistedAuthor(long authorId, boolean forcibly) {
         Optional<Author> opt = authorRepository.getOneByAuthorId(authorId);
 
         if (!opt.isPresent()) {
@@ -125,17 +153,18 @@ public class AuthorService {
         }
 
         Author toDelete = opt.get();
-        long booksCount = toDelete.getBooks().size();
+        long booksCount = bookRepository.getAuthorBooksByAuthorId(authorId).size();
 
         if (booksCount == 0) {
-            authorRepository.deleteByAuthorId(authorId);
-            return;
+            authorRepository.delete(toDelete);
+            return toDtoMapper.mapAuthorModelToGetDto(toDelete);
         }
 
         if (!forcibly) {
             throw new BooksInAuthorIsPresentException(authorId, booksCount);
         }
 
-        authorRepository.deleteByAuthorId(authorId);
+        authorRepository.delete(toDelete);
+        return toDtoMapper.mapAuthorModelToGetDto(toDelete);
     }
 }

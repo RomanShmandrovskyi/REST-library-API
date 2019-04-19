@@ -19,7 +19,6 @@ public class AuthorToAuthorGetDto implements Converter<Author, AuthorGetDto> {
         authorDto.setNationality(source.getNationality());
         authorDto.setBirth(new BirthDto(source.getBirthDate(), source.getBirthCountry(), source.getBirthCity()));
         authorDto.setDescription(source.getDescription());
-        authorDto.setBooksCount(source.getBooks().size());
         return authorDto;
     }
 }
