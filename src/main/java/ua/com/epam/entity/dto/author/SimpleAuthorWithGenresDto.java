@@ -4,15 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ua.com.epam.entity.dto.author.nested.NameDto;
+import ua.com.epam.entity.dto.genre.SimpleGenreDto;
+
+import java.util.List;
 
 @Setter
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class AuthorGetDto {
+@NoArgsConstructor
+public class SimpleAuthorWithGenresDto {
     private Long authorId;
     private NameDto authorName;
-    private String nationality;
-    private BirthDto birth;
-    private String description;
+    private List<SimpleGenreDto> genres;
 }

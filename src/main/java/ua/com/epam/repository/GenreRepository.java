@@ -20,5 +20,5 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
     List<Genre> findAllOrderBy(Sort sort);
 
     @Query(value = "SELECT DISTINCT g.* FROM genre g JOIN book b ON g.genre_id = b.genre_id AND b.author_id = ?1", nativeQuery = true)
-    List<Genre> getAuthorGenres(long authorId);
+    List<Genre> getAllGenresOfAuthorByAuthorId(long authorId);
 }

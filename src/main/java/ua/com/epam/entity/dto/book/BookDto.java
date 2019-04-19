@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ua.com.epam.entity.dto.book.nested.AdditionalDto;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

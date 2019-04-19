@@ -6,9 +6,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.author.AuthorDto;
-import ua.com.epam.entity.dto.author.AuthorGetDto;
-import ua.com.epam.entity.dto.book.AuthorBookDto;
-import ua.com.epam.entity.dto.genre.AuthorGenreDto;
+import ua.com.epam.entity.dto.author.SimpleAuthorWithBooksDto;
+import ua.com.epam.entity.dto.author.SimpleAuthorWithGenresDto;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
 import ua.com.epam.repository.JsonKeysConformity;
@@ -46,7 +45,7 @@ public class AuthorController {
     @GetMapping(value = "/author/{authorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthor(
             @PathVariable Long authorId) {
-        AuthorGetDto author = authorService.findAuthorByAuthorId(authorId);
+        AuthorDto author = authorService.findAuthorByAuthorId(authorId);
         return new ResponseEntity<>(author, HttpStatus.OK);
     }
 
@@ -76,8 +75,8 @@ public class AuthorController {
         params.putIfAbsent("orderType", orderType);
         params.putIfAbsent("limit", String.valueOf(limit));
 
-        List<AuthorGetDto> authorsFiltered = authorService.filterAuthors(params);
-        return new ResponseEntity<>(authorsFiltered, HttpStatus.OK);
+        List<AuthorDto> response = authorService.filterAuthors(params);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
@@ -96,40 +95,37 @@ public class AuthorController {
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
-        List<AuthorGetDto> authors = authorService.getAllAuthorsSortedBy(sortBy, orderType);
-        return new ResponseEntity<>(authors, HttpStatus.OK);
+
+        List<AuthorDto> response = authorService.getAllAuthorsSortedBy(sortBy, orderType);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
-     * Find all Genres of Author. Will return array of Genre objects with
-     * next values: 'genreId' and 'genreName'.
+     * Find all Genres of Author. Will return Simple info about Author with
+     * array of Simple Genre objects with next values: 'genreId' and 'genreName'.
      *
      * @param authorId required -> long value
      * @return -> ResponseEntity with array of genres or 404 - Author Not Found
      */
     @GetMapping(value = "/author/{authorId}/genres", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorGenres(
-            @PathVariable Long authorId,
-            @RequestParam(name = "sortBy", defaultValue = "genreId") String sortBy,
-            @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
-        List<AuthorGenreDto> authorGenres = authorService.getAllGenresOfAuthor(authorId);
-        return new ResponseEntity<>(authorGenres, HttpStatus.OK);
+            @PathVariable Long authorId) {
+        SimpleAuthorWithGenresDto response = authorService.getAuthorWithAllItGenres(authorId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
-     * Find all Books of Author. Will return array of Book objects with
-     * next values: 'bookId', 'bookName' and 'bookDescription'.
+     * Find all Books of Author. Will return Simple info about Author with
+     * array of Book objects with next values: 'bookId', 'bookName' and 'bookDescription'.
      *
      * @param authorId required -> long value
      * @return -> ResponseEntity with array of books or 404 - Author Not Found
      */
     @GetMapping(value = "/author/{authorId}/books", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorBooks(
-            @PathVariable Long authorId,
-            @RequestParam(name = "sortBy", defaultValue = "bookId") String sortBy,
-            @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
-        List<AuthorBookDto> authorBooks = authorService.getAllBooksOfAuthor(authorId);
-        return new ResponseEntity<>(authorBooks, HttpStatus.OK);
+            @PathVariable Long authorId) {
+        SimpleAuthorWithBooksDto response = authorService.getAuthorWithAllItBooks(authorId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
@@ -143,7 +139,7 @@ public class AuthorController {
     @PostMapping(value = "/author/new", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewAuthor(
             @RequestBody @Valid AuthorDto postAuthor) {
-        AuthorGetDto response = authorService.addNewAuthor(postAuthor);
+        AuthorDto response = authorService.addNewAuthor(postAuthor);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -160,7 +156,7 @@ public class AuthorController {
     public ResponseEntity<?> updateAuthor(
             @PathVariable Long authorId,
             @RequestBody @Valid AuthorDto updatedAuthor) {
-        AuthorGetDto response = authorService.updateExistedAuthor(authorId, updatedAuthor);
+        AuthorDto response = authorService.updateExistedAuthor(authorId, updatedAuthor);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -178,7 +174,7 @@ public class AuthorController {
     public ResponseEntity<?> deleteAuthor(
             @PathVariable Long authorId,
             @RequestParam(name = "forcibly", defaultValue = "false") boolean forcibly) {
-        AuthorGetDto agd = authorService.deleteExistedAuthor(authorId, forcibly);
-        return new ResponseEntity<>(agd, HttpStatus.OK);
+        AuthorDto response = authorService.deleteExistedAuthor(authorId, forcibly);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

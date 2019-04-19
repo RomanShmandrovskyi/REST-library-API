@@ -1,4 +1,4 @@
-package ua.com.epam.entity.dto.genre;
+package ua.com.epam.entity.dto.book.nested;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,8 +9,8 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GenreGetDto {
-    private Long genreId;
-    private String genreName;
-    private String description;
+public class SizeDto {
+    private Double height = 0.0;
+    private Double width = 0.0;
+    private Double length = 0.0;
 }

@@ -1,4 +1,4 @@
-package ua.com.epam.entity.dto.book;
+package ua.com.epam.entity.dto.book.nested;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

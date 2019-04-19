@@ -1,4 +1,4 @@
-package ua.com.epam.entity.dto.author;
+package ua.com.epam.entity.dto.author.nested;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;

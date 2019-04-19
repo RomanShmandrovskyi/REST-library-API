@@ -9,8 +9,8 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthorBookDto {
-    private Long bookId;
-    private String bookName;
-    private String bookDescr;
+public class SimpleBookDto {
+    private Long id;
+    private String name;
+    private String description;
 }

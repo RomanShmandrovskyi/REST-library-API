@@ -1,4 +1,4 @@
-package ua.com.epam.entity.dto.genre;
+package ua.com.epam.entity.exception.genre;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthorGenreDto {
-    private Long genreId;
-    private String genreName;
+public class GenreNotFoundException extends RuntimeException {
+    private long genreId;
 }
