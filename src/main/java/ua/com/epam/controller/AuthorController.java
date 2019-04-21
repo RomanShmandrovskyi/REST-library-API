@@ -37,10 +37,10 @@ public class AuthorController {
     }
 
     /**
-     * Get Author entity by authorId
+     * Get Author entity by authorId.
      *
      * @param authorId -> long value
-     * @return -> Response with Author Json Dto or 404 - Author Not Found
+     * @return -> Response with Author object or 404 - Author Not Found.
      */
     @GetMapping(value = "/author/{authorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthor(
@@ -50,15 +50,15 @@ public class AuthorController {
     }
 
     /**
-     * Get array of Authors in JSON. Can apply different filters using query
-     * parameters after '?'. Example: '?p1=v1&p2=v2.1,v2.2'. It is possible
-     * to set one custom 'sortBy' parameter, and set order type (ascending or
-     * descending). All unsuitable parameters will produce a fault.
+     * Get array of filtered Author objects. Can apply different filters
+     * using query parameters after '?'. Example: '?p1=v1&p2=v2.1,v2.2'.
+     * It is possible to set one custom 'sortBy' parameter and order type
+     * (ascending or descending). All unsuitable parameters will produce a fault.
      *
-     * @param params    not required -> will be parsed to Map<String, String>
-     * @param sortBy    not required, by default 'authorId' -> String value
-     * @param orderType not required, by default 'asc' -> String value
-     * @return -> Response with array of Authors, empty array or 400 - Bed Request
+     * @param params    not required -> will be parsed to Map<String, String>.
+     * @param sortBy    not required, by default 'authorId' -> String value.
+     * @param orderType not required, by default 'asc' -> String value.
+     * @return -> Response with array of Authors, empty array or 400 - Bed Request.
      */
     @GetMapping(value = "/authors", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorsByParams(
@@ -76,18 +76,19 @@ public class AuthorController {
     }
 
     /**
-     * Get array of existed Authors in JSON. Can sort by any other one
-     * json key. If key not exist in JSON will be thrown exception. By
-     * default sort in ascending order. Descending order is available
-     * too. This endpoint can also paginate response, just set page number
-     * to 'page' param and needed entities count on one page in 'size' param.
-     * Any others query params (expect 'sortBy' and 'order') will be ignored.
+     * Get array of existed Author Objects. Can sort by any other one json
+     * key. If key not exists in JSON, will be thrown exception. By default
+     * sort in ascending order. Descending order is available too. This
+     * endpoint can also paginate response, just set page number to 'page'
+     * param and needed entities count on one page in 'size' param. Any
+     * others query params (expect 'sortBy', 'orderType', 'page' and size)
+     * will be ignored.
      *
-     * @param sortBy    not required, by default 'authorId' -> String value
-     * @param orderType not required, by default 'asc' -> String value
-     * @param page      not required, by default '1' -> Integer value
-     * @param size      not required, by default '5' -> Integer value
-     * @return -> ResponseEntity with array of authors or 400 - Bad Request
+     * @param sortBy    not required, by default 'authorId' -> String value.
+     * @param orderType not required, by default 'asc' -> String value.
+     * @param page      not required, by default '1' -> Integer value.
+     * @param size      not required, by default '5' -> Integer value.
+     * @return -> ResponseEntity with array of authors or 400 - Bad Request.
      */
     @GetMapping(value = "/authors/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthors(
@@ -103,10 +104,10 @@ public class AuthorController {
     }
 
     /**
-     * Find all Genres of Author. Will return Simple info about Author with
-     * array of Simple Genre objects with next values: 'genreId' and 'genreName'.
+     * Find all Genres of Author. Will return simple info about Author with array
+     * of Genre objects that will contain next values: 'genreId' and 'genreName'.
      *
-     * @param authorId required -> long value
+     * @param authorId required -> long value.
      * @return -> ResponseEntity with array of genres or 404 - Author Not Found
      */
     @GetMapping(value = "/author/{authorId}/genres", produces = MediaType.APPLICATION_JSON_VALUE)

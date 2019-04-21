@@ -15,12 +15,15 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ua.com.epam.entity.ExceptionResponse;
+import ua.com.epam.entity.exception.IdMismatchException;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.author.AuthorAlreadyExistsException;
 import ua.com.epam.entity.exception.author.AuthorNotFoundException;
 import ua.com.epam.entity.exception.author.BooksInAuthorIsPresentException;
 import ua.com.epam.entity.exception.genre.GenreAlreadyExistsException;
-import ua.com.epam.entity.exception.type.*;
+import ua.com.epam.entity.exception.type.InvalidDateTypeException;
+import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
+import ua.com.epam.entity.exception.type.InvalidTypeException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -87,18 +90,6 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler(value = InvalidLimitFormatException.class)
-    public ResponseEntity<ExceptionResponse> handleInvalidNumberFormat() {
-        return new ResponseEntity<>(
-                new ExceptionResponse(
-                        generateDate(),
-                        HttpStatus.BAD_REQUEST.value(),
-                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        "'limit' value must be a number!"),
-                HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseBody
     @ExceptionHandler(value = AuthorAlreadyExistsException.class)
     public ResponseEntity<ExceptionResponse> handleAuthorConflict() {
         return new ResponseEntity<>(
@@ -130,20 +121,22 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        "Entity ID in URL must be the same as in body!"),
+                        "Entity ID cannot be updated and must be the same as in URL!"),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ResponseBody
     @ExceptionHandler(value = BooksInAuthorIsPresentException.class)
     public ResponseEntity<ExceptionResponse> handleBooksIsPresent(BooksInAuthorIsPresentException biaip) {
-        String message = "Author with 'authorId' = '%d' has '%d' books! To delete - set 'forcibly' parameter to 'true'!";
+        long booksCount = biaip.getBooksCount();
+        String b = booksCount == 1 ? " book! " : " books! ";
+        String message = "Author with 'authorId' = '%d' has '%d'" + b + "To delete - set 'forcibly' parameter to 'true'!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        String.format(message, biaip.getAuthorId(), biaip.getBooksCount())),
+                        String.format(message, biaip.getAuthorId(), booksCount)),
                 HttpStatus.BAD_REQUEST);
     }
 

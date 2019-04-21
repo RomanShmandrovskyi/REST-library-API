@@ -6,6 +6,10 @@ import ua.com.epam.entity.Genre;
 import ua.com.epam.entity.dto.author.SimpleAuthorDto;
 import ua.com.epam.entity.dto.book.SimpleBookDto;
 import ua.com.epam.entity.dto.genre.GenreDto;
+import ua.com.epam.entity.dto.genre.SimpleGenreWithAuthorsDto;
+import ua.com.epam.entity.dto.genre.SimpleGenreWithBooksDto;
+import ua.com.epam.entity.exception.IdMismatchException;
+import ua.com.epam.entity.exception.genre.GenreAlreadyExistsException;
 import ua.com.epam.entity.exception.genre.GenreNotFoundException;
 import ua.com.epam.repository.AuthorRepository;
 import ua.com.epam.repository.BookRepository;
@@ -13,6 +17,7 @@ import ua.com.epam.repository.GenreRepository;
 import ua.com.epam.repository.SqlQueryBuilder;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
+import ua.com.epam.service.mapper.converter.genre.BooksInGenreIsPresentException;
 
 import java.util.List;
 import java.util.Optional;
@@ -50,25 +55,94 @@ public class GenreService {
         return toDtoMapper.mapGenreToGenreDto(toGet);
     }
 
-    public List<SimpleAuthorDto> getAllAuthorsInGenre(long genreId) {
-        if (!genreRepository.existsByGenreId(genreId)) {
+    public SimpleGenreWithAuthorsDto getGenreWithItAuthors(long genreId) {
+        Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
+
+        if (!opt.isPresent()) {
             throw new GenreNotFoundException(genreId);
         }
 
-        return authorRepository.getAllAuthorsOfGenreByGenreId(genreId)
+        Genre genre = opt.get();
+
+        List<SimpleAuthorDto> authorsInGenre = authorRepository.getAllAuthorsOfGenreByGenreId(genreId)
                 .stream()
                 .map(toDtoMapper::mapAuthorToSimpleAuthorDto)
                 .collect(Collectors.toList());
+
+        return new SimpleGenreWithAuthorsDto(
+                genre.getGenreId(),
+                genre.getGenreName(),
+                authorsInGenre);
     }
 
-    public List<SimpleBookDto> getAllBooksOfGenre(long genreId) {
-        if (!genreRepository.existsByGenreId(genreId)) {
+    public SimpleGenreWithBooksDto getGenreWithItBooks(long genreId, int page, int size) {
+        Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
+
+        if (!opt.isPresent()) {
             throw new GenreNotFoundException(genreId);
         }
 
-        return bookRepository.getGenreBooksByGenreId(genreId)
+        Genre genre = opt.get();
+
+        List<SimpleBookDto> books = bookRepository.getGenreBooksByGenreId(genreId)
                 .stream()
                 .map(toDtoMapper::mapBookToSimpleBookDto)
+                .skip((page - 1) * size)
+                .limit(size)
                 .collect(Collectors.toList());
+
+        return new SimpleGenreWithBooksDto(
+                genre.getGenreId(),
+                genre.getGenreName(),
+                books);
+    }
+
+    public GenreDto addNewGenre(GenreDto genre) {
+        if (genreRepository.existsByGenreId(genre.getGenreId())) {
+            throw new GenreAlreadyExistsException();
+        }
+
+        Genre toPost = toModelMapper.mapGenreDtoToGenre(genre);
+        Genre response = genreRepository.save(toPost);
+
+        return toDtoMapper.mapGenreToGenreDto(response);
+    }
+
+    public GenreDto updateExistedGenre(long genreId, GenreDto genre) {
+        Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
+
+        if (!opt.isPresent()) {
+            throw new GenreNotFoundException(genreId);
+        }
+        if (genreId != genre.getGenreId()) {
+            throw new IdMismatchException();
+        }
+
+        Genre proxy = opt.get();
+
+        proxy.setGenreId(genre.getGenreId());
+        proxy.setGenreName(genre.getGenreName());
+        proxy.setGenreDescription(genre.getDescription());
+
+        Genre updated = genreRepository.save(proxy);
+        return toDtoMapper.mapGenreToGenreDto(updated);
+    }
+
+    public GenreDto deleteExistedGenre(long genreId, boolean forcibly) {
+        Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
+
+        if (!opt.isPresent()) {
+            throw new GenreNotFoundException(genreId);
+        }
+
+        Genre toDelete = opt.get();
+        long booksCount = bookRepository.getGenreBooksByGenreId(genreId).size();
+
+        if (booksCount > 0 && !forcibly) {
+            throw new BooksInGenreIsPresentException(genreId, booksCount);
+        }
+
+        genreRepository.delete(toDelete);
+        return toDtoMapper.mapGenreToGenreDto(toDelete);
     }
 }

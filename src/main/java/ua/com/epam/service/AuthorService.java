@@ -10,11 +10,11 @@ import ua.com.epam.entity.dto.author.SimpleAuthorWithGenresDto;
 import ua.com.epam.entity.dto.author.nested.NameDto;
 import ua.com.epam.entity.dto.book.SimpleBookDto;
 import ua.com.epam.entity.dto.genre.SimpleGenreDto;
+import ua.com.epam.entity.exception.IdMismatchException;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.author.AuthorAlreadyExistsException;
 import ua.com.epam.entity.exception.author.AuthorNotFoundException;
 import ua.com.epam.entity.exception.author.BooksInAuthorIsPresentException;
-import ua.com.epam.entity.exception.type.IdMismatchException;
 import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
@@ -148,8 +148,12 @@ public class AuthorService {
     public AuthorDto updateExistedAuthor(long authorId, AuthorDto authorDto) {
         Optional<Author> opt = authorRepository.getOneByAuthorId(authorId);
 
-        if (!opt.isPresent()) throw new AuthorNotFoundException(authorId);
-        if (authorId != authorDto.getAuthorId()) throw new IdMismatchException();
+        if (!opt.isPresent()) {
+            throw new AuthorNotFoundException(authorId);
+        }
+        if (authorId != authorDto.getAuthorId()) {
+            throw new IdMismatchException();
+        }
 
         Author proxy = opt.get();
 
@@ -176,12 +180,7 @@ public class AuthorService {
         Author toDelete = opt.get();
         long booksCount = bookRepository.getAuthorBooksByAuthorId(authorId).size();
 
-        if (booksCount == 0) {
-            authorRepository.delete(toDelete);
-            return toDtoMapper.mapAuthorToAuthorDto(toDelete);
-        }
-
-        if (!forcibly) {
+        if (booksCount > 0 && !forcibly) {
             throw new BooksInAuthorIsPresentException(authorId, booksCount);
         }
 
