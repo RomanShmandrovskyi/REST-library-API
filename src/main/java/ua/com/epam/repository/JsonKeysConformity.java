@@ -16,7 +16,7 @@ public enum JsonKeysConformity {
 
     GENRE_ID("genreId", "genreId"),
     GENRE_NAME("genreName", "genreName"),
-    GENRE_DESCRIPTION("genreDescription", "genreDescription"),
+    GENRE_DESCRIPTION("description", "genreDescription"),
 
     BOOK_ID("bookId", "bookId"),
     BOOK_NAME("bookName", "bookName"),

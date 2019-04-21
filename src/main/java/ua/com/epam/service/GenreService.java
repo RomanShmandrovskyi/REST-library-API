@@ -1,6 +1,7 @@
 package ua.com.epam.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Genre;
 import ua.com.epam.entity.dto.author.SimpleAuthorDto;
@@ -11,10 +12,7 @@ import ua.com.epam.entity.dto.genre.SimpleGenreWithBooksDto;
 import ua.com.epam.entity.exception.IdMismatchException;
 import ua.com.epam.entity.exception.genre.GenreAlreadyExistsException;
 import ua.com.epam.entity.exception.genre.GenreNotFoundException;
-import ua.com.epam.repository.AuthorRepository;
-import ua.com.epam.repository.BookRepository;
-import ua.com.epam.repository.GenreRepository;
-import ua.com.epam.repository.SqlQueryBuilder;
+import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 import ua.com.epam.service.mapper.converter.genre.BooksInGenreIsPresentException;
@@ -53,6 +51,22 @@ public class GenreService {
 
         Genre toGet = exist.get();
         return toDtoMapper.mapGenreToGenreDto(toGet);
+    }
+
+    public List<GenreDto> getAllGenres(String sortBy, String order) {
+        Sort.Direction orderType;
+
+        if (order.equals("desc"))
+            orderType = Sort.Direction.DESC;
+        else
+            orderType = Sort.Direction.ASC;
+
+        String parameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+
+        return genreRepository.findAllOrderBy(Sort.by(orderType, parameter))
+                .stream()
+                .map(toDtoMapper::mapGenreToGenreDto)
+                .collect(Collectors.toList());
     }
 
     public SimpleGenreWithAuthorsDto getGenreWithItAuthors(long genreId) {
