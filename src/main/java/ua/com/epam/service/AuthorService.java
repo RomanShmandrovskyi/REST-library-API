@@ -97,7 +97,7 @@ public class AuthorService {
                 authorBooks);
     }
 
-    public List<AuthorDto> getAllAuthorsSortedBy(String sortBy, String order) {
+    public List<AuthorDto> getAllAuthorsSortedBy(String sortBy, String order, int page, int size) {
         Sort.Direction orderType;
 
         if (order.equals("desc"))
@@ -110,13 +110,14 @@ public class AuthorService {
         return authorRepository.findAllOrderBy(Sort.by(orderType, parameter))
                 .stream()
                 .map(toDtoMapper::mapAuthorToAuthorDto)
+                .skip((page - 1) * size)
+                .limit(size)
                 .collect(Collectors.toList());
     }
 
     public List<AuthorDto> filterAuthors(Map<String, String> params) {
         String orderBy = JsonKeysConformity.getPropNameByJsonKey(params.remove("sortBy"));
         String orderType = params.remove("orderType");
-        String limit = params.remove("limit");
 
         params.keySet().forEach(key -> {
             if (!JsonKeysConformity.ifJsonKeyExistsInGroup(key, JsonKeysConformity.Group.AUTHOR)) {
@@ -127,8 +128,8 @@ public class AuthorService {
         Map<String, String> replaced = new HashMap<>();
         params.keySet().forEach(k -> replaced.put(JsonKeysConformity.getPropNameByJsonKey(k), params.get(k)));
 
-        List<Author> filtered = queryBuilder.getFilteredEntities(replaced, orderBy, orderType, limit, Author.class);
 
+        List<Author> filtered = queryBuilder.getFilteredEntities(replaced, orderBy, orderType, Author.class);
         return filtered.stream()
                 .map(toDtoMapper::mapAuthorToAuthorDto)
                 .collect(Collectors.toList());

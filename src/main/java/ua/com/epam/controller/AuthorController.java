@@ -52,51 +52,53 @@ public class AuthorController {
     /**
      * Get array of Authors in JSON. Can apply different filters using query
      * parameters after '?'. Example: '?p1=v1&p2=v2.1,v2.2'. It is possible
-     * to set custom 'sortBy' parameter, but only one per one request, limit
-     * response array size and set order type (ascending or descending). All
-     * unsuitable parameters will produce a fault.
+     * to set one custom 'sortBy' parameter, and set order type (ascending or
+     * descending). All unsuitable parameters will produce a fault.
      *
      * @param params    not required -> will be parsed to Map<String, String>
      * @param sortBy    not required, by default 'authorId' -> String value
      * @param orderType not required, by default 'asc' -> String value
-     * @param limit     not required, by default '10' -> int value
      * @return -> Response with array of Authors, empty array or 400 - Bed Request
      */
     @GetMapping(value = "/authors", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorsByParams(
             @RequestParam Map<String, String> params,
             @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
-            @RequestParam(name = "orderType", defaultValue = "asc") String orderType,
-            @RequestParam(name = "limit", defaultValue = "10") Integer limit) {
+            @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
 
         params.putIfAbsent("sortBy", sortBy);
         params.putIfAbsent("orderType", orderType);
-        params.putIfAbsent("limit", String.valueOf(limit));
 
         List<AuthorDto> response = authorService.filterAuthors(params);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
-     * Get array of all existed Authors in JSON. Can sort by any other one
+     * Get array of existed Authors in JSON. Can sort by any other one
      * json key. If key not exist in JSON will be thrown exception. By
-     * default sort in ascending order. Descending order is available too.
+     * default sort in ascending order. Descending order is available
+     * too. This endpoint can also paginate response, just set page number
+     * to 'page' param and needed entities count on one page in 'size' param.
      * Any others query params (expect 'sortBy' and 'order') will be ignored.
      *
      * @param sortBy    not required, by default 'authorId' -> String value
      * @param orderType not required, by default 'asc' -> String value
+     * @param page      not required, by default '1' -> Integer value
+     * @param size      not required, by default '5' -> Integer value
      * @return -> ResponseEntity with array of authors or 400 - Bad Request
      */
     @GetMapping(value = "/authors/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthors(
             @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
-            @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
+            @RequestParam(name = "orderType", defaultValue = "asc") String orderType,
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "size", defaultValue = "5") Integer size) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
 
-        List<AuthorDto> response = authorService.getAllAuthorsSortedBy(sortBy, orderType);
+        List<AuthorDto> response = authorService.getAllAuthorsSortedBy(sortBy, orderType, page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -116,7 +118,7 @@ public class AuthorController {
 
     /**
      * Find all Books of Author. Will return Simple info about Author with
-     * array of Book objects with next values: 'bookId', 'bookName' and 'bookDescription'.
+     * array of Book objects that include next values: 'bookId' and 'bookName'.
      *
      * @param authorId required -> long value
      * @return -> ResponseEntity with array of books or 404 - Author Not Found

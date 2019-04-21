@@ -15,10 +15,11 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ua.com.epam.entity.ExceptionResponse;
-import ua.com.epam.entity.exception.*;
+import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.author.AuthorAlreadyExistsException;
 import ua.com.epam.entity.exception.author.AuthorNotFoundException;
 import ua.com.epam.entity.exception.author.BooksInAuthorIsPresentException;
+import ua.com.epam.entity.exception.genre.GenreAlreadyExistsException;
 import ua.com.epam.entity.exception.type.*;
 
 import java.text.SimpleDateFormat;
@@ -42,7 +43,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         generateDate(),
                         HttpStatus.NOT_FOUND.value(),
                         HttpStatus.NOT_FOUND.getReasonPhrase(),
-                         String.format(message, enfe.getAuthorId())),
+                        String.format(message, enfe.getAuthorId())),
                 HttpStatus.NOT_FOUND);
     }
 
@@ -54,7 +55,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                 new ExceptionResponse(
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
-                        HttpStatus.BAD_GATEWAY.getReasonPhrase(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
                         String.format(message, matme.getName(), matme.getParameter().getParameterType().getSimpleName())),
                 HttpStatus.BAD_REQUEST);
     }
@@ -62,7 +63,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = NoSuchJsonKeyException.class)
     public ResponseEntity<ExceptionResponse> handleNoSuchJsonProperty(NoSuchJsonKeyException nsjpe) {
-        String message = "Invalid property name - '%s'!";
+        String message = "No such JSON property - '%s'!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
@@ -110,6 +111,18 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ResponseBody
+    @ExceptionHandler(value = GenreAlreadyExistsException.class)
+    public ResponseEntity<ExceptionResponse> handleGenreConflict() {
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.CONFLICT.value(),
+                        HttpStatus.CONFLICT.getReasonPhrase(),
+                        "Genre with such 'genreId' already exists!"),
+                HttpStatus.CONFLICT);
+    }
+
+    @ResponseBody
     @ExceptionHandler(value = IdMismatchException.class)
     public ResponseEntity<ExceptionResponse> handleIdMismatch() {
         return new ResponseEntity<>(
@@ -118,7 +131,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
                         "Entity ID in URL must be the same as in body!"),
-                HttpStatus.CONFLICT);
+                HttpStatus.BAD_REQUEST);
     }
 
     @ResponseBody
@@ -131,7 +144,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
                         String.format(message, biaip.getAuthorId(), biaip.getBooksCount())),
-                HttpStatus.CONFLICT);
+                HttpStatus.BAD_REQUEST);
     }
 
     @Override
@@ -183,13 +196,13 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @Override
     @ResponseBody
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-        String message = "Method '%s' by '%s' not supported!";
+        String message = "Method '%s' mapped by '%s' not supported!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
                         HttpStatus.METHOD_NOT_ALLOWED.value(),
                         HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase(),
-                        String.format(message, ex.getMethod(), request.getDescription(false))),
+                        String.format(message, ex.getMethod(), request.getDescription(false).split("=")[1])),
                 HttpStatus.METHOD_NOT_ALLOWED);
     }
 }

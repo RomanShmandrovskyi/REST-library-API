@@ -16,7 +16,7 @@ public class SqlQueryBuilder {
     private EntityManager entityManager;
 
     public <T> List<T> getFilteredEntities(
-            Map<String, String> params, String orderBy, String orderType, String limit, Class<T> clazz) {
+            Map<String, String> params, String orderBy, String orderType, Class<T> clazz) {
         StringBuilder query = new StringBuilder();
 
         String queryPrefix = "SELECT t FROM %s t ";
@@ -31,9 +31,7 @@ public class SqlQueryBuilder {
         query.append(String.format(sorting, orderBy))
                 .append(orderType);
 
-        return (List<T>) entityManager.createQuery(query.toString())
-                .setMaxResults(Integer.valueOf(limit))
-                .getResultList();
+        return (List<T>) entityManager.createQuery(query.toString()).getResultList();
     }
 
     private String convertParamsMapToSqlQuery(Map<String, String> params) {
