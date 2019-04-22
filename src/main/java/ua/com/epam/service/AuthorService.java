@@ -109,9 +109,9 @@ public class AuthorService {
 
         return authorRepository.findAllOrderBy(Sort.by(orderType, parameter))
                 .stream()
-                .map(toDtoMapper::mapAuthorToAuthorDto)
                 .skip((page - 1) * size)
                 .limit(size)
+                .map(toDtoMapper::mapAuthorToAuthorDto)
                 .collect(Collectors.toList());
     }
 

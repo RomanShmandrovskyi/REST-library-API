@@ -53,7 +53,49 @@ public class GenreService {
         return toDtoMapper.mapGenreToGenreDto(toGet);
     }
 
-    public List<GenreDto> getAllGenres(String sortBy, String order) {
+    public SimpleGenreWithAuthorsDto getGenreWithItAuthors(long genreId, int authorsCount) {
+        Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
+
+        if (!opt.isPresent()) {
+            throw new GenreNotFoundException(genreId);
+        }
+
+        Genre genre = opt.get();
+
+        List<SimpleAuthorDto> authorsInGenre = authorRepository.getAllAuthorsOfGenreByGenreId(genreId)
+                .stream()
+                .limit(authorsCount)
+                .map(toDtoMapper::mapAuthorToSimpleAuthorDto)
+                .collect(Collectors.toList());
+
+        return new SimpleGenreWithAuthorsDto(
+                genre.getGenreId(),
+                genre.getGenreName(),
+                authorsInGenre);
+    }
+
+    public SimpleGenreWithBooksDto getGenreWithItBooks(long genreId, int booksCount) {
+        Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
+
+        if (!opt.isPresent()) {
+            throw new GenreNotFoundException(genreId);
+        }
+
+        Genre genre = opt.get();
+
+        List<SimpleBookDto> books = bookRepository.getGenreBooksByGenreId(genreId)
+                .stream()
+                .limit(booksCount)
+                .map(toDtoMapper::mapBookToSimpleBookDto)
+                .collect(Collectors.toList());
+
+        return new SimpleGenreWithBooksDto(
+                genre.getGenreId(),
+                genre.getGenreName(),
+                books);
+    }
+
+    public List<GenreDto> getAllGenres(String sortBy, String order, int page, int size) {
         Sort.Direction orderType;
 
         if (order.equals("desc"))
@@ -65,50 +107,10 @@ public class GenreService {
 
         return genreRepository.findAllOrderBy(Sort.by(orderType, parameter))
                 .stream()
-                .map(toDtoMapper::mapGenreToGenreDto)
-                .collect(Collectors.toList());
-    }
-
-    public SimpleGenreWithAuthorsDto getGenreWithItAuthors(long genreId) {
-        Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
-
-        if (!opt.isPresent()) {
-            throw new GenreNotFoundException(genreId);
-        }
-
-        Genre genre = opt.get();
-
-        List<SimpleAuthorDto> authorsInGenre = authorRepository.getAllAuthorsOfGenreByGenreId(genreId)
-                .stream()
-                .map(toDtoMapper::mapAuthorToSimpleAuthorDto)
-                .collect(Collectors.toList());
-
-        return new SimpleGenreWithAuthorsDto(
-                genre.getGenreId(),
-                genre.getGenreName(),
-                authorsInGenre);
-    }
-
-    public SimpleGenreWithBooksDto getGenreWithItBooks(long genreId, int page, int size) {
-        Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
-
-        if (!opt.isPresent()) {
-            throw new GenreNotFoundException(genreId);
-        }
-
-        Genre genre = opt.get();
-
-        List<SimpleBookDto> books = bookRepository.getGenreBooksByGenreId(genreId)
-                .stream()
-                .map(toDtoMapper::mapBookToSimpleBookDto)
                 .skip((page - 1) * size)
                 .limit(size)
+                .map(toDtoMapper::mapGenreToGenreDto)
                 .collect(Collectors.toList());
-
-        return new SimpleGenreWithBooksDto(
-                genre.getGenreId(),
-                genre.getGenreName(),
-                books);
     }
 
     public GenreDto addNewGenre(GenreDto genre) {

@@ -15,5 +15,5 @@ import java.util.List;
 public class SimpleGenreWithAuthorsDto {
     private Long genreId;
     private String genreName;
-    List<SimpleAuthorDto> authors;
+    private List<SimpleAuthorDto> authors;
 }
