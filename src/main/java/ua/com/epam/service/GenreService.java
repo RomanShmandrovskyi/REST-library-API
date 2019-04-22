@@ -34,9 +34,6 @@ public class GenreService {
     private BookRepository bookRepository;
 
     @Autowired
-    private SqlQueryBuilder queryBuilder;
-
-    @Autowired
     private ModelToDtoMapper toDtoMapper;
 
     @Autowired
