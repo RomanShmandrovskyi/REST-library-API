@@ -134,7 +134,7 @@ public class GenreController {
      *
      * @param genreId     required -> Long value
      * @param updateGenre required -> JSON body with Genre object to update
-     * @return -> ResponseEntity with updated Genre or 404 - Not Found
+     * @return -> ResponseEntity with updated Genre or 404 - Genre Not Found
      */
     @PutMapping(value = "/genre/{genreId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateAuthor(
@@ -151,15 +151,15 @@ public class GenreController {
      * If 'forcibly' indicator defining as 'true' it will delete Genre and all related
      * Books.
      *
-     * @param genreId
-     * @param forcibly
-     * @return
+     * @param genreId  required -> Long value
+     * @param forcibly not required, by default 'false' -> Boolean value
+     * @return ResponseEntity with deleted Genre or 404 - Genre Not Found
      */
     @DeleteMapping(value = "/genre/{genreId}/delete")
     public ResponseEntity<?> deleteGenre(
             @PathVariable Long genreId,
             @RequestParam(name = "forcibly", defaultValue = "false") Boolean forcibly) {
-        GenreDto respnse = genreService.deleteExistedGenre(genreId, forcibly);
-        return new ResponseEntity<>(respnse, HttpStatus.OK);
+        GenreDto response = genreService.deleteExistedGenre(genreId, forcibly);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

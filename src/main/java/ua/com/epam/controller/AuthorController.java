@@ -50,10 +50,10 @@ public class AuthorController {
     }
 
     /**
-     * Get array of filtered Author objects. Can apply different filters
-     * using query parameters after '?'. Example: '?p1=v1&p2=v2.1,v2.2'.
-     * It is possible to set one custom 'sortBy' parameter and order type
-     * (asc or desc). All unsuitable parameters will produce a fault.
+     * Get array of filtered Author objects. Can apply different filters using query
+     * parameters after '?'. Example: '?p1=v1&p2=v2.1,v2.2'. It is possible to set
+     * one custom 'sortBy' parameter and order type (asc or desc). All unsuitable
+     * parameters will produce a fault.
      *
      * @param params    not required -> will be parsed to Map<String, String>.
      * @param sortBy    not required, by default 'authorId' -> String value.
@@ -76,13 +76,12 @@ public class AuthorController {
     }
 
     /**
-     * Get array of existed Author Objects. Can sort by any other one json
-     * key. If key not exists in JSON, will be thrown exception. By default
-     * sort in ascending order. Descending order is available too. This
-     * endpoint can also paginate response, just set page number to 'page'
-     * param and needed entities count on one page in 'size' param. Any
-     * others query params (expect 'sortBy', 'orderType', 'page' and 'size')
-     * will be ignored.
+     * Get array of existed Author Objects. Can sort by any other one json key. If
+     * key not exists in JSON, will be thrown exception. By default sort in ascending
+     * order. Descending order is available too. This endpoint can also paginate
+     * response, just set page number to 'page' param and needed entities count on
+     * one page in 'size' param. Any others query params (expect 'sortBy', 'orderType',
+     * 'page' and 'size') will be ignored.
      *
      * @param sortBy    not required, by default 'authorId' -> String value.
      * @param orderType not required, by default 'asc' -> String value.
@@ -171,7 +170,7 @@ public class AuthorController {
      * Books.
      *
      * @param authorId required -> Long value
-     * @param forcibly not required, by default 'false' -> boolean value
+     * @param forcibly not required, by default 'false' -> Boolean value
      * @return -> ResponseEntity with deleted Author object
      */
     @DeleteMapping(value = "/author/{authorId}/delete", produces = MediaType.APPLICATION_JSON_VALUE)

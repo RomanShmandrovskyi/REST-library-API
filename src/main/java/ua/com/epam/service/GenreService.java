@@ -3,6 +3,8 @@ package ua.com.epam.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ua.com.epam.entity.Author;
+import ua.com.epam.entity.Book;
 import ua.com.epam.entity.Genre;
 import ua.com.epam.entity.dto.author.SimpleAuthorDto;
 import ua.com.epam.entity.dto.book.SimpleBookDto;
@@ -15,7 +17,7 @@ import ua.com.epam.entity.exception.genre.GenreNotFoundException;
 import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
-import ua.com.epam.service.mapper.converter.genre.BooksInGenreIsPresentException;
+import ua.com.epam.entity.exception.type.BooksInGenreIsPresentException;
 
 import java.util.List;
 import java.util.Optional;
@@ -58,17 +60,12 @@ public class GenreService {
         }
 
         Genre genre = opt.get();
-
-        List<SimpleAuthorDto> authorsInGenre = authorRepository.getAllAuthorsOfGenreByGenreId(genreId)
+        List<Author> authorsInGenre = authorRepository.getAllAuthorsOfGenreByGenreId(genreId)
                 .stream()
                 .limit(authorsCount)
-                .map(toDtoMapper::mapAuthorToSimpleAuthorDto)
                 .collect(Collectors.toList());
 
-        return new SimpleGenreWithAuthorsDto(
-                genre.getGenreId(),
-                genre.getGenreName(),
-                authorsInGenre);
+        return toDtoMapper.getSimpleGenreWithAuthorsDto(genre, authorsInGenre);
     }
 
     public SimpleGenreWithBooksDto getGenreWithItBooks(long genreId, int booksCount) {
@@ -79,17 +76,12 @@ public class GenreService {
         }
 
         Genre genre = opt.get();
-
-        List<SimpleBookDto> books = bookRepository.getGenreBooksByGenreId(genreId)
+        List<Book> booksInGenre = bookRepository.getGenreBooksByGenreId(genreId)
                 .stream()
                 .limit(booksCount)
-                .map(toDtoMapper::mapBookToSimpleBookDto)
                 .collect(Collectors.toList());
 
-        return new SimpleGenreWithBooksDto(
-                genre.getGenreId(),
-                genre.getGenreName(),
-                books);
+        return toDtoMapper.getSimpleGenreWithBooksDto(genre, booksInGenre);
     }
 
     public List<GenreDto> getAllGenres(String sortBy, String order, int page, int size) {

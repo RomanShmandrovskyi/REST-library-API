@@ -4,12 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
+import ua.com.epam.entity.Book;
+import ua.com.epam.entity.Genre;
 import ua.com.epam.entity.dto.author.AuthorDto;
 import ua.com.epam.entity.dto.author.SimpleAuthorWithBooksDto;
 import ua.com.epam.entity.dto.author.SimpleAuthorWithGenresDto;
-import ua.com.epam.entity.dto.author.nested.NameDto;
-import ua.com.epam.entity.dto.book.SimpleBookDto;
-import ua.com.epam.entity.dto.genre.SimpleGenreDto;
 import ua.com.epam.entity.exception.IdMismatchException;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.author.AuthorAlreadyExistsException;
@@ -64,17 +63,10 @@ public class AuthorService {
             throw new AuthorNotFoundException(authorId);
         }
 
-        Author a = opt.get();
+        Author author = opt.get();
+        List<Genre> authorGenres = genreRepository.getAllGenresOfAuthorByAuthorId(authorId);
 
-        List<SimpleGenreDto> authorGenres = genreRepository.getAllGenresOfAuthorByAuthorId(authorId)
-                .stream()
-                .map(toDtoMapper::mapGenreToSimpleGenreDto)
-                .collect(Collectors.toList());
-
-        return new SimpleAuthorWithGenresDto(
-                a.getAuthorId(),
-                new NameDto(a.getFirstName(), a.getSecondName()),
-                authorGenres);
+        return toDtoMapper.getSimpleAuthorWithGenresDto(author, authorGenres);
     }
 
     public SimpleAuthorWithBooksDto getAuthorWithAllItBooks(long authorId) {
@@ -84,17 +76,10 @@ public class AuthorService {
             throw new AuthorNotFoundException(authorId);
         }
 
-        Author a = opt.get();
+        Author author = opt.get();
+        List<Book> authorBooks = bookRepository.getAuthorBooksByAuthorId(authorId);
 
-        List<SimpleBookDto> authorBooks = bookRepository.getAuthorBooksByAuthorId(authorId)
-                .stream()
-                .map(toDtoMapper::mapBookToSimpleBookDto)
-                .collect(Collectors.toList());
-
-        return new SimpleAuthorWithBooksDto(
-                a.getAuthorId(),
-                new NameDto(a.getFirstName(), a.getSecondName()),
-                authorBooks);
+        return toDtoMapper.getSimpleAuthorWithBooksDto(author, authorBooks);
     }
 
     public List<AuthorDto> getAllAuthorsSortedBy(String sortBy, String order, int page, int size) {
@@ -128,8 +113,8 @@ public class AuthorService {
         Map<String, String> replaced = new HashMap<>();
         params.keySet().forEach(k -> replaced.put(JsonKeysConformity.getPropNameByJsonKey(k), params.get(k)));
 
-
         List<Author> filtered = queryBuilder.getFilteredEntities(replaced, orderBy, orderType, Author.class);
+
         return filtered.stream()
                 .map(toDtoMapper::mapAuthorToAuthorDto)
                 .collect(Collectors.toList());
