@@ -12,7 +12,7 @@ import ua.com.epam.entity.dto.genre.SimpleGenreDto;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookWithAuthorAndGenreSimpleDto {
+public class BookWithAuthorAndGenreDto {
     private Long bookId;
     private String bookName;
     private String bookLanguage;

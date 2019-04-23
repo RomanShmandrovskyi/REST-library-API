@@ -138,7 +138,7 @@ public class AuthorController {
      * @param postAuthor required -> JSON body with new Author object
      * @return -> ResponseEntity with new Author or 409 - Conflict
      */
-    @PostMapping(value = "/author/new", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/author/new", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewAuthor(
             @RequestBody @Valid AuthorDto postAuthor) {
         AuthorDto response = authorService.addNewAuthor(postAuthor);
@@ -154,7 +154,7 @@ public class AuthorController {
      * @param updatedAuthor required -> JSON body with Author object to update
      * @return -> ResponseEntity with updated Author or 404 - Not Found
      */
-    @PutMapping(value = "/author/{authorId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/author/{authorId}/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateAuthor(
             @PathVariable Long authorId,
             @RequestBody @Valid AuthorDto updatedAuthor) {

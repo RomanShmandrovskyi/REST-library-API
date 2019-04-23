@@ -11,7 +11,7 @@ import ua.com.epam.entity.dto.author.SimpleAuthorWithBooksDto;
 import ua.com.epam.entity.dto.author.SimpleAuthorWithGenresDto;
 import ua.com.epam.entity.dto.author.nested.NameDto;
 import ua.com.epam.entity.dto.book.BookDto;
-import ua.com.epam.entity.dto.book.BookWithAuthorAndGenreSimpleDto;
+import ua.com.epam.entity.dto.book.BookWithAuthorAndGenreDto;
 import ua.com.epam.entity.dto.book.SimpleBookDto;
 import ua.com.epam.entity.dto.book.nested.AdditionalDto;
 import ua.com.epam.entity.dto.book.nested.SizeDto;
@@ -113,8 +113,8 @@ public class ModelToDtoMapper {
         return genreWithBooksDto;
     }
 
-    public BookWithAuthorAndGenreSimpleDto getBookWithAuthorAndGenreDto(Book book, Author author, Genre genre) {
-        BookWithAuthorAndGenreSimpleDto bookWithAuthorAndGenreDto = new BookWithAuthorAndGenreSimpleDto();
+    public BookWithAuthorAndGenreDto getBookWithAuthorAndGenreDto(Book book, Author author, Genre genre) {
+        BookWithAuthorAndGenreDto bookWithAuthorAndGenreDto = new BookWithAuthorAndGenreDto();
 
         bookWithAuthorAndGenreDto.setBookId(book.getBookId());
         bookWithAuthorAndGenreDto.setBookName(book.getBookName());
