@@ -71,7 +71,7 @@ public class AuthorController {
         params.putIfAbsent("sortBy", sortBy);
         params.putIfAbsent("orderType", orderType);
 
-        List<AuthorDto> response = authorService.filterAuthors(params);
+        List<AuthorDto> response = authorService.findFilteredAuthors(params);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -98,7 +98,7 @@ public class AuthorController {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
 
-        List<AuthorDto> response = authorService.getAllAuthorsSortedBy(sortBy, orderType, page, size);
+        List<AuthorDto> response = authorService.findAllAuthorsSortedPaginated(sortBy, orderType, page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -112,7 +112,7 @@ public class AuthorController {
     @GetMapping(value = "/author/{authorId}/genres", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorGenres(
             @PathVariable Long authorId) {
-        SimpleAuthorWithGenresDto response = authorService.getAuthorWithAllItGenres(authorId);
+        SimpleAuthorWithGenresDto response = authorService.findAuthorWithAllItGenres(authorId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -126,7 +126,7 @@ public class AuthorController {
     @GetMapping(value = "/author/{authorId}/books", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorBooks(
             @PathVariable Long authorId) {
-        SimpleAuthorWithBooksDto response = authorService.getAuthorWithAllItBooks(authorId);
+        SimpleAuthorWithBooksDto response = authorService.findAuthorWithAllItBooks(authorId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

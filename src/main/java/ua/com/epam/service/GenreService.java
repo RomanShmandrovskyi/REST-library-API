@@ -6,18 +6,19 @@ import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
 import ua.com.epam.entity.Book;
 import ua.com.epam.entity.Genre;
-import ua.com.epam.entity.dto.author.SimpleAuthorDto;
-import ua.com.epam.entity.dto.book.SimpleBookDto;
 import ua.com.epam.entity.dto.genre.GenreDto;
 import ua.com.epam.entity.dto.genre.SimpleGenreWithAuthorsDto;
 import ua.com.epam.entity.dto.genre.SimpleGenreWithBooksDto;
 import ua.com.epam.entity.exception.IdMismatchException;
 import ua.com.epam.entity.exception.genre.GenreAlreadyExistsException;
 import ua.com.epam.entity.exception.genre.GenreNotFoundException;
-import ua.com.epam.repository.*;
+import ua.com.epam.entity.exception.type.BooksInGenreIsPresentException;
+import ua.com.epam.repository.AuthorRepository;
+import ua.com.epam.repository.BookRepository;
+import ua.com.epam.repository.GenreRepository;
+import ua.com.epam.repository.JsonKeysConformity;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
-import ua.com.epam.entity.exception.type.BooksInGenreIsPresentException;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +42,17 @@ public class GenreService {
     @Autowired
     private DtoToModelMapper toModelMapper;
 
+    private Sort.Direction getSortDirection(String order) {
+        Sort.Direction orderType = null;
+
+        if (order.equals("desc"))
+            orderType = Sort.Direction.DESC;
+        else if (order.equals("asc"))
+            orderType = Sort.Direction.ASC;
+
+        return orderType;
+    }
+
     public GenreDto findGenreByGenreId(long genreId) {
         Optional<Genre> exist = genreRepository.getOneByGenreId(genreId);
 
@@ -52,7 +64,7 @@ public class GenreService {
         return toDtoMapper.mapGenreToGenreDto(toGet);
     }
 
-    public SimpleGenreWithAuthorsDto getGenreWithItAuthors(long genreId, int authorsCount) {
+    public SimpleGenreWithAuthorsDto findGenreWithItAuthors(long genreId, int authorsCount) {
         Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
 
         if (!opt.isPresent()) {
@@ -60,7 +72,7 @@ public class GenreService {
         }
 
         Genre genre = opt.get();
-        List<Author> authorsInGenre = authorRepository.getAllAuthorsOfGenreByGenreId(genreId)
+        List<Author> authorsInGenre = authorRepository.getAllAuthorsInGenre(genreId)
                 .stream()
                 .limit(authorsCount)
                 .collect(Collectors.toList());
@@ -68,7 +80,7 @@ public class GenreService {
         return toDtoMapper.getSimpleGenreWithAuthorsDto(genre, authorsInGenre);
     }
 
-    public SimpleGenreWithBooksDto getGenreWithItBooks(long genreId, int booksCount) {
+    public SimpleGenreWithBooksDto findGenreWithItBooksList(long genreId, int booksCount) {
         Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
 
         if (!opt.isPresent()) {
@@ -76,7 +88,7 @@ public class GenreService {
         }
 
         Genre genre = opt.get();
-        List<Book> booksInGenre = bookRepository.getGenreBooksByGenreId(genreId)
+        List<Book> booksInGenre = bookRepository.getAllBooksInGenre(genreId)
                 .stream()
                 .limit(booksCount)
                 .collect(Collectors.toList());
@@ -84,17 +96,12 @@ public class GenreService {
         return toDtoMapper.getSimpleGenreWithBooksDto(genre, booksInGenre);
     }
 
-    public List<GenreDto> getAllGenres(String sortBy, String order, int page, int size) {
-        Sort.Direction orderType;
-
-        if (order.equals("desc"))
-            orderType = Sort.Direction.DESC;
-        else
-            orderType = Sort.Direction.ASC;
+    public List<GenreDto> findAllGenres(String sortBy, String order, int page, int size) {
+        Sort.Direction orderType = getSortDirection(order);
 
         String parameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        return genreRepository.findAllOrderBy(Sort.by(orderType, parameter))
+        return genreRepository.getAllGenresOrdered(Sort.by(orderType, parameter))
                 .stream()
                 .skip((page - 1) * size)
                 .limit(size)
@@ -141,7 +148,7 @@ public class GenreService {
         }
 
         Genre toDelete = opt.get();
-        long booksCount = bookRepository.getGenreBooksByGenreId(genreId).size();
+        long booksCount = bookRepository.getAllBooksInGenre(genreId).size();
 
         if (booksCount > 0 && !forcibly) {
             throw new BooksInGenreIsPresentException(genreId, booksCount);

@@ -45,6 +45,17 @@ public class AuthorService {
     @Autowired
     private DtoToModelMapper toModelMapper;
 
+    private Sort.Direction getSortDirection(String order) {
+        Sort.Direction orderType = null;
+
+        if (order.equals("desc"))
+            orderType = Sort.Direction.DESC;
+        else if (order.equals("asc"))
+            orderType = Sort.Direction.ASC;
+
+        return orderType;
+    }
+
     public AuthorDto findAuthorByAuthorId(long authorId) {
         Optional<Author> exist = authorRepository.getOneByAuthorId(authorId);
 
@@ -56,7 +67,7 @@ public class AuthorService {
         return toDtoMapper.mapAuthorToAuthorDto(toGet);
     }
 
-    public SimpleAuthorWithGenresDto getAuthorWithAllItGenres(long authorId) {
+    public SimpleAuthorWithGenresDto findAuthorWithAllItGenres(long authorId) {
         Optional<Author> opt = authorRepository.getOneByAuthorId(authorId);
 
         if (!opt.isPresent()) {
@@ -64,12 +75,12 @@ public class AuthorService {
         }
 
         Author author = opt.get();
-        List<Genre> authorGenres = genreRepository.getAllGenresOfAuthorByAuthorId(authorId);
+        List<Genre> authorGenres = genreRepository.getAllGenresOfAuthor(authorId);
 
         return toDtoMapper.getSimpleAuthorWithGenresDto(author, authorGenres);
     }
 
-    public SimpleAuthorWithBooksDto getAuthorWithAllItBooks(long authorId) {
+    public SimpleAuthorWithBooksDto findAuthorWithAllItBooks(long authorId) {
         Optional<Author> opt = authorRepository.getOneByAuthorId(authorId);
 
         if (!opt.isPresent()) {
@@ -77,22 +88,16 @@ public class AuthorService {
         }
 
         Author author = opt.get();
-        List<Book> authorBooks = bookRepository.getAuthorBooksByAuthorId(authorId);
+        List<Book> authorBooks = bookRepository.getAllAuthorBooks(authorId);
 
         return toDtoMapper.getSimpleAuthorWithBooksDto(author, authorBooks);
     }
 
-    public List<AuthorDto> getAllAuthorsSortedBy(String sortBy, String order, int page, int size) {
-        Sort.Direction orderType;
-
-        if (order.equals("desc"))
-            orderType = Sort.Direction.DESC;
-        else
-            orderType = Sort.Direction.ASC;
-
+    public List<AuthorDto> findAllAuthorsSortedPaginated(String sortBy, String order, int page, int size) {
+        Sort.Direction orderType = getSortDirection(order);
         String parameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        return authorRepository.findAllOrderBy(Sort.by(orderType, parameter))
+        return authorRepository.getAllAuthorsOrdered(Sort.by(orderType, parameter))
                 .stream()
                 .skip((page - 1) * size)
                 .limit(size)
@@ -100,7 +105,7 @@ public class AuthorService {
                 .collect(Collectors.toList());
     }
 
-    public List<AuthorDto> filterAuthors(Map<String, String> params) {
+    public List<AuthorDto> findFilteredAuthors(Map<String, String> params) {
         String orderBy = JsonKeysConformity.getPropNameByJsonKey(params.remove("sortBy"));
         String orderType = params.remove("orderType");
 
@@ -163,7 +168,7 @@ public class AuthorService {
         }
 
         Author toDelete = opt.get();
-        long booksCount = bookRepository.getAuthorBooksByAuthorId(authorId).size();
+        long booksCount = bookRepository.getAllAuthorBooks(authorId).size();
 
         if (booksCount > 0 && !forcibly) {
             throw new BooksInAuthorIsPresentException(authorId, booksCount);

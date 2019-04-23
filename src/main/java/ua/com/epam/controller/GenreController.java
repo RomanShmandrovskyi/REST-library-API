@@ -62,7 +62,7 @@ public class GenreController {
     public ResponseEntity<?> getGenreAuthors(
             @PathVariable Long genreId,
             @RequestParam(name = "limit", defaultValue = "5") Integer authorsCount) {
-        SimpleGenreWithAuthorsDto response = genreService.getGenreWithItAuthors(genreId, authorsCount);
+        SimpleGenreWithAuthorsDto response = genreService.findGenreWithItAuthors(genreId, authorsCount);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -80,7 +80,7 @@ public class GenreController {
     public ResponseEntity<?> getGenreBooks(
             @PathVariable Long genreId,
             @RequestParam(name = "limit", defaultValue = "5") Integer booksCount) {
-        SimpleGenreWithBooksDto response = genreService.getGenreWithItBooks(genreId, booksCount);
+        SimpleGenreWithBooksDto response = genreService.findGenreWithItBooksList(genreId, booksCount);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -108,7 +108,7 @@ public class GenreController {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
 
-        List<GenreDto> response = genreService.getAllGenres(sortBy, orderType, page, size);
+        List<GenreDto> response = genreService.findAllGenres(sortBy, orderType, page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

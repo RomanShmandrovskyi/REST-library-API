@@ -16,12 +16,12 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
 
     Optional<Genre> getOneByGenreId(long genreId);
 
+    @Query(value = "SELECT g.* FROM genre AS g JOIN book AS b ON b.genre_id = g.genre_id AND book_id = ?1", nativeQuery = true)
+    Genre getGenreOfBook(long bookId);
+
     @Query(value = "SELECT g FROM Genre g")
-    List<Genre> findAllOrderBy(Sort sort);
+    List<Genre> getAllGenresOrdered(Sort sort);
 
     @Query(value = "SELECT DISTINCT g.* FROM genre g JOIN book b ON g.genre_id = b.genre_id AND b.author_id = ?1", nativeQuery = true)
-    List<Genre> getAllGenresOfAuthorByAuthorId(long authorId);
-
-    @Query(value = "SELECT g.* FROM genre AS g JOIN book AS b ON b.genre_id = g.genre_id AND book_id = ?1", nativeQuery = true)
-    Genre getBookGenreByBookId(long bookId);
+    List<Genre> getAllGenresOfAuthor(long authorId);
 }

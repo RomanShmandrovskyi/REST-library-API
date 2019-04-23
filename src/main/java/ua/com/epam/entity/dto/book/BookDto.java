@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ua.com.epam.entity.dto.book.nested.AdditionalDto;
+import ua.com.epam.service.util.deserializer.CustomIntegerDeserializer;
 import ua.com.epam.service.util.deserializer.CustomLongDeserializer;
 import ua.com.epam.service.util.deserializer.CustomStringDeserializer;
 
@@ -30,13 +31,17 @@ public class BookDto {
 
     @JsonDeserialize(using = CustomStringDeserializer.class)
     @NotBlank(message = "Value 'bookLanguage' is required!")
-    @Size(min = 1, max = 50, message = "Value 'bookLanguage' cannot be longer than 255 characters!")
+    @Size(min = 1, max = 50, message = "Value 'bookLanguage' cannot be longer than 50 characters!")
     private String bookLanguage;
+
+    @JsonDeserialize(using = CustomStringDeserializer.class)
+    @Size(max = 1000, message = "Value 'bookDescr' cannot be longer than 1000 characters!")
+    private String bookDescr;
 
     @Valid
     private AdditionalDto additional;
 
-    @Min(value = 1920, message = "Publication year must be higher then 1920")
+    @JsonDeserialize(using = CustomIntegerDeserializer.class)
     @Max(value = 2019, message = "Publication year must be lower then 2019")
     private Integer publicationYear = 0;
 }
