@@ -1,4 +1,4 @@
-package ua.com.epam.entity.exception.type;
+package ua.com.epam.entity.exception.genre;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BooksInGenreIsPresentException extends RuntimeException {
+public class BooksInGenreArePresentException extends RuntimeException {
     private long genreId;
     private long booksCount;
 }

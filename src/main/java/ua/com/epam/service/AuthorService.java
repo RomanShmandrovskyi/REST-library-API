@@ -13,7 +13,7 @@ import ua.com.epam.entity.exception.IdMismatchException;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.author.AuthorAlreadyExistsException;
 import ua.com.epam.entity.exception.author.AuthorNotFoundException;
-import ua.com.epam.entity.exception.author.BooksInAuthorIsPresentException;
+import ua.com.epam.entity.exception.author.BooksInAuthorArePresentException;
 import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
@@ -168,7 +168,7 @@ public class AuthorService {
         long booksCount = bookRepository.getAllAuthorBooks(authorId).size();
 
         if (booksCount > 0 && !forcibly) {
-            throw new BooksInAuthorIsPresentException(authorId, booksCount);
+            throw new BooksInAuthorArePresentException(authorId, booksCount);
         }
 
         authorRepository.delete(toDelete);

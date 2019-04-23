@@ -14,6 +14,8 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
 
     boolean existsByGenreId(long genreId);
 
+    boolean existsByGenreName(String genreName);
+
     Optional<Genre> getOneByGenreId(long genreId);
 
     @Query(value = "SELECT g.* FROM genre AS g JOIN book AS b ON b.genre_id = g.genre_id AND book_id = ?1", nativeQuery = true)

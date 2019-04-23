@@ -11,8 +11,9 @@ import ua.com.epam.entity.dto.genre.SimpleGenreWithAuthorsDto;
 import ua.com.epam.entity.dto.genre.SimpleGenreWithBooksDto;
 import ua.com.epam.entity.exception.IdMismatchException;
 import ua.com.epam.entity.exception.genre.GenreAlreadyExistsException;
+import ua.com.epam.entity.exception.genre.GenreNameAlreadyExistsException;
 import ua.com.epam.entity.exception.genre.GenreNotFoundException;
-import ua.com.epam.entity.exception.type.BooksInGenreIsPresentException;
+import ua.com.epam.entity.exception.genre.BooksInGenreArePresentException;
 import ua.com.epam.repository.AuthorRepository;
 import ua.com.epam.repository.BookRepository;
 import ua.com.epam.repository.GenreRepository;
@@ -114,6 +115,10 @@ public class GenreService {
             throw new GenreAlreadyExistsException();
         }
 
+        if (genreRepository.existsByGenreName(genre.getGenreName())) {
+            throw new GenreNameAlreadyExistsException();
+        }
+
         Genre toPost = toModelMapper.mapGenreDtoToGenre(genre);
         Genre response = genreRepository.save(toPost);
 
@@ -151,7 +156,7 @@ public class GenreService {
         long booksCount = bookRepository.getAllBooksInGenre(genreId).size();
 
         if (booksCount > 0 && !forcibly) {
-            throw new BooksInGenreIsPresentException(genreId, booksCount);
+            throw new BooksInGenreArePresentException(genreId, booksCount);
         }
 
         genreRepository.delete(toDelete);

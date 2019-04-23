@@ -19,8 +19,13 @@ import ua.com.epam.entity.exception.IdMismatchException;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.author.AuthorAlreadyExistsException;
 import ua.com.epam.entity.exception.author.AuthorNotFoundException;
-import ua.com.epam.entity.exception.author.BooksInAuthorIsPresentException;
+import ua.com.epam.entity.exception.author.BooksInAuthorArePresentException;
+import ua.com.epam.entity.exception.book.BookAlreadyExistsException;
+import ua.com.epam.entity.exception.book.BookNotFoundException;
+import ua.com.epam.entity.exception.genre.BooksInGenreArePresentException;
 import ua.com.epam.entity.exception.genre.GenreAlreadyExistsException;
+import ua.com.epam.entity.exception.genre.GenreNameAlreadyExistsException;
+import ua.com.epam.entity.exception.genre.GenreNotFoundException;
 import ua.com.epam.entity.exception.type.InvalidDateTypeException;
 import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
 import ua.com.epam.entity.exception.type.InvalidTypeException;
@@ -47,6 +52,32 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.NOT_FOUND.value(),
                         HttpStatus.NOT_FOUND.getReasonPhrase(),
                         String.format(message, enfe.getAuthorId())),
+                HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = BookNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleBookNotFound(BookNotFoundException bnfe) {
+        String message = "Author with 'authorId' = '%d' doesn't exist!";
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.NOT_FOUND.value(),
+                        HttpStatus.NOT_FOUND.getReasonPhrase(),
+                        String.format(message, bnfe.getBookId())),
+                HttpStatus.NOT_FOUND);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = GenreNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleGenreNotFound(GenreNotFoundException gnfe) {
+        String message = "Author with 'authorId' = '%d' doesn't exist!";
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.NOT_FOUND.value(),
+                        HttpStatus.NOT_FOUND.getReasonPhrase(),
+                        String.format(message, gnfe.getGenreId())),
                 HttpStatus.NOT_FOUND);
     }
 
@@ -114,6 +145,30 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ResponseBody
+    @ExceptionHandler(value = GenreNameAlreadyExistsException.class)
+    public ResponseEntity<ExceptionResponse> handleGenreNameConflict() {
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.CONFLICT.value(),
+                        HttpStatus.CONFLICT.getReasonPhrase(),
+                        "Genre with such 'genreName' already exists!"),
+                HttpStatus.CONFLICT);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = BookAlreadyExistsException.class)
+    public ResponseEntity<ExceptionResponse> handleBookConflict() {
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.CONFLICT.value(),
+                        HttpStatus.CONFLICT.getReasonPhrase(),
+                        "Book with such 'bookId' already exists!"),
+                HttpStatus.CONFLICT);
+    }
+
+    @ResponseBody
     @ExceptionHandler(value = IdMismatchException.class)
     public ResponseEntity<ExceptionResponse> handleIdMismatch() {
         return new ResponseEntity<>(
@@ -126,8 +181,8 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler(value = BooksInAuthorIsPresentException.class)
-    public ResponseEntity<ExceptionResponse> handleBooksIsPresent(BooksInAuthorIsPresentException biaip) {
+    @ExceptionHandler(value = BooksInAuthorArePresentException.class)
+    public ResponseEntity<ExceptionResponse> handleBooksIsPresent(BooksInAuthorArePresentException biaip) {
         long booksCount = biaip.getBooksCount();
         String b = booksCount == 1 ? " book! " : " books! ";
         String message = "Author with 'authorId' = '%d' has '%d'" + b + "To delete - set 'forcibly' parameter to 'true'!";
@@ -137,6 +192,21 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
                         String.format(message, biaip.getAuthorId(), booksCount)),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = BooksInGenreArePresentException.class)
+    public ResponseEntity<ExceptionResponse> handleBookInGenrePresent(BooksInGenreArePresentException bigap) {
+        long booksCount = bigap.getBooksCount();
+        String b = booksCount == 1 ? " book! " : " books! ";
+        String message = "Genre with 'genreId' = '%d' has '%d'" + b + "To delete - set 'forcibly' parameter to 'true'!";
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        String.format(message, bigap.getGenreId(), booksCount)),
                 HttpStatus.BAD_REQUEST);
     }
 

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @AllArgsConstructor
-public class BooksInAuthorIsPresentException extends RuntimeException {
+public class BooksInAuthorArePresentException extends RuntimeException {
     private long authorId;
     private long booksCount;
 }
