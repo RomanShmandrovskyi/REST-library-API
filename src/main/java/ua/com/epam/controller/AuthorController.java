@@ -40,7 +40,9 @@ public class AuthorController {
      * Get Author entity by authorId.
      *
      * @param authorId -> Long value
-     * @return -> ResponseEntity with Author object or 404 - Author Not Found.
+     * @return -> ResponseEntity with: Author object |
+     *            404 - Author Not Found |
+     *            400 - Bad Request.
      */
     @GetMapping(value = "/author/{authorId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthor(
@@ -58,7 +60,9 @@ public class AuthorController {
      * @param params    not required -> will be parsed to Map<String, String>.
      * @param sortBy    not required, by default 'authorId' -> String value.
      * @param orderType not required, by default 'asc' -> String value.
-     * @return -> ResponseEntity with array of Authors, empty array or 400 - Bed Request.
+     * @return -> ResponseEntity with: array of Authors |
+     *            empty array |
+     *            400 - Bad Request.
      */
     @GetMapping(value = "/authors", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorsByParams(
@@ -87,7 +91,9 @@ public class AuthorController {
      * @param orderType not required, by default 'asc' -> String value.
      * @param page      not required, by default '1' -> Integer value.
      * @param size      not required, by default '5' -> Integer value.
-     * @return -> ResponseEntity with array of authors or 400 - Bad Request.
+     * @return -> ResponseEntity with:
+     *            array of authors |
+     *            400 - Bad Request.
      */
     @GetMapping(value = "/authors/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthors(
@@ -107,7 +113,10 @@ public class AuthorController {
      * of Genre objects that will contain next values: 'genreId' and 'genreName'.
      *
      * @param authorId required -> Long value.
-     * @return -> ResponseEntity with array of genres or 404 - Author Not Found
+     * @return -> ResponseEntity with:
+     *            Author object with array of it genres |
+     *            404 - Author Not Found |
+     *            400 - Bad Request.
      */
     @GetMapping(value = "/author/{authorId}/genres", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorGenres(
@@ -121,7 +130,10 @@ public class AuthorController {
      * array of Book objects that include next values: 'bookId' and 'bookName'.
      *
      * @param authorId required -> Long value
-     * @return -> ResponseEntity with array of books or 404 - Author Not Found
+     * @return -> ResponseEntity with:
+     *            Author object with array of it books |
+     *            404 - Author Not Found |
+     *            400 - BadRequest.
      */
     @GetMapping(value = "/author/{authorId}/books", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorBooks(
@@ -136,7 +148,10 @@ public class AuthorController {
      * for String type values and null for Date type.
      *
      * @param postAuthor required -> JSON body with new Author object
-     * @return -> ResponseEntity with new Author or 409 - Conflict
+     * @return -> ResponseEntity with:
+     *            created Author object |
+     *            409 - Conflict |
+     *            400 - Bad Request.
      */
     @PostMapping(value = "/author/new", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewAuthor(
@@ -151,8 +166,11 @@ public class AuthorController {
      * way will be thrown exception.
      *
      * @param authorId      required -> Long value
-     * @param updatedAuthor required -> JSON body with Author object to update
-     * @return -> ResponseEntity with updated Author or 404 - Not Found
+     * @param updatedAuthor not required -> JSON body with Author object to update
+     * @return -> ResponseEntity with:
+     *            updated Author object |
+     *            404 - Not Found |
+     *            400 - Bad Request.
      */
     @PutMapping(value = "/author/{authorId}/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateAuthor(
@@ -171,7 +189,10 @@ public class AuthorController {
      *
      * @param authorId required -> Long value
      * @param forcibly not required, by default 'false' -> Boolean value
-     * @return -> ResponseEntity with deleted Author object
+     * @return -> ResponseEntity with:
+     *            deleted Author object |
+     *            404 - Author Not Found |
+     *            400 - Bad Request.
      */
     @DeleteMapping(value = "/author/{authorId}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAuthor(

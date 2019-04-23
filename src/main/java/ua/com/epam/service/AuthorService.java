@@ -95,9 +95,9 @@ public class AuthorService {
 
     public List<AuthorDto> findAllAuthorsSortedPaginated(String sortBy, String order, int page, int size) {
         Sort.Direction orderType = getSortDirection(order);
-        String parameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        return authorRepository.getAllAuthorsOrdered(Sort.by(orderType, parameter))
+        return authorRepository.getAllAuthorsOrdered(Sort.by(orderType, sortParameter))
                 .stream()
                 .skip((page - 1) * size)
                 .limit(size)

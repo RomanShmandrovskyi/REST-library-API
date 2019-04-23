@@ -39,7 +39,10 @@ public class GenreController {
      * Get Genre entity by genreId.
      *
      * @param genreId -> Long value
-     * @return -> ResponseEntity with Genre object or 404 - Genre Not Found
+     * @return -> ResponseEntity with:
+     *            Genre object |
+     *            404 - Genre Not Found |
+     *            400 - Bad Request.
      */
     @GetMapping(value = "/genre/{genreId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGenre(
@@ -56,7 +59,10 @@ public class GenreController {
      *
      * @param genreId      required -> Long value
      * @param authorsCount not required, by default = '5' -> Integer value
-     * @return -> ResponseEntity with Simple Genre object with limited Authors in it as array
+     * @return -> ResponseEntity with:
+     *            simple Genre object with limited array of Authors |
+     *            404 - Genre Not Found |
+     *            400 - Bad Request.
      */
     @GetMapping(value = "/genre/{genreId}/authors", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGenreAuthors(
@@ -74,7 +80,10 @@ public class GenreController {
      *
      * @param genreId    required -> Long value
      * @param booksCount not required, by default = '5' -> Integer value
-     * @return -> ResponseEntity with Simple Genre object with limited Books in it as array
+     * @return -> ResponseEntity with:
+     *            simple Genre object with limited array of Books |
+     *            404 - Genre Not Found
+     *            400 - Bad Request.
      */
     @GetMapping(value = "/genre/{genreId}/books", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGenreBooks(
@@ -97,7 +106,10 @@ public class GenreController {
      * @param orderType not required, by default - 'asc' -> String value
      * @param page      not required, by default - '1' -> Integer value
      * @param size      not required, by default - '3' -> Integer value
-     * @return -> ResponseEntity with Array of paginated array of Genres
+     * @return -> ResponseEntity with:
+     *            paginated array of Genre objects |
+     *            empty array |
+     *            400 - Bad Request.
      */
     @GetMapping(value = "/genres/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllGenres(
@@ -118,7 +130,10 @@ public class GenreController {
      * type values.
      *
      * @param postGenre required -> JSON body with new Genre object
-     * @return -> ResponseEntity with new Genre or 409 - Conflict
+     * @return -> ResponseEntity with:
+     *            new Genre object |
+     *            409 - Conflict |
+     *            400 - Bad Request.
      */
     @PostMapping(value = "/genre/new", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewGenre(
@@ -134,7 +149,10 @@ public class GenreController {
      *
      * @param genreId     required -> Long value
      * @param updateGenre required -> JSON body with Genre object to update
-     * @return -> ResponseEntity with updated Genre or 404 - Genre Not Found
+     * @return -> ResponseEntity with:
+     *            updated Genre object |
+     *            404 - Genre Not Found
+     *            400 - Bad Request.
      */
     @PutMapping(value = "/genre/{genreId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateAuthor(
@@ -153,7 +171,10 @@ public class GenreController {
      *
      * @param genreId  required -> Long value
      * @param forcibly not required, by default 'false' -> Boolean value
-     * @return ResponseEntity with deleted Genre or 404 - Genre Not Found
+     * @return ResponseEntity with:
+     *         deleted Genre object |
+     *         404 - Genre Not Found |
+     *         400 - Bad Request.
      */
     @DeleteMapping(value = "/genre/{genreId}/delete")
     public ResponseEntity<?> deleteGenre(

@@ -77,9 +77,9 @@ public class BookService {
 
     public List<BookDto> findAllBooksSortedPaginated(String sortBy, String order, int page, int size) {
         Sort.Direction orderType = getSortDirection(order);
-        String parameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        return bookRepository.getAllBooksOrdered(Sort.by(orderType, parameter))
+        return bookRepository.getAllBooksOrdered(Sort.by(orderType, sortParameter))
                 .stream()
                 .skip((page - 1) * size)
                 .limit(size)
@@ -93,9 +93,9 @@ public class BookService {
         }
 
         Sort.Direction orderType = getSortDirection(order);
-        String parameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        return bookRepository.getAllBooksInGenreOrdered(genreId, Sort.by(orderType, parameter))
+        return bookRepository.getAllBooksInGenreOrdered(genreId, Sort.by(orderType, sortParameter))
                 .stream()
                 .skip((page - 1) * size)
                 .limit(size)
@@ -109,9 +109,9 @@ public class BookService {
         }
 
         Sort.Direction orderType = getSortDirection(order);
-        String parameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        return bookRepository.getAllAuthorBooksOrdered(authorId, Sort.by(orderType, parameter))
+        return bookRepository.getAllAuthorBooksOrdered(authorId, Sort.by(orderType, sortParameter))
                 .stream()
                 .map(toDtoMapper::mapBookToBookDto)
                 .collect(Collectors.toList());

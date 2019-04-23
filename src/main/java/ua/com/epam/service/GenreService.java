@@ -99,9 +99,9 @@ public class GenreService {
     public List<GenreDto> findAllGenres(String sortBy, String order, int page, int size) {
         Sort.Direction orderType = getSortDirection(order);
 
-        String parameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        return genreRepository.getAllGenresOrdered(Sort.by(orderType, parameter))
+        return genreRepository.getAllGenresOrdered(Sort.by(orderType, sortParameter))
                 .stream()
                 .skip((page - 1) * size)
                 .limit(size)
