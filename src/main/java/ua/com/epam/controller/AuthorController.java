@@ -44,7 +44,8 @@ public class AuthorController {
      *            404 - Author Not Found |
      *            400 - Bad Request.
      */
-    @GetMapping(value = "/author/{authorId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/author/{authorId}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthor(
             @PathVariable Long authorId) {
         AuthorDto response = authorService.findAuthorByAuthorId(authorId);
@@ -64,7 +65,8 @@ public class AuthorController {
      *            empty array |
      *            400 - Bad Request.
      */
-    @GetMapping(value = "/authors", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/authors",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorsByParams(
             @RequestParam Map<String, String> params,
             @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
@@ -95,7 +97,8 @@ public class AuthorController {
      *            array of authors |
      *            400 - Bad Request.
      */
-    @GetMapping(value = "/authors/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/authors/all",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthors(
             @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType,
@@ -118,7 +121,8 @@ public class AuthorController {
      *            404 - Author Not Found |
      *            400 - Bad Request.
      */
-    @GetMapping(value = "/author/{authorId}/genres", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/author/{authorId}/genres",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorGenres(
             @PathVariable Long authorId) {
         SimpleAuthorWithGenresDto response = authorService.findAuthorWithAllItGenres(authorId);
@@ -135,7 +139,8 @@ public class AuthorController {
      *            404 - Author Not Found |
      *            400 - BadRequest.
      */
-    @GetMapping(value = "/author/{authorId}/books", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/author/{authorId}/books",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorBooks(
             @PathVariable Long authorId) {
         SimpleAuthorWithBooksDto response = authorService.findAuthorWithAllItBooks(authorId);
@@ -153,7 +158,9 @@ public class AuthorController {
      *            409 - Conflict |
      *            400 - Bad Request.
      */
-    @PostMapping(value = "/author/new", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/author/new",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewAuthor(
             @RequestBody @Valid AuthorDto postAuthor) {
         AuthorDto response = authorService.addNewAuthor(postAuthor);
@@ -172,7 +179,9 @@ public class AuthorController {
      *            404 - Not Found |
      *            400 - Bad Request.
      */
-    @PutMapping(value = "/author/{authorId}/update", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/author/{authorId}/update",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateAuthor(
             @PathVariable Long authorId,
             @RequestBody @Valid AuthorDto updatedAuthor) {
@@ -194,7 +203,8 @@ public class AuthorController {
      *            404 - Author Not Found |
      *            400 - Bad Request.
      */
-    @DeleteMapping(value = "/author/{authorId}/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/author/{authorId}/delete",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAuthor(
             @PathVariable Long authorId,
             @RequestParam(name = "forcibly", defaultValue = "false") Boolean forcibly) {

@@ -44,7 +44,8 @@ public class GenreController {
      *            404 - Genre Not Found |
      *            400 - Bad Request.
      */
-    @GetMapping(value = "/genre/{genreId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/genre/{genreId}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGenre(
             @PathVariable Long genreId) {
         GenreDto response = genreService.findGenreByGenreId(genreId);
@@ -64,7 +65,8 @@ public class GenreController {
      *            404 - Genre Not Found |
      *            400 - Bad Request.
      */
-    @GetMapping(value = "/genre/{genreId}/authors", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/genre/{genreId}/authors",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGenreAuthors(
             @PathVariable Long genreId,
             @RequestParam(name = "limit", defaultValue = "5") Integer authorsCount) {
@@ -85,7 +87,8 @@ public class GenreController {
      *            404 - Genre Not Found
      *            400 - Bad Request.
      */
-    @GetMapping(value = "/genre/{genreId}/books", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/genre/{genreId}/books",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGenreBooks(
             @PathVariable Long genreId,
             @RequestParam(name = "limit", defaultValue = "5") Integer booksCount) {
@@ -111,7 +114,8 @@ public class GenreController {
      *            empty array |
      *            400 - Bad Request.
      */
-    @GetMapping(value = "/genres/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/genres/all",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllGenres(
             @RequestParam(name = "sortBy", defaultValue = "genreId") String sortBy,
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType,
@@ -135,7 +139,9 @@ public class GenreController {
      *            409 - Conflict |
      *            400 - Bad Request.
      */
-    @PostMapping(value = "/genre/new", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/genre/new",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewGenre(
             @RequestBody @Valid GenreDto postGenre) {
         GenreDto response = genreService.addNewGenre(postGenre);
@@ -154,7 +160,9 @@ public class GenreController {
      *            404 - Genre Not Found
      *            400 - Bad Request.
      */
-    @PutMapping(value = "/genre/{genreId}/update", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/genre/{genreId}/update",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateAuthor(
             @PathVariable Long genreId,
             @RequestBody @Valid GenreDto updateGenre) {
@@ -176,7 +184,8 @@ public class GenreController {
      *         404 - Genre Not Found |
      *         400 - Bad Request.
      */
-    @DeleteMapping(value = "/genre/{genreId}/delete")
+    @DeleteMapping(value = "/genre/{genreId}/delete",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteGenre(
             @PathVariable Long genreId,
             @RequestParam(name = "forcibly", defaultValue = "false") Boolean forcibly) {

@@ -38,7 +38,8 @@ public class BookController {
      * Get Book entity by bookId.
      *
      * @param bookId required -> Long value.
-     * @return -> ResponseEntity with: Book object |
+     * @return -> ResponseEntity with:
+     *            Book object |
      *            404 - Book Not Found |
      *            400 - Bad Request.
      */
@@ -53,7 +54,8 @@ public class BookController {
      * Get Book entity with simple info about it genre and author.
      *
      * @param bookId required -> Long value.
-     * @return -> ResponseEntity with: Special Book object |
+     * @return -> ResponseEntity with:
+     *            Special Book object |
      *            404 - Book Not Found |
      *            400 - Bad Request.
      */
@@ -76,7 +78,8 @@ public class BookController {
      * @param orderType not required, by default 'asc' -> String value.
      * @param page      not required, by default '1' -> Integer value.
      * @param size      not required, by default '5' -> Integer value.
-     * @return -> ResponseEntity with: array of books |
+     * @return -> ResponseEntity with:
+     *            array of Books |
      *            empty array |
      *            400 - Bad Request.
      */
@@ -106,7 +109,8 @@ public class BookController {
      * @param orderType not required, by default 'asc' -> String value.
      * @param page      not required, by default '1' -> Integer value.
      * @param size      not required, by default '5' -> Integer value.
-     * @return -> ResponseEntity with: array of books |
+     * @return -> ResponseEntity with:
+     *            array of Books |
      *            empty array |
      *            404 - Genre Not Found |
      *            400 - Bad Request.
@@ -134,7 +138,8 @@ public class BookController {
      * @param authorId  required -> Long value
      * @param sortBy    not required, by default 'bookId' -> String value.
      * @param orderType not required, by default 'asc' -> String value.
-     * @return -> ResponseEntity with: array of books |
+     * @return -> ResponseEntity with:
+     *            array of books |
      *            empty array |
      *            404 - Author Not Found |
      *            400 - Bad Request.
@@ -156,7 +161,8 @@ public class BookController {
      *
      * @param authorId required -> Long value.
      * @param genreId  required -> Long value.
-     * @return -> ResponseEntity with: array of books |
+     * @return -> ResponseEntity with:
+     *            array of books |
      *            empty array |
      *            404 - Author Not Found |
      *            404 - Genre Not Found |
@@ -180,7 +186,8 @@ public class BookController {
      * @param authorId required -> Long value
      * @param genreId  required -> Long value
      * @param newBook  required -> JSON body with new Book object
-     * @return -> ResponseEntity with: created Author object |
+     * @return -> ResponseEntity with:
+     *            created Author object |
      *            409 - Conflict |
      *            400 - Bad Request.
      */
@@ -200,7 +207,8 @@ public class BookController {
      *
      * @param bookId      required -> Long value.
      * @param updatedBook not required -> JSON body with Book object to update
-     * @return -> ResponseEntity with: updated Author object |
+     * @return -> ResponseEntity with:
+     *            updated Author object |
      *            404 - Book Not Found |
      *            400 - Bad Request.
      */
@@ -217,7 +225,8 @@ public class BookController {
      * exist it will produce 404 - Book Not Found.
      *
      * @param bookId required -> Long value.
-     * @return -> ResponseEntity with: deleted Book object |
+     * @return -> ResponseEntity with:
+     *            deleted Book object |
      *            404 - Book Not Found |
      *            400 - Bad Request.
      */
