@@ -40,7 +40,8 @@ public class AuthorController {
      * Get Author entity by authorId.
      *
      * @param authorId -> Long value
-     * @return -> ResponseEntity with: Author object |
+     * @return -> ResponseEntity with:
+     *            Author object |
      *            404 - Author Not Found |
      *            400 - Bad Request.
      */
@@ -61,7 +62,8 @@ public class AuthorController {
      * @param params    not required -> will be parsed to Map<String, String>.
      * @param sortBy    not required, by default 'authorId' -> String value.
      * @param orderType not required, by default 'asc' -> String value.
-     * @return -> ResponseEntity with: array of Authors |
+     * @return -> ResponseEntity with:
+     *            array of Authors |
      *            empty array |
      *            400 - Bad Request.
      */
@@ -95,6 +97,7 @@ public class AuthorController {
      * @param size      not required, by default '5' -> Integer value.
      * @return -> ResponseEntity with:
      *            array of authors |
+     *            empty array |
      *            400 - Bad Request.
      */
     @GetMapping(value = "/authors/all",
