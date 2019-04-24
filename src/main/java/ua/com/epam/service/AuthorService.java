@@ -4,11 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
-import ua.com.epam.entity.Book;
-import ua.com.epam.entity.Genre;
 import ua.com.epam.entity.dto.author.AuthorDto;
-import ua.com.epam.entity.dto.author.SimpleAuthorWithBooksDto;
-import ua.com.epam.entity.dto.author.SimpleAuthorWithGenresDto;
 import ua.com.epam.entity.exception.IdMismatchException;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.author.AuthorAlreadyExistsException;
@@ -18,7 +14,10 @@ import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,45 +63,7 @@ public class AuthorService {
         return toDtoMapper.mapAuthorToAuthorDto(toGet);
     }
 
-    public SimpleAuthorWithGenresDto findAuthorWithAllItGenres(long authorId) {
-        Optional<Author> opt = authorRepository.getOneByAuthorId(authorId);
-
-        if (!opt.isPresent()) {
-            throw new AuthorNotFoundException(authorId);
-        }
-
-        Author author = opt.get();
-        List<Genre> authorGenres = genreRepository.getAllGenresOfAuthor(authorId);
-
-        return toDtoMapper.getSimpleAuthorWithGenresDto(author, authorGenres);
-    }
-
-    public SimpleAuthorWithBooksDto findAuthorWithAllItBooks(long authorId) {
-        Optional<Author> opt = authorRepository.getOneByAuthorId(authorId);
-
-        if (!opt.isPresent()) {
-            throw new AuthorNotFoundException(authorId);
-        }
-
-        Author author = opt.get();
-        List<Book> authorBooks = bookRepository.getAllAuthorBooks(authorId);
-
-        return toDtoMapper.getSimpleAuthorWithBooksDto(author, authorBooks);
-    }
-
-    public List<AuthorDto> findAllAuthorsSortedPaginated(String sortBy, String order, int page, int size) {
-        Sort.Direction orderType = getSortDirection(order);
-        String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
-
-        return authorRepository.getAllAuthorsOrdered(Sort.by(orderType, sortParameter))
-                .stream()
-                .skip((page - 1) * size)
-                .limit(size)
-                .map(toDtoMapper::mapAuthorToAuthorDto)
-                .collect(Collectors.toList());
-    }
-
-    public List<AuthorDto> findFilteredAuthors(Map<String, String> params) {
+    public List<AuthorDto> findFilteredAuthors(Map<String, String> params, int page, int size, boolean pagination) {
         String orderBy = JsonKeysConformity.getPropNameByJsonKey(params.remove("sortBy"));
         String orderType = params.remove("orderType");
 
@@ -115,7 +76,8 @@ public class AuthorService {
         Map<String, String> replaced = new HashMap<>();
         params.keySet().forEach(k -> replaced.put(JsonKeysConformity.getPropNameByJsonKey(k), params.get(k)));
 
-        List<Author> filtered = queryBuilder.getFilteredEntities(replaced, orderBy, orderType, Author.class);
+        int offset = (page - 1) * size;
+        List<Author> filtered = queryBuilder.getFilteredEntities(replaced, orderBy, orderType, offset, size, pagination, Author.class);
 
         return filtered.stream()
                 .map(toDtoMapper::mapAuthorToAuthorDto)

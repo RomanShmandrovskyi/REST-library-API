@@ -6,10 +6,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.genre.GenreDto;
-import ua.com.epam.entity.dto.genre.SimpleGenreWithAuthorsDto;
-import ua.com.epam.entity.dto.genre.SimpleGenreWithBooksDto;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
+import ua.com.epam.entity.exception.type.InvalidPageValueException;
+import ua.com.epam.entity.exception.type.InvalidSizeValueException;
 import ua.com.epam.repository.JsonKeysConformity;
 import ua.com.epam.service.GenreService;
 
@@ -35,6 +35,15 @@ public class GenreController {
         }
     }
 
+    private void checkPaginateParams(int page, int size) {
+        if (page <= 0) {
+            throw new InvalidPageValueException();
+        }
+        if (size < 0) {
+            throw new InvalidSizeValueException();
+        }
+    }
+
     /**
      * Get Genre entity by genreId.
      *
@@ -53,50 +62,6 @@ public class GenreController {
     }
 
     /**
-     * Find all Authors of Genre. Will return simple info about Genre ('genreId'
-     * and 'genreName') with array of Author objects that will contain next
-     * values: 'authorId', 'authorName.first' and 'authorName.second'. Authors
-     * array size can be limited using 'limit' query param.
-     *
-     * @param genreId      required -> Long value
-     * @param authorsCount not required, by default = '5' -> Integer value
-     * @return -> ResponseEntity with:
-     *            simple Genre object with limited array of Authors |
-     *            404 - Genre Not Found |
-     *            400 - Bad Request.
-     */
-    @GetMapping(value = "/genre/{genreId}/authorsSimpleInfo",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGenreAuthors(
-            @PathVariable Long genreId,
-            @RequestParam(name = "limit", defaultValue = "5") Integer authorsCount) {
-        SimpleGenreWithAuthorsDto response = genreService.findGenreWithItAuthors(genreId, authorsCount);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Find all Books of Genre. Will return simple info about Genre ('genreId'
-     * and 'genreName') with array of Book objects that will contain next
-     * values: 'bookId' and 'bookName'. Books array size can be limited using
-     * 'limit' query param.
-     *
-     * @param genreId    required -> Long value
-     * @param booksCount not required, by default = '5' -> Integer value
-     * @return -> ResponseEntity with:
-     *            simple Genre object with limited array of Books |
-     *            404 - Genre Not Found
-     *            400 - Bad Request.
-     */
-    @GetMapping(value = "/genre/{genreId}/booksSimpleInfo",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGenreBooks(
-            @PathVariable Long genreId,
-            @RequestParam(name = "limit", defaultValue = "5") Integer booksCount) {
-        SimpleGenreWithBooksDto response = genreService.findGenreWithItBooksList(genreId, booksCount);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
      * Get array of existed Genre Objects. Can sort by any other one json
      * key. If key not exists in JSON, will be thrown exception. By default
      * sort in ascending order. Descending order is available too. This
@@ -108,21 +73,23 @@ public class GenreController {
      * @param sortBy    not required, by default - 'genreId' -> Long value
      * @param orderType not required, by default - 'asc' -> String value
      * @param page      not required, by default - '1' -> Integer value
-     * @param size      not required, by default - '3' -> Integer value
+     * @param size      not required, by default - '5' -> Integer value
      * @return -> ResponseEntity with:
      *            paginated array of Genre objects |
      *            empty array |
      *            400 - Bad Request.
      */
-    @GetMapping(value = "/genres/all",
+    @GetMapping(value = "/genres",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllGenres(
+            @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
             @RequestParam(name = "sortBy", defaultValue = "genreId") String sortBy,
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @RequestParam(name = "size", defaultValue = "3") Integer size) {
+            @RequestParam(name = "size", defaultValue = "5") Integer size) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
+        checkPaginateParams(page, size);
 
         List<GenreDto> response = genreService.findAllGenres(sortBy, orderType, page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);

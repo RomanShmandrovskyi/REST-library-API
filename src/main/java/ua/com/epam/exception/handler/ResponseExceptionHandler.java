@@ -26,9 +26,7 @@ import ua.com.epam.entity.exception.genre.BooksInGenreArePresentException;
 import ua.com.epam.entity.exception.genre.GenreAlreadyExistsException;
 import ua.com.epam.entity.exception.genre.GenreNameAlreadyExistsException;
 import ua.com.epam.entity.exception.genre.GenreNotFoundException;
-import ua.com.epam.entity.exception.type.InvalidDateTypeException;
-import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
-import ua.com.epam.entity.exception.type.InvalidTypeException;
+import ua.com.epam.entity.exception.type.*;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,6 +38,32 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     private String generateDate() {
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss.SSS dd-MM-yyyy");
         return formatter.format(new Date());
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = InvalidSizeValueException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidSizeValue() {
+        String message = "Value of 'size' parameter must be positive!";
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        message),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = InvalidPageValueException.class)
+    public ResponseEntity<ExceptionResponse> handleInvalidPageValue() {
+        String message = "Value of 'page' parameter must be positive and grater that zero!";
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        message),
+                HttpStatus.BAD_REQUEST);
     }
 
     @ResponseBody

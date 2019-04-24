@@ -16,7 +16,7 @@ public class SqlQueryBuilder {
     private EntityManager entityManager;
 
     public <T> List<T> getFilteredEntities(
-            Map<String, String> params, String orderBy, String orderType, Class<T> clazz) {
+            Map<String, String> params, String orderBy, String orderType, int page, int size, boolean pageable, Class<T> clazz) {
         StringBuilder query = new StringBuilder();
 
         String queryPrefix = "SELECT t FROM %s t ";
@@ -30,6 +30,13 @@ public class SqlQueryBuilder {
 
         query.append(String.format(sorting, orderBy))
                 .append(orderType);
+
+        if (pageable) {
+            return (List<T>) entityManager.createQuery(query.toString())
+                    .setFirstResult(page)
+                    .setMaxResults(size)
+                    .getResultList();
+        }
 
         return (List<T>) entityManager.createQuery(query.toString()).getResultList();
     }

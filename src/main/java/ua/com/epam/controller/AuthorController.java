@@ -6,10 +6,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.author.AuthorDto;
-import ua.com.epam.entity.dto.author.SimpleAuthorWithBooksDto;
-import ua.com.epam.entity.dto.author.SimpleAuthorWithGenresDto;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
+import ua.com.epam.entity.exception.type.InvalidPageValueException;
+import ua.com.epam.entity.exception.type.InvalidSizeValueException;
 import ua.com.epam.repository.JsonKeysConformity;
 import ua.com.epam.service.AuthorService;
 
@@ -36,6 +36,15 @@ public class AuthorController {
         }
     }
 
+    private void checkPaginateParams(int page, int size) {
+        if (page <= 0) {
+            throw new InvalidPageValueException();
+        }
+        if (size < 0) {
+            throw new InvalidSizeValueException();
+        }
+    }
+
     /**
      * Get Author entity by authorId.
      *
@@ -55,13 +64,22 @@ public class AuthorController {
 
     /**
      * Get array of filtered Author objects. Can apply different filters using query
-     * parameters after '?'. Example: '?p1=v1&p2=v2.1,v2.2'. It is possible to set
-     * one custom 'sortBy' parameter and order type (asc or desc). All unsuitable
-     * parameters will produce a fault.
+     * parameters after '?'. Example: '?p1=v1&p2=v2.1,v2.2'. Assume as one value for
+     * parameter, so several, just join it using ','. It is possible to set one
+     * custom 'sortBy' parameter and order type ('asc' or 'desc'). All unsuitable
+     * parameters that not exist in JSON, will produce a fault.
+     * <p>
+     * This endpoint can also paginate response: just set page number to 'page' param
+     * and needed entities count on one page in 'size' param. By default pagination
+     * is enabled, but you can disable it. In this case, if there aren't any filter
+     * parameters, you get all existed Authors from DB.
      *
-     * @param params    not required -> will be parsed to Map<String, String>.
-     * @param sortBy    not required, by default 'authorId' -> String value.
-     * @param orderType not required, by default 'asc' -> String value.
+     * @param params     not required -> will be parsed to Map<String, String>.
+     * @param pagination not required, by default 'true' -> Boolean value
+     * @param page       not required, by default '1' -> Integer value
+     * @param size       not required, by default '10' -> Integer value
+     * @param sortBy     not required, by default 'authorId' -> String value.
+     * @param orderType  not required, by default 'asc' -> String value.
      * @return -> ResponseEntity with:
      *            array of Authors |
      *            empty array |
@@ -71,82 +89,23 @@ public class AuthorController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorsByParams(
             @RequestParam Map<String, String> params,
+            @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
+        checkPaginateParams(page, size);
+
+        params.remove("page");
+        params.remove("size");
+        params.remove("pagination");
 
         params.putIfAbsent("sortBy", sortBy);
         params.putIfAbsent("orderType", orderType);
 
-        List<AuthorDto> response = authorService.findFilteredAuthors(params);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Get array of existed Author Objects. Can sort by any other one json key. If
-     * key not exists in JSON, will be thrown exception. By default sort in ascending
-     * order. Descending order is available too. This endpoint can also paginate
-     * response, just set page number to 'page' param and needed entities count on
-     * one page in 'size' param. Any others query params (expect 'sortBy', 'orderType',
-     * 'page' and 'size') will be ignored.
-     *
-     * @param sortBy    not required, by default 'authorId' -> String value.
-     * @param orderType not required, by default 'asc' -> String value.
-     * @param page      not required, by default '1' -> Integer value.
-     * @param size      not required, by default '5' -> Integer value.
-     * @return -> ResponseEntity with:
-     *            array of authors |
-     *            empty array |
-     *            400 - Bad Request.
-     */
-    @GetMapping(value = "/authors/all",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllAuthors(
-            @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
-            @RequestParam(name = "orderType", defaultValue = "asc") String orderType,
-            @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @RequestParam(name = "size", defaultValue = "5") Integer size) {
-        checkSortByKeyInGroup(sortBy);
-        checkOrdering(orderType);
-
-        List<AuthorDto> response = authorService.findAllAuthorsSortedPaginated(sortBy, orderType, page, size);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Find all Genres of Author. Will return simple info about Author with array
-     * of Genre objects that will contain next values: 'genreId' and 'genreName'.
-     *
-     * @param authorId required -> Long value.
-     * @return -> ResponseEntity with:
-     *            Author object with array of it genres |
-     *            404 - Author Not Found |
-     *            400 - Bad Request.
-     */
-    @GetMapping(value = "/author/{authorId}/genresSimpleInfo",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAuthorGenres(
-            @PathVariable Long authorId) {
-        SimpleAuthorWithGenresDto response = authorService.findAuthorWithAllItGenres(authorId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Find all Books of Author. Will return Simple info about Author with
-     * array of Book objects that include next values: 'bookId' and 'bookName'.
-     *
-     * @param authorId required -> Long value
-     * @return -> ResponseEntity with:
-     *            Author object with array of it books |
-     *            404 - Author Not Found |
-     *            400 - BadRequest.
-     */
-    @GetMapping(value = "/author/{authorId}/booksSimpleInfo",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAuthorBooks(
-            @PathVariable Long authorId) {
-        SimpleAuthorWithBooksDto response = authorService.findAuthorWithAllItBooks(authorId);
+        List<AuthorDto> response = authorService.findFilteredAuthors(params, page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

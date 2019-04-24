@@ -9,6 +9,8 @@ import ua.com.epam.entity.dto.book.BookDto;
 import ua.com.epam.entity.dto.book.BookWithAuthorAndGenreDto;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
+import ua.com.epam.entity.exception.type.InvalidPageValueException;
+import ua.com.epam.entity.exception.type.InvalidSizeValueException;
 import ua.com.epam.repository.JsonKeysConformity;
 import ua.com.epam.service.BookService;
 
@@ -31,6 +33,15 @@ public class BookController {
     private void checkSortByKeyInGroup(String sortBy) {
         if (!JsonKeysConformity.ifJsonKeyExistsInGroup(sortBy, JsonKeysConformity.Group.BOOK)) {
             throw new NoSuchJsonKeyException(sortBy);
+        }
+    }
+
+    private void checkPaginateParams(int page, int size) {
+        if (page <= 0) {
+            throw new InvalidPageValueException();
+        }
+        if (size < 0) {
+            throw new InvalidSizeValueException();
         }
     }
 
@@ -83,7 +94,7 @@ public class BookController {
      *            empty array |
      *            400 - Bad Request.
      */
-    @GetMapping(value = "/books/all", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/books", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllBooks(
             @RequestParam(name = "sortBy", defaultValue = "bookId") String sortBy,
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType,
@@ -91,6 +102,7 @@ public class BookController {
             @RequestParam(name = "size", defaultValue = "5") Integer size) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
+        checkPaginateParams(page, size);
 
         List<BookDto> response = bookService.findAllBooksSortedPaginated(sortBy, orderType, page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -124,6 +136,7 @@ public class BookController {
             @RequestParam(name = "size", defaultValue = "5") Integer size) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
+        checkPaginateParams(page, size);
 
         List<BookDto> response = bookService.findBooksInGenre(genreId, sortBy, orderType, page, size);
         return new ResponseEntity<>(response, HttpStatus.OK);

@@ -3,17 +3,13 @@ package ua.com.epam.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import ua.com.epam.entity.Author;
-import ua.com.epam.entity.Book;
 import ua.com.epam.entity.Genre;
 import ua.com.epam.entity.dto.genre.GenreDto;
-import ua.com.epam.entity.dto.genre.SimpleGenreWithAuthorsDto;
-import ua.com.epam.entity.dto.genre.SimpleGenreWithBooksDto;
 import ua.com.epam.entity.exception.IdMismatchException;
+import ua.com.epam.entity.exception.genre.BooksInGenreArePresentException;
 import ua.com.epam.entity.exception.genre.GenreAlreadyExistsException;
 import ua.com.epam.entity.exception.genre.GenreNameAlreadyExistsException;
 import ua.com.epam.entity.exception.genre.GenreNotFoundException;
-import ua.com.epam.entity.exception.genre.BooksInGenreArePresentException;
 import ua.com.epam.repository.AuthorRepository;
 import ua.com.epam.repository.BookRepository;
 import ua.com.epam.repository.GenreRepository;
@@ -63,38 +59,6 @@ public class GenreService {
 
         Genre toGet = exist.get();
         return toDtoMapper.mapGenreToGenreDto(toGet);
-    }
-
-    public SimpleGenreWithAuthorsDto findGenreWithItAuthors(long genreId, int authorsCount) {
-        Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
-
-        if (!opt.isPresent()) {
-            throw new GenreNotFoundException(genreId);
-        }
-
-        Genre genre = opt.get();
-        List<Author> authorsInGenre = authorRepository.getAllAuthorsInGenre(genreId)
-                .stream()
-                .limit(authorsCount)
-                .collect(Collectors.toList());
-
-        return toDtoMapper.getSimpleGenreWithAuthorsDto(genre, authorsInGenre);
-    }
-
-    public SimpleGenreWithBooksDto findGenreWithItBooksList(long genreId, int booksCount) {
-        Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
-
-        if (!opt.isPresent()) {
-            throw new GenreNotFoundException(genreId);
-        }
-
-        Genre genre = opt.get();
-        List<Book> booksInGenre = bookRepository.getAllBooksInGenre(genreId)
-                .stream()
-                .limit(booksCount)
-                .collect(Collectors.toList());
-
-        return toDtoMapper.getSimpleGenreWithBooksDto(genre, booksInGenre);
     }
 
     public List<GenreDto> findAllGenres(String sortBy, String order, int page, int size) {

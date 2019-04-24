@@ -7,27 +7,17 @@ import ua.com.epam.entity.Book;
 import ua.com.epam.entity.Genre;
 import ua.com.epam.entity.dto.author.AuthorDto;
 import ua.com.epam.entity.dto.author.SimpleAuthorDto;
-import ua.com.epam.entity.dto.author.SimpleAuthorWithBooksDto;
-import ua.com.epam.entity.dto.author.SimpleAuthorWithGenresDto;
-import ua.com.epam.entity.dto.author.nested.NameDto;
 import ua.com.epam.entity.dto.book.BookDto;
 import ua.com.epam.entity.dto.book.BookWithAuthorAndGenreDto;
-import ua.com.epam.entity.dto.book.SimpleBookDto;
 import ua.com.epam.entity.dto.book.nested.AdditionalDto;
 import ua.com.epam.entity.dto.book.nested.SizeDto;
-import ua.com.epam.entity.dto.genre.SimpleGenreDto;
 import ua.com.epam.entity.dto.genre.GenreDto;
-import ua.com.epam.entity.dto.genre.SimpleGenreWithAuthorsDto;
-import ua.com.epam.entity.dto.genre.SimpleGenreWithBooksDto;
+import ua.com.epam.entity.dto.genre.SimpleGenreDto;
 import ua.com.epam.service.mapper.converter.author.AuthorToAuthorDto;
 import ua.com.epam.service.mapper.converter.author.AuthorToSimpleAuthorDto;
 import ua.com.epam.service.mapper.converter.book.BookToBookDto;
-import ua.com.epam.service.mapper.converter.book.BookToSimpleBookDto;
-import ua.com.epam.service.mapper.converter.genre.GenreToSimpleGenreDto;
 import ua.com.epam.service.mapper.converter.genre.GenreToGenreDto;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import ua.com.epam.service.mapper.converter.genre.GenreToSimpleGenreDto;
 
 @Service
 public class ModelToDtoMapper {
@@ -42,7 +32,6 @@ public class ModelToDtoMapper {
         modelMapper.addConverter(new GenreToSimpleGenreDto());
 
         modelMapper.addConverter(new BookToBookDto());
-        modelMapper.addConverter(new BookToSimpleBookDto());
     }
 
     public AuthorDto mapAuthorToAuthorDto(Author author) {
@@ -55,62 +44,6 @@ public class ModelToDtoMapper {
 
     public BookDto mapBookToBookDto(Book book) {
         return modelMapper.map(book, BookDto.class);
-    }
-
-    public SimpleAuthorWithGenresDto getSimpleAuthorWithGenresDto(Author author, List<Genre> authorGenres) {
-        SimpleAuthorWithGenresDto authorWithGenres = new SimpleAuthorWithGenresDto();
-
-        List<SimpleGenreDto> simpleGenres = authorGenres.stream()
-                .map(g -> modelMapper.map(g, SimpleGenreDto.class))
-                .collect(Collectors.toList());
-
-        authorWithGenres.setAuthorId(author.getAuthorId());
-        authorWithGenres.setAuthorName(new NameDto(author.getFirstName(), author.getSecondName()));
-        authorWithGenres.setGenres(simpleGenres);
-
-        return authorWithGenres;
-    }
-
-    public SimpleAuthorWithBooksDto getSimpleAuthorWithBooksDto(Author author, List<Book> authorBooks) {
-        SimpleAuthorWithBooksDto authorWithBooksDto = new SimpleAuthorWithBooksDto();
-
-        List<SimpleBookDto> simpleBooks = authorBooks.stream()
-                .map(b -> modelMapper.map(b, SimpleBookDto.class))
-                .collect(Collectors.toList());
-
-        authorWithBooksDto.setAuthorId(author.getAuthorId());
-        authorWithBooksDto.setAuthorName(new NameDto(author.getFirstName(), author.getSecondName()));
-        authorWithBooksDto.setBooks(simpleBooks);
-
-        return authorWithBooksDto;
-    }
-
-    public SimpleGenreWithAuthorsDto getSimpleGenreWithAuthorsDto(Genre genre, List<Author> authorsInGenre) {
-        SimpleGenreWithAuthorsDto genreWithAuthorsDto = new SimpleGenreWithAuthorsDto();
-
-        List<SimpleAuthorDto> simpleAuthors = authorsInGenre.stream()
-                .map(a -> modelMapper.map(a, SimpleAuthorDto.class))
-                .collect(Collectors.toList());
-
-        genreWithAuthorsDto.setGenreId(genre.getGenreId());
-        genreWithAuthorsDto.setGenreName(genre.getGenreName());
-        genreWithAuthorsDto.setAuthors(simpleAuthors);
-
-        return genreWithAuthorsDto;
-    }
-
-    public SimpleGenreWithBooksDto getSimpleGenreWithBooksDto(Genre genre, List<Book> booksInGenre) {
-        SimpleGenreWithBooksDto genreWithBooksDto = new SimpleGenreWithBooksDto();
-
-        List<SimpleBookDto> simpleBooks = booksInGenre.stream()
-                .map(b -> modelMapper.map(b, SimpleBookDto.class))
-                .collect(Collectors.toList());
-
-        genreWithBooksDto.setGenreId(genre.getGenreId());
-        genreWithBooksDto.setGenreName(genre.getGenreName());
-        genreWithBooksDto.setBooks(simpleBooks);
-
-        return genreWithBooksDto;
     }
 
     public BookWithAuthorAndGenreDto getBookWithAuthorAndGenreDto(Book book, Author author, Genre genre) {
