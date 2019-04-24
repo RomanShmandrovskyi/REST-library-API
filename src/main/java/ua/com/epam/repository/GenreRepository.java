@@ -1,5 +1,7 @@
 package ua.com.epam.repository;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -20,6 +22,9 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
 
     @Query(value = "SELECT g.* FROM genre AS g JOIN book AS b ON b.genre_id = g.genre_id AND book_id = ?1", nativeQuery = true)
     Genre getGenreOfBook(long bookId);
+
+    @Query(value = "SELECT g FROM Genre g")
+    List<Genre> getAllGenresOrderedPaginated(Sort sort, PageRequest page);
 
     @Query(value = "SELECT g FROM Genre g")
     List<Genre> getAllGenresOrdered(Sort sort);

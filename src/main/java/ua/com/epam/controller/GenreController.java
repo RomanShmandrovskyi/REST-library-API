@@ -91,7 +91,7 @@ public class GenreController {
         checkOrdering(orderType);
         checkPaginateParams(page, size);
 
-        List<GenreDto> response = genreService.findAllGenres(sortBy, orderType, page, size);
+        List<GenreDto> response = genreService.findAllGenres(sortBy, orderType, page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

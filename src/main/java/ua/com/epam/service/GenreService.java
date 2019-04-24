@@ -1,6 +1,7 @@
 package ua.com.epam.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Genre;
@@ -61,15 +62,19 @@ public class GenreService {
         return toDtoMapper.mapGenreToGenreDto(toGet);
     }
 
-    public List<GenreDto> findAllGenres(String sortBy, String order, int page, int size) {
+    public List<GenreDto> findAllGenres(String sortBy, String order, int page, int size, boolean pageable) {
         Sort.Direction orderType = getSortDirection(order);
+        String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        if (pageable) {
+            return genreRepository.getAllGenresOrderedPaginated(Sort.by(orderType, sortParam), PageRequest.of(page - 1, size))
+                    .stream()
+                    .map(toDtoMapper::mapGenreToGenreDto)
+                    .collect(Collectors.toList());
+        }
 
-        return genreRepository.getAllGenresOrdered(Sort.by(orderType, sortParameter))
+        return genreRepository.getAllGenresOrdered(Sort.by(orderType, sortParam))
                 .stream()
-                .skip((page - 1) * size)
-                .limit(size)
                 .map(toDtoMapper::mapGenreToGenreDto)
                 .collect(Collectors.toList());
     }
