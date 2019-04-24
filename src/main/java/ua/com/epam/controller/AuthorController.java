@@ -124,7 +124,7 @@ public class AuthorController {
      *            404 - Author Not Found |
      *            400 - Bad Request.
      */
-    @GetMapping(value = "/author/{authorId}/genres",
+    @GetMapping(value = "/author/{authorId}/genresSimpleInfo",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorGenres(
             @PathVariable Long authorId) {
@@ -142,7 +142,7 @@ public class AuthorController {
      *            404 - Author Not Found |
      *            400 - BadRequest.
      */
-    @GetMapping(value = "/author/{authorId}/books",
+    @GetMapping(value = "/author/{authorId}/booksSimpleInfo",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorBooks(
             @PathVariable Long authorId) {

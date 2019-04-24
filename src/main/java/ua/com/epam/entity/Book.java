@@ -19,10 +19,10 @@ public class Book implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "book_id", unique = true, nullable = false)
-    private long bookId;
+    private Long bookId;
 
     @Column(name = "book_name", nullable = false)
     private String bookName;
@@ -34,19 +34,19 @@ public class Book implements Serializable {
     private String bookDescription;
 
     @Column(name = "page_count")
-    private int pageCount;
+    private Integer pageCount;
 
     @Column(name = "book_height")
-    private double bookHeight;
+    private Double bookHeight;
 
     @Column(name = "book_width")
-    private double bookWidth;
+    private Double bookWidth;
 
     @Column(name = "book_length")
-    private double bookLength;
+    private Double bookLength;
 
     @Column(name = "publication_year")
-    private int publicationYear;
+    private Integer publicationYear;
 
     @Column(name = "author_id")
     private Long authorId;

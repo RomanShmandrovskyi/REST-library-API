@@ -170,7 +170,7 @@ public class BookService {
 
         proxy.setBookName(bookDto.getBookName());
         proxy.setBookLang(bookDto.getBookLanguage());
-        proxy.setBookDescription(bookDto.getBookDescr());
+        proxy.setBookDescription(bookDto.getDescription());
         proxy.setPublicationYear(bookDto.getPublicationYear());
         proxy.setPageCount(bookDto.getAdditional().getPageCount());
         proxy.setBookWidth(bookDto.getAdditional().getSize().getWidth());

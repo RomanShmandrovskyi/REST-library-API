@@ -65,7 +65,7 @@ public class GenreController {
      *            404 - Genre Not Found |
      *            400 - Bad Request.
      */
-    @GetMapping(value = "/genre/{genreId}/authors",
+    @GetMapping(value = "/genre/{genreId}/authorsSimpleInfo",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGenreAuthors(
             @PathVariable Long genreId,
@@ -87,7 +87,7 @@ public class GenreController {
      *            404 - Genre Not Found
      *            400 - Bad Request.
      */
-    @GetMapping(value = "/genre/{genreId}/books",
+    @GetMapping(value = "/genre/{genreId}/booksSimpleInfo",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGenreBooks(
             @PathVariable Long genreId,

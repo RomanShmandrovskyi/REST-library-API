@@ -25,7 +25,7 @@ public class BirthDto {
     private Date date;
 
     @JsonDeserialize(using = CustomStringDeserializer.class)
-    @Size(max = 50, message = "Value 'country' cannot be longer than 50 characters!")
+    @Size(max = 100, message = "Value 'country' cannot be longer than 100 characters!")
     private String country = "";
 
     @JsonDeserialize(using = CustomStringDeserializer.class)

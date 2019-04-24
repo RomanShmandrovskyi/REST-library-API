@@ -19,16 +19,16 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query(value = "SELECT b FROM Book b")
     List<Book> getAllBooksOrdered(Sort sort);
 
-    @Query(value = "SELECT b FROM Book b WHERE b.authorId=?")
+    @Query(value = "SELECT b FROM Book b WHERE b.authorId=?1")
     List<Book> getAllAuthorBooks(long authorId);
 
-    @Query(value = "SELECT b FROM Book b WHERE b.authorId=?")
+    @Query(value = "SELECT b FROM Book b WHERE b.authorId=?1")
     List<Book> getAllAuthorBooksOrdered(long authorId, Sort sort);
 
-    @Query(value = "SELECT b FROM Book b WHERE b.genreId=?")
+    @Query(value = "SELECT b FROM Book b WHERE b.genreId=?1")
     List<Book> getAllBooksInGenre(long genreId);
 
-    @Query(value = "SELECT b FROM Book b WHERE b.genreId=?")
+    @Query(value = "SELECT b FROM Book b WHERE b.genreId=?1")
     List<Book> getAllBooksInGenreOrdered(long genreId, Sort sort);
 
     @Query(value = "SELECT b FROM Book b WHERE b.authorId=?1 and b.genreId=?2")
