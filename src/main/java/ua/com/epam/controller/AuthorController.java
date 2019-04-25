@@ -100,7 +100,7 @@ public class AuthorController {
      */
     @GetMapping(value = "/authors",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAFilteredAuthors(
+    public ResponseEntity<?> getAllAuthors(
             @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size,
