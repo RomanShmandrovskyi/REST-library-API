@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Genre;
 import ua.com.epam.entity.dto.genre.GenreDto;
 import ua.com.epam.entity.exception.IdMismatchException;
+import ua.com.epam.entity.exception.author.AuthorNotFoundException;
+import ua.com.epam.entity.exception.book.BookNotFoundException;
 import ua.com.epam.entity.exception.genre.BooksInGenreArePresentException;
 import ua.com.epam.entity.exception.genre.GenreAlreadyExistsException;
 import ua.com.epam.entity.exception.genre.GenreNameAlreadyExistsException;
@@ -62,18 +64,43 @@ public class GenreService {
         return toDtoMapper.mapGenreToGenreDto(toGet);
     }
 
+    public GenreDto findGenreOfBook(long bookId) {
+        if (!bookRepository.existsByBookId(bookId)) {
+            throw new BookNotFoundException(bookId);
+        }
+
+        Genre toGet = genreRepository.getGenreOfBook(bookId);
+        return toDtoMapper.mapGenreToGenreDto(toGet);
+    }
+
     public List<GenreDto> findAllGenres(String sortBy, String order, int page, int size, boolean pageable) {
         Sort.Direction orderType = getSortDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
         if (pageable) {
-            return genreRepository.getAllGenresOrderedPaginated(Sort.by(orderType, sortParam), PageRequest.of(page - 1, size))
+            return genreRepository
+                    .getAllGenresOrderedPaginated(Sort.by(orderType, sortParam), PageRequest.of(page - 1, size))
                     .stream()
                     .map(toDtoMapper::mapGenreToGenreDto)
                     .collect(Collectors.toList());
         }
 
         return genreRepository.getAllGenresOrdered(Sort.by(orderType, sortParam))
+                .stream()
+                .map(toDtoMapper::mapGenreToGenreDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<GenreDto> findAllGenresOfAuthor(long authorId, String sortBy, String order) {
+        if (!authorRepository.existsByAuthorId(authorId)) {
+            throw new AuthorNotFoundException(authorId);
+        }
+
+        Sort.Direction orderType = getSortDirection(order);
+        String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+
+        return genreRepository
+                .getAllGenresOfAuthorOrdered(authorId, Sort.by(orderType, sortParam))
                 .stream()
                 .map(toDtoMapper::mapGenreToGenreDto)
                 .collect(Collectors.toList());
@@ -108,7 +135,7 @@ public class GenreService {
 
         proxy.setGenreId(genre.getGenreId());
         proxy.setGenreName(genre.getGenreName());
-        proxy.setGenreDescription(genre.getDescription());
+        proxy.setDescription(genre.getGenreDescription());
 
         Genre updated = genreRepository.save(proxy);
         return toDtoMapper.mapGenreToGenreDto(updated);

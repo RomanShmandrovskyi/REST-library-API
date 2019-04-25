@@ -31,7 +31,7 @@ public class Book implements Serializable {
     private String bookLang;
 
     @Column(name = "book_descr", length = 1000)
-    private String bookDescription;
+    private String description;
 
     @Column(name = "page_count")
     private Integer pageCount;

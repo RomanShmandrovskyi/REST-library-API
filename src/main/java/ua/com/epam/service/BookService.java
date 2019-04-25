@@ -1,6 +1,7 @@
 package ua.com.epam.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
@@ -50,7 +51,7 @@ public class BookService {
         return orderType;
     }
 
-    public BookDto findBook(long bookId) {
+    public BookDto findBookByBookId(long bookId) {
         Optional<Book> opt = bookRepository.getOneByBookId(bookId);
 
         if (!opt.isPresent()) {
@@ -61,7 +62,7 @@ public class BookService {
         return toDtoMapper.mapBookToBookDto(book);
     }
 
-    public BookWithAuthorAndGenreDto findBookWithAuthorAndGenreInfos(long bookId) {
+    public BookWithAuthorAndGenreDto findBookWithAuthorAndGenreInfo(long bookId) {
         Optional<Book> opt = bookRepository.getOneByBookId(bookId);
 
         if (!opt.isPresent()) {
@@ -75,19 +76,26 @@ public class BookService {
         return toDtoMapper.getBookWithAuthorAndGenreDto(book, authorOfBook, genreOfBook);
     }
 
-    public List<BookDto> findAllBooksSortedPaginated(String sortBy, String order, int page, int size) {
+    public List<BookDto> findAllBooksSortedPaginated(String sortBy, String order, int page, int size, boolean pageable) {
         Sort.Direction orderType = getSortDirection(order);
         String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        return bookRepository.getAllBooksOrdered(Sort.by(orderType, sortParameter))
+        if (pageable) {
+            return bookRepository
+                    .getAllBooksOrderedPaginated(Sort.by(orderType, sortParameter), PageRequest.of(page, size))
+                    .stream()
+                    .map(toDtoMapper::mapBookToBookDto)
+                    .collect(Collectors.toList());
+        }
+
+        return bookRepository
+                .getAllBooksOrdered(Sort.by(orderType, sortParameter))
                 .stream()
-                .skip((page - 1) * size)
-                .limit(size)
                 .map(toDtoMapper::mapBookToBookDto)
                 .collect(Collectors.toList());
     }
 
-    public List<BookDto> findBooksInGenre(long genreId, String sortBy, String order, int page, int size) {
+    public List<BookDto> findBooksInGenre(long genreId, String sortBy, String order, int page, int size, boolean pageable) {
         if (!genreRepository.existsByGenreId(genreId)) {
             throw new GenreNotFoundException(genreId);
         }
@@ -95,10 +103,17 @@ public class BookService {
         Sort.Direction orderType = getSortDirection(order);
         String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        return bookRepository.getAllBooksInGenreOrdered(genreId, Sort.by(orderType, sortParameter))
+        if (pageable) {
+            return bookRepository
+                    .getAllBooksInGenreOrderedPaginated(genreId, Sort.by(orderType, sortParameter), PageRequest.of(page, size))
+                    .stream()
+                    .map(toDtoMapper::mapBookToBookDto)
+                    .collect(Collectors.toList());
+        }
+
+        return bookRepository
+                .getAllBooksInGenreOrdered(genreId, Sort.by(orderType, sortParameter))
                 .stream()
-                .skip((page - 1) * size)
-                .limit(size)
                 .map(toDtoMapper::mapBookToBookDto)
                 .collect(Collectors.toList());
     }
@@ -111,7 +126,8 @@ public class BookService {
         Sort.Direction orderType = getSortDirection(order);
         String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        return bookRepository.getAllAuthorBooksOrdered(authorId, Sort.by(orderType, sortParameter))
+        return bookRepository
+                .getAllAuthorBooksOrdered(authorId, Sort.by(orderType, sortParameter))
                 .stream()
                 .map(toDtoMapper::mapBookToBookDto)
                 .collect(Collectors.toList());
@@ -126,7 +142,8 @@ public class BookService {
             throw new GenreNotFoundException(genreId);
         }
 
-        return bookRepository.getAllAuthorBooksInGenre(authorId, genreId)
+        return bookRepository
+                .getAllAuthorBooksInGenre(authorId, genreId)
                 .stream()
                 .map(toDtoMapper::mapBookToBookDto)
                 .collect(Collectors.toList());
@@ -170,7 +187,7 @@ public class BookService {
 
         proxy.setBookName(bookDto.getBookName());
         proxy.setBookLang(bookDto.getBookLanguage());
-        proxy.setBookDescription(bookDto.getDescription());
+        proxy.setDescription(bookDto.getBookDescription());
         proxy.setPublicationYear(bookDto.getPublicationYear());
         proxy.setPageCount(bookDto.getAdditional().getPageCount());
         proxy.setBookWidth(bookDto.getAdditional().getSize().getWidth());

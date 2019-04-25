@@ -36,6 +36,6 @@ public class AuthorDto {
     private BirthDto birth = new BirthDto();
 
     @JsonDeserialize(using = CustomStringDeserializer.class)
-    @Size(max = 1000, message = "Value 'description' cannot be longer than 1000 characters!")
-    private String description = "";
+    @Size(max = 1000, message = "Value 'authorDescription' cannot be longer than 1000 characters!")
+    private String authorDescription = "";
 }

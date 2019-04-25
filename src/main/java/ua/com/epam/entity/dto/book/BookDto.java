@@ -36,7 +36,7 @@ public class BookDto {
 
     @JsonDeserialize(using = CustomStringDeserializer.class)
     @Size(max = 1000, message = "Value 'description' cannot be longer than 1000 characters!")
-    private String description;
+    private String bookDescription = "";
 
     @Valid
     private AdditionalDto additional;

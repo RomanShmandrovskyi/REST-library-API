@@ -1,5 +1,6 @@
 package ua.com.epam.repository;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,6 +18,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     boolean existsByBookId(long bookId);
 
     @Query(value = "SELECT b FROM Book b")
+    List<Book> getAllBooksOrderedPaginated(Sort sort, PageRequest page);
+
+    @Query(value = "SELECT b FROM Book b")
     List<Book> getAllBooksOrdered(Sort sort);
 
     @Query(value = "SELECT b FROM Book b WHERE b.authorId=?1")
@@ -31,6 +35,9 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     @Query(value = "SELECT b FROM Book b WHERE b.genreId=?1")
     List<Book> getAllBooksInGenreOrdered(long genreId, Sort sort);
 
-    @Query(value = "SELECT b FROM Book b WHERE b.authorId=?1 and b.genreId=?2")
+    @Query(value = "SELECT b FROM Book b WHERE b.genreId=?1")
+    List<Book> getAllBooksInGenreOrderedPaginated(long genreId, Sort sort, PageRequest page);
+
+    @Query(value = "SELECT b FROM Book b WHERE b.authorId=?1 AND b.genreId=?2")
     List<Book> getAllAuthorBooksInGenre(long authorId, long genreId);
 }

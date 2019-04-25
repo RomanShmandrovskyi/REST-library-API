@@ -16,7 +16,7 @@ public class AuthorDtoToAuthor implements Converter<AuthorDto, Author> {
         author.setFirstName(source.getAuthorName().getFirst());
         author.setSecondName(source.getAuthorName().getSecond());
         author.setNationality(source.getNationality());
-        author.setDescription(source.getDescription());
+        author.setDescription(source.getAuthorDescription());
         author.setBirthDate(source.getBirth().getDate());
         author.setBirthCity(source.getBirth().getCity());
         author.setBirthCountry(source.getBirth().getCountry());

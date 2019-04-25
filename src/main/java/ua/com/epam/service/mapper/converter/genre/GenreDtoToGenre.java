@@ -13,7 +13,7 @@ public class GenreDtoToGenre implements Converter<Genre, GenreDto> {
         GenreDto genre = new GenreDto();
         genre.setGenreId(source.getGenreId());
         genre.setGenreName(source.getGenreName());
-        genre.setDescription(source.getGenreDescription());
+        genre.setGenreDescription(source.getDescription());
 
         return genre;
     }

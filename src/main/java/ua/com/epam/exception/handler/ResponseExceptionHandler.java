@@ -82,7 +82,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = BookNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleBookNotFound(BookNotFoundException bnfe) {
-        String message = "Author with 'authorId' = '%d' doesn't exist!";
+        String message = "Book with 'bookId' = '%d' doesn't exist!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
@@ -95,7 +95,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = GenreNotFoundException.class)
     public ResponseEntity<ExceptionResponse> handleGenreNotFound(GenreNotFoundException gnfe) {
-        String message = "Author with 'authorId' = '%d' doesn't exist!";
+        String message = "Genre with 'genreId' = '%d' doesn't exist!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),

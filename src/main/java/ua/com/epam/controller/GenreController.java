@@ -45,7 +45,7 @@ public class GenreController {
     }
 
     /**
-     * Get Genre entity by genreId.
+     * Get Genre object by genreId. Return a single Genre object.
      *
      * @param genreId -> Long value
      * @return -> ResponseEntity with:
@@ -60,6 +60,24 @@ public class GenreController {
         GenreDto response = genreService.findGenreByGenreId(genreId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    /**
+     * Get Genre object of special Book. Return a single Genre object.
+     *
+     * @param bookId required -> Long value.
+     * @return -> ResponseEntity with:
+     *            Genre object |
+     *            404 - Book Not Found |
+     *            400 - Bad Request.
+     */
+    @GetMapping(value = "book/{bookId}/genre",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getBookGenre(
+            @PathVariable Long bookId) {
+        GenreDto response = genreService.findGenreOfBook(bookId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
 
     /**
      * Get array of existed Genre Objects. Can sort by any other one json
@@ -92,6 +110,26 @@ public class GenreController {
         checkPaginateParams(page, size);
 
         List<GenreDto> response = genreService.findAllGenres(sortBy, orderType, page, size, pagination);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     *
+     * @param authorId
+     * @param sortBy
+     * @param orderType
+     * @return
+     */
+    @GetMapping(value = "/author/{authorId}/genres",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    private ResponseEntity<?> getAllAuthorGenres(
+            @PathVariable Long authorId,
+            @RequestParam(name = "sortBy", defaultValue = "genreId") String sortBy,
+            @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
+        checkSortByKeyInGroup(sortBy);
+        checkOrdering(orderType);
+
+        List<GenreDto> response = genreService.findAllGenresOfAuthor(authorId, sortBy, orderType);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

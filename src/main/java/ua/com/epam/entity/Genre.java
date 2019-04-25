@@ -1,13 +1,9 @@
 package ua.com.epam.entity;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Getter
 @Setter
@@ -23,9 +19,9 @@ public class Genre implements Serializable {
     @Column(name = "genre_id", unique = true, nullable = false)
     private long genreId;
 
-    @Column(name = "genre_name", length = 50, nullable = false)
+    @Column(name = "genre_name", length = 50, unique = true, nullable = false)
     private String genreName;
 
     @Column(name = "genre_descr" , length = 1000)
-    private String genreDescription;
+    private String description;
 }
