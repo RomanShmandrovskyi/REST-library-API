@@ -76,7 +76,7 @@ public class BookService {
         return toDtoMapper.getBookWithAuthorAndGenreDto(book, authorOfBook, genreOfBook);
     }
 
-    public List<BookDto> findAllBooksSortedPaginated(String sortBy, String order, int page, int size, boolean pageable) {
+    public List<BookDto> findAllBooks(String sortBy, String order, int page, int size, boolean pageable) {
         Sort.Direction orderType = getSortDirection(order);
         String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 

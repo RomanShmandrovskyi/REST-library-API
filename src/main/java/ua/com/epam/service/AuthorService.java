@@ -68,7 +68,7 @@ public class AuthorService {
         return toDtoMapper.mapAuthorToAuthorDto(toGet);
     }
 
-    public List<AuthorDto> findAllAuthorsSortedPaginated(String sortBy, String order, int page, int size, boolean pagination) {
+    public List<AuthorDto> findAllAuthors(String sortBy, String order, int page, int size, boolean pagination) {
         Sort.Direction orderType = getSortDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 

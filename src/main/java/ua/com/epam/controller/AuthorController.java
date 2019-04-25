@@ -110,7 +110,7 @@ public class AuthorController {
         checkOrdering(orderType);
         checkPaginateParams(page, size);
 
-        List<AuthorDto> response = authorService.findAllAuthorsSortedPaginated(sortBy, orderType, page, size, pagination);
+        List<AuthorDto> response = authorService.findAllAuthors(sortBy, orderType, page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -105,7 +105,7 @@ public class BookController {
         checkOrdering(orderType);
         checkPaginateParams(page, size);
 
-        List<BookDto> response = bookService.findAllBooksSortedPaginated(sortBy, orderType, page, size, pagination);
+        List<BookDto> response = bookService.findAllBooks(sortBy, orderType, page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
