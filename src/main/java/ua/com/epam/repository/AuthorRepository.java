@@ -17,10 +17,10 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
 
     Optional<Author> getOneByAuthorId(long authorId);
 
-    @Query(value = "SELECT g FROM Genre g")
+    @Query(value = "SELECT a FROM Author a")
     List<Author> getAllAuthorsOrdered(Sort sort);
 
-    @Query(value = "SELECT g FROM Genre g")
+    @Query(value = "SELECT a FROM Author a")
     List<Author> getAllAuthorsOrderedPaginated(Sort sort, PageRequest page);
 
     @Query(value = "SELECT DISTINCT a FROM Author a JOIN Book b ON a.authorId = b.authorId AND b.genreId = ?1")

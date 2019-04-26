@@ -80,15 +80,18 @@ public class BookController {
     /**
      * Get array of existed Book Objects. Can sort by any other one json key. If
      * key not exists in JSON, will be thrown exception. By default sort in ascending
-     * order. Descending order is available too. This endpoint can also paginate
-     * response: just set page number to 'page' param and needed entities count on
-     * one page in 'size' param. Any others query params (expect 'sortBy', 'orderType',
-     * 'page' and 'size') will be ignored.
+     * order. Descending order is available too.
+     * <p>
+     * This endpoint can also paginate response: just set page number to 'page'
+     * param and needed entities count on one page in 'size' param. By default
+     * pagination is enabled, but you can disable it: just set 'pagination'
+     * parameter to 'false'. In this case, you get all existed Book objects
+     * from DB.
      *
      * @param sortBy    not required, by default 'bookId' -> String value.
      * @param orderType not required, by default 'asc' -> String value.
      * @param page      not required, by default '1' -> Integer value.
-     * @param size      not required, by default '5' -> Integer value.
+     * @param size      not required, by default '10' -> Integer value.
      * @return -> ResponseEntity with:
      *            array of Books |
      *            empty array |
@@ -98,7 +101,7 @@ public class BookController {
     public ResponseEntity<?> getAllBooks(
             @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @RequestParam(name = "size", defaultValue = "5") Integer size,
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "bookId") String sortBy,
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
         checkSortByKeyInGroup(sortBy);
@@ -112,16 +115,23 @@ public class BookController {
     /**
      * Get array of existed Book Objects in some Genre. Can sort by any other one
      * json key. If key not exists in JSON, will be thrown exception. By default
-     * sort in ascending order. Descending order is available too. This endpoint
-     * can also paginate response, just set page number to 'page' param and needed
-     * entities count on one page in 'size' param. Any others query params (expect
-     * 'sortBy', 'orderType', 'page' and 'size') will be ignored.
+     * sort in ascending order. Descending order is available too.
+     * <p>
+     * This endpoint can also paginate response: just set page number to 'page'
+     * param and needed entities count on one page in 'size' param. By default
+     * pagination is enabled, but you can disable it: just set 'pagination'
+     * parameter to 'false'. In this case, you get all existed Book objects
+     * in special Genre from DB.
+     * <p>
+     * Any others query params expect 'sortBy', 'orderType', 'page', 'size'
+     * and 'pagination' will be ignored.
      *
-     * @param genreId   required -> Long value
-     * @param sortBy    not required, by default 'bookId' -> String value.
-     * @param orderType not required, by default 'asc' -> String value.
-     * @param page      not required, by default '1' -> Integer value.
-     * @param size      not required, by default '5' -> Integer value.
+     * @param genreId    required -> Long value
+     * @param pagination not required, by default 'true' -> Boolean value.
+     * @param sortBy     not required, by default 'bookId' -> String value.
+     * @param orderType  not required, by default 'asc' -> String value.
+     * @param page       not required, by default '1' -> Integer value.
+     * @param size       not required, by default '10' -> Integer value.
      * @return -> ResponseEntity with:
      *            array of Books |
      *            empty array |
@@ -133,7 +143,7 @@ public class BookController {
             @PathVariable Long genreId,
             @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @RequestParam(name = "size", defaultValue = "5") Integer size,
+            @RequestParam(name = "size", defaultValue = "10") Integer size,
             @RequestParam(name = "sortBy", defaultValue = "bookId") String sortBy,
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
         checkSortByKeyInGroup(sortBy);
@@ -149,6 +159,8 @@ public class BookController {
      * json key. If key not exists in JSON, will be thrown exception. By default
      * sort in ascending order. Descending order is available too. Any others query
      * params (expect 'sortBy', 'orderType') will be ignored.
+     * <p>
+     * Any others query params expect 'sortBy' and 'orderType' will be ignored.
      *
      * @param authorId  required -> Long value
      * @param sortBy    not required, by default 'bookId' -> String value.

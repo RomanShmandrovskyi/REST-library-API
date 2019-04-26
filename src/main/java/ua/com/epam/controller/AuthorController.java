@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.author.AuthorDto;
+import ua.com.epam.entity.dto.author.AuthorGroupByBooksDto;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
 import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
 import ua.com.epam.entity.exception.type.InvalidPageValueException;
@@ -72,25 +73,80 @@ public class AuthorController {
      */
     @GetMapping(value = "/book/{bookId}/author",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getBookAuthor(
+    public ResponseEntity<?> getAuthorOfBook(
             @PathVariable Long bookId) {
         AuthorDto response = authorService.findAuthorOfBook(bookId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     /**
-     * Get array of filtered Author objects. It is possible to set one custom
-     * 'sortBy' parameter and order type ('asc' or 'desc'). All unsuitable
-     * parameters that not exist in JSON, will produce a fault.
+     * Get Author grouped by books count. Object will contains next values:
+     * 'authorId', 'authorName' (first + second), 'booksCount'.
+     *
+     * @param authorId required ->
+     * @return -> ResponseEntity with:
+     *            AuthorGroupByBooks object |
+     *            404 - Author Not Found
+     *            400 - Bad Request
+     */
+    @GetMapping(value = "/author/{authorId}/groupByBooks",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAuthorGroupedByItBooks(
+            @PathVariable Long authorId) {
+        AuthorGroupByBooksDto response = authorService.findAuthorWithBooksCount(authorId);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Get array of Author grouped by books count. Object will contains next
+     * values: 'authorId', 'authorName' (first + second), 'booksCount'.
      * <p>
      * This endpoint can also paginate response: just set page number to 'page'
      * param and needed entities count on one page in 'size' param. By default
-     * pagination is enabled, but you can disable it. In this case, if there
-     * aren't any filter parameters, you get all existed Authors from DB.
+     * pagination is enabled, but you can disable it: just set 'pagination'
+     * parameter to 'false'. In this case, you get all existed Authors grouped
+     * by books count from DB.
+     * <p>
+     * Any others query params expect 'pagination', 'page' and 'size' will be
+     * ignored.
      *
-     * @param pagination not required, by default 'true' -> Boolean value
-     * @param page       not required, by default '1' -> Integer value
-     * @param size       not required, by default '10' -> Integer value
+     * @param pagination not required, by default 'true' -> Boolean value.
+     * @param page       not required, by default '1' -> Integer value.
+     * @param size       not required, by default '10' -> Integer value.
+     * @return -> ResponseEntity with:
+     *            AuthorGroupByBooks object |
+     *            empty array |
+     *            400 - Bad Request.
+     */
+    @GetMapping(value = "/authors/groupByBooks",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAllAuthorGroupedByItBooks(
+            @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        checkPaginateParams(page, size);
+
+        List<AuthorGroupByBooksDto> response = authorService.findAllAuthorWithBooksCount(page, size, pagination);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    /**
+     * Get array of Author objects. It is possible to set one custom 'sortBy'
+     * parameter and order type ('asc' or 'desc'). All unsuitable parameters
+     * that not exist in JSON, will produce a fault.
+     * <p>
+     * This endpoint can also paginate response: just set page number to 'page'
+     * param and needed entities count on one page in 'size' param. By default
+     * pagination is enabled, but you can disable it: just set 'pagination'
+     * parameter to 'false'. In this case, you get all existed Author objects
+     * from DB.
+     * <p>
+     * Any others query params expect 'sortBy', 'orderType', 'page', 'size'
+     * and 'pagination' will be ignored.
+     *
+     * @param pagination not required, by default 'true' -> Boolean value.
+     * @param page       not required, by default '1' -> Integer value.
+     * @param size       not required, by default '10' -> Integer value.
      * @param sortBy     not required, by default 'authorId' -> String value.
      * @param orderType  not required, by default 'asc' -> String value.
      * @return -> ResponseEntity with:
@@ -125,6 +181,9 @@ public class AuthorController {
      * param (this value must positive and grater that zero) and needed entities
      * count on one page in 'size' param. By default pagination is enabled, but
      * you can disable it. In this case, you get all existed Authors from DB.
+     * <p>
+     * Any others query params expect 'sortBy', 'orderType', 'page', 'size'
+     * and 'pagination' will be ignored.
      *
      * @param genreId    required -> Long value
      * @param pagination not required, by default 'true' -> Boolean value.

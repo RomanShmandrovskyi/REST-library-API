@@ -82,16 +82,21 @@ public class GenreController {
     /**
      * Get array of existed Genre Objects. Can sort by any other one json
      * key. If key not exists in JSON, will be thrown exception. By default
-     * sort in ascending order. Descending order is available too. This
-     * endpoint can also paginate response, just set page number to 'page'
-     * param and needed entities count on one page in 'size' param. Any
-     * others query params (expect 'sortBy', 'orderType', 'page' and 'size')
+     * sort in ascending order. Descending order is available too.
+     * <p>
+     * This endpoint can also paginate response: just set page number to 'page'
+     * param and needed entities count on one page in 'size' param. By default
+     * pagination is enabled, but you can disable it: just set 'pagination'
+     * parameter to 'false'. In this case, you get all existed Genre objects
+     * in special Genre from DB.
+     * <p>
+     * Any others query params (expect 'sortBy', 'orderType', 'page' and 'size')
      * will be ignored.
      *
-     * @param sortBy    not required, by default - 'genreId' -> Long value
-     * @param orderType not required, by default - 'asc' -> String value
-     * @param page      not required, by default - '1' -> Integer value
-     * @param size      not required, by default - '5' -> Integer value
+     * @param sortBy    not required, by default - 'genreId' -> Long value.
+     * @param orderType not required, by default - 'asc' -> String value.
+     * @param page      not required, by default - '1' -> Integer value.
+     * @param size      not required, by default - '10' -> Integer value.
      * @return -> ResponseEntity with:
      *            paginated array of Genre objects |
      *            empty array |
@@ -104,7 +109,7 @@ public class GenreController {
             @RequestParam(name = "sortBy", defaultValue = "genreId") String sortBy,
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @RequestParam(name = "size", defaultValue = "5") Integer size) {
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
         checkPaginateParams(page, size);
@@ -114,11 +119,20 @@ public class GenreController {
     }
 
     /**
+     * Get all Genres that special Author write in. Can sort by any other one
+     * json key. If key not exists in JSON, will be thrown exception. By default
+     * sort in ascending order. Descending order is available too.
+     * <p>
+     * Any others query params (expect 'sortBy', 'orderType') will be ignored.
      *
-     * @param authorId
-     * @param sortBy
-     * @param orderType
-     * @return
+     * @param authorId  required -> Long value.
+     * @param sortBy    not required, by default 'genreId' -> String value.
+     * @param orderType not required, by default 'genreId' -> String value.
+     * @return -> ResponseEntity with:
+     *            array of Genre objects |
+     *            empty array |
+     *            404 - Author Not Found |
+     *            400 - Bad Request.
      */
     @GetMapping(value = "/author/{authorId}/genres",
             produces = MediaType.APPLICATION_JSON_VALUE)

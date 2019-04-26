@@ -5,7 +5,9 @@ import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
 import ua.com.epam.entity.Book;
 import ua.com.epam.entity.Genre;
+import ua.com.epam.entity.GroupByBooksCount;
 import ua.com.epam.entity.dto.author.AuthorDto;
+import ua.com.epam.entity.dto.author.AuthorGroupByBooksDto;
 import ua.com.epam.entity.dto.author.SimpleAuthorDto;
 import ua.com.epam.entity.dto.book.BookDto;
 import ua.com.epam.entity.dto.book.BookWithAuthorAndGenreDto;
@@ -18,6 +20,7 @@ import ua.com.epam.service.mapper.converter.author.AuthorToSimpleAuthorDto;
 import ua.com.epam.service.mapper.converter.book.BookToBookDto;
 import ua.com.epam.service.mapper.converter.genre.GenreToGenreDto;
 import ua.com.epam.service.mapper.converter.genre.GenreToSimpleGenreDto;
+import ua.com.epam.service.mapper.converter.group.GroupByBooksToAuthor;
 
 @Service
 public class ModelToDtoMapper {
@@ -32,6 +35,8 @@ public class ModelToDtoMapper {
         modelMapper.addConverter(new GenreToSimpleGenreDto());
 
         modelMapper.addConverter(new BookToBookDto());
+
+        modelMapper.addConverter(new GroupByBooksToAuthor());
     }
 
     public AuthorDto mapAuthorToAuthorDto(Author author) {
@@ -44,6 +49,10 @@ public class ModelToDtoMapper {
 
     public BookDto mapBookToBookDto(Book book) {
         return modelMapper.map(book, BookDto.class);
+    }
+
+    public AuthorGroupByBooksDto mapGroupModelToAuthorGroup(GroupByBooksCount group) {
+        return modelMapper.map(group, AuthorGroupByBooksDto.class);
     }
 
     public BookWithAuthorAndGenreDto getBookWithAuthorAndGenreDto(Book book, Author author, Genre genre) {

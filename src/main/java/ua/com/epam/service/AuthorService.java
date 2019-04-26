@@ -5,7 +5,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
+import ua.com.epam.entity.GroupByBooksCount;
 import ua.com.epam.entity.dto.author.AuthorDto;
+import ua.com.epam.entity.dto.author.AuthorGroupByBooksDto;
 import ua.com.epam.entity.exception.IdMismatchException;
 import ua.com.epam.entity.exception.author.AuthorAlreadyExistsException;
 import ua.com.epam.entity.exception.author.AuthorNotFoundException;
@@ -30,6 +32,9 @@ public class AuthorService {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private GroupByBooksRepository group;
 
     @Autowired
     private ModelToDtoMapper toDtoMapper;
@@ -74,7 +79,7 @@ public class AuthorService {
 
         if (pagination) {
             return authorRepository
-                    .getAllAuthorsOrderedPaginated(Sort.by(orderType, sortParam), PageRequest.of(page, size))
+                    .getAllAuthorsOrderedPaginated(Sort.by(orderType, sortParam), PageRequest.of(page - 1, size))
                     .stream()
                     .map(toDtoMapper::mapAuthorToAuthorDto)
                     .collect(Collectors.toList());
@@ -97,7 +102,7 @@ public class AuthorService {
 
         if (pageable) {
             return authorRepository
-                    .getAllAuthorsInGenreOrderedPaginated(genreId, Sort.by(orderType, sortParameter), PageRequest.of(page, size))
+                    .getAllAuthorsInGenreOrderedPaginated(genreId, Sort.by(orderType, sortParameter), PageRequest.of(page - 1, size))
                     .stream()
                     .map(toDtoMapper::mapAuthorToAuthorDto)
                     .collect(Collectors.toList());
@@ -107,6 +112,32 @@ public class AuthorService {
                 .getAllAuthorsInGenreOrdered(genreId, Sort.by(orderType, sortParameter))
                 .stream()
                 .map(toDtoMapper::mapAuthorToAuthorDto)
+                .collect(Collectors.toList());
+    }
+
+    public AuthorGroupByBooksDto findAuthorWithBooksCount(long authorId) {
+        Optional<GroupByBooksCount> opt = group.getAuthorGroupByBooks(authorId);
+
+        if (!opt.isPresent()) {
+            throw new AuthorNotFoundException(authorId);
+        }
+
+        GroupByBooksCount group = opt.get();
+
+        return toDtoMapper.mapGroupModelToAuthorGroup(group);
+    }
+
+    public List<AuthorGroupByBooksDto> findAllAuthorWithBooksCount(int page, int size, boolean pagination) {
+        if (pagination) {
+            return group.getAllAuthorsGroupByBooksPaginated(PageRequest.of(page - 1, size))
+                    .stream()
+                    .map(toDtoMapper::mapGroupModelToAuthorGroup)
+                    .collect(Collectors.toList());
+        }
+
+        return group.getAllAuthorsGroupByBooks()
+                .stream()
+                .map(toDtoMapper::mapGroupModelToAuthorGroup)
                 .collect(Collectors.toList());
     }
 

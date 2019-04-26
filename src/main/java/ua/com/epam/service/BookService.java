@@ -82,7 +82,7 @@ public class BookService {
 
         if (pageable) {
             return bookRepository
-                    .getAllBooksOrderedPaginated(Sort.by(orderType, sortParameter), PageRequest.of(page, size))
+                    .getAllBooksOrderedPaginated(Sort.by(orderType, sortParameter), PageRequest.of(page - 1, size))
                     .stream()
                     .map(toDtoMapper::mapBookToBookDto)
                     .collect(Collectors.toList());
@@ -105,7 +105,7 @@ public class BookService {
 
         if (pageable) {
             return bookRepository
-                    .getAllBooksInGenreOrderedPaginated(genreId, Sort.by(orderType, sortParameter), PageRequest.of(page, size))
+                    .getAllBooksInGenreOrderedPaginated(genreId, Sort.by(orderType, sortParameter), PageRequest.of(page - 1, size))
                     .stream()
                     .map(toDtoMapper::mapBookToBookDto)
                     .collect(Collectors.toList());
