@@ -88,13 +88,13 @@ public class GenreService {
 
     public List<GenreGroupByBooksDto> findAllGenresWithBooksCount(int page, int size, boolean pagination) {
         if (pagination) {
-            return group.getAllAuthorsGroupByBooksPaginated(PageRequest.of(page - 1, size))
+            return group.getAllGenresGroupByBooksPaginated(PageRequest.of(page - 1, size))
                     .stream()
                     .map(toDtoMapper::mapGroupModelToGenreGroup)
                     .collect(Collectors.toList());
         }
 
-        return group.getAllAuthorsGroupByBooks()
+        return group.getAllGenresGroupByBooks()
                 .stream()
                 .map(toDtoMapper::mapGroupModelToGenreGroup)
                 .collect(Collectors.toList());
