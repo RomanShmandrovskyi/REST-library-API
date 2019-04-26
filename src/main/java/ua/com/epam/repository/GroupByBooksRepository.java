@@ -15,8 +15,11 @@ public interface GroupByBooksRepository extends JpaRepository<GroupByBooksCount,
     @Query(value = "SELECT NEW GroupByBooksCount(g.genreId, g.genreName, COUNT(g.genreId)) FROM Genre g JOIN Book b ON g.genreId = b.genreId AND g.genreId = ?1 GROUP BY g.genreId")
     Optional<GroupByBooksCount> getGenreGroupByBooks(long genreId);
 
-    @Query(value = "SELECT NEW GroupByBooksCount(g.genreId, g.genreName, COUNT(g.genreId)) FROM Genre g JOIN Book b ON g.genreId = b.genreId GROUP BY g.genreId")
-    List<GroupByBooksCount> getAllGenresGroupByBooks(PageRequest pageRequest);
+    @Query(value = "SELECT NEW GroupByBooksCount(g.genreId, g.genreName, COUNT(g.genreId)) FROM Genre g JOIN Book b ON g.genreId = b.genreId GROUP BY g.genreId ORDER BY COUNT(g.genreId) ASC")
+    List<GroupByBooksCount> getAllGenresGroupByBooks();
+
+    @Query(value = "SELECT NEW GroupByBooksCount(g.genreId, g.genreName, COUNT(g.genreId)) FROM Genre g JOIN Book b ON g.genreId = b.genreId GROUP BY g.genreId ORDER BY COUNT(g.genreId) ASC")
+    List<GroupByBooksCount> getAllGenresGroupByBooksPaginated(PageRequest pageRequest);
 
     @Query(value = "SELECT NEW GroupByBooksCount(a.authorId, CONCAT(a.firstName, ' ', a.secondName), COUNT(a.authorId)) FROM Author a JOIN Book b ON a.authorId = b.authorId AND a.authorId = ?1 GROUP BY a.authorId")
     Optional<GroupByBooksCount> getAuthorGroupByBooks(long authorId);

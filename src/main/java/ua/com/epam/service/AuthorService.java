@@ -127,7 +127,7 @@ public class AuthorService {
         return toDtoMapper.mapGroupModelToAuthorGroup(group);
     }
 
-    public List<AuthorGroupByBooksDto> findAllAuthorWithBooksCount(int page, int size, boolean pagination) {
+    public List<AuthorGroupByBooksDto> findAllAuthorsWithBooksCount(int page, int size, boolean pagination) {
         if (pagination) {
             return group.getAllAuthorsGroupByBooksPaginated(PageRequest.of(page - 1, size))
                     .stream()

@@ -11,6 +11,7 @@ import ua.com.epam.entity.dto.author.AuthorGroupByBooksDto;
 import ua.com.epam.entity.dto.author.SimpleAuthorDto;
 import ua.com.epam.entity.dto.book.BookDto;
 import ua.com.epam.entity.dto.book.BookWithAuthorAndGenreDto;
+import ua.com.epam.entity.dto.book.GenreGroupByBooksDto;
 import ua.com.epam.entity.dto.book.nested.AdditionalDto;
 import ua.com.epam.entity.dto.book.nested.SizeDto;
 import ua.com.epam.entity.dto.genre.GenreDto;
@@ -21,6 +22,7 @@ import ua.com.epam.service.mapper.converter.book.BookToBookDto;
 import ua.com.epam.service.mapper.converter.genre.GenreToGenreDto;
 import ua.com.epam.service.mapper.converter.genre.GenreToSimpleGenreDto;
 import ua.com.epam.service.mapper.converter.group.GroupByBooksToAuthor;
+import ua.com.epam.service.mapper.converter.group.GroupByBooksToGenre;
 
 @Service
 public class ModelToDtoMapper {
@@ -37,6 +39,7 @@ public class ModelToDtoMapper {
         modelMapper.addConverter(new BookToBookDto());
 
         modelMapper.addConverter(new GroupByBooksToAuthor());
+        modelMapper.addConverter(new GroupByBooksToGenre());
     }
 
     public AuthorDto mapAuthorToAuthorDto(Author author) {
@@ -53,6 +56,10 @@ public class ModelToDtoMapper {
 
     public AuthorGroupByBooksDto mapGroupModelToAuthorGroup(GroupByBooksCount group) {
         return modelMapper.map(group, AuthorGroupByBooksDto.class);
+    }
+
+    public GenreGroupByBooksDto mapGroupModelToGenreGroup(GroupByBooksCount group) {
+        return modelMapper.map(group, GenreGroupByBooksDto.class);
     }
 
     public BookWithAuthorAndGenreDto getBookWithAuthorAndGenreDto(Book book, Author author, Genre genre) {

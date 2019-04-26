@@ -63,7 +63,8 @@ public class AuthorController {
     }
 
     /**
-     * Return Author of special book using 'bookId'. Return a single Author object.
+     * Return Author of special book using 'bookId'. Return a single Author
+     * object.
      *
      * @param bookId required -> Long value.
      * @return -> ResponseEntity with:
@@ -80,10 +81,10 @@ public class AuthorController {
     }
 
     /**
-     * Get Author grouped by books count. Object will contains next values:
-     * 'authorId', 'authorName' (first + second), 'booksCount'.
+     * Get special Author grouped by books count. Object will contains next
+     * values: 'authorId', 'authorName' (first + second), 'booksCount'.
      *
-     * @param authorId required ->
+     * @param authorId required -> Long value.
      * @return -> ResponseEntity with:
      *            AuthorGroupByBooks object |
      *            404 - Author Not Found
@@ -120,13 +121,13 @@ public class AuthorController {
      */
     @GetMapping(value = "/authors/groupByBooks",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllAuthorGroupedByItBooks(
+    public ResponseEntity<?> getAllAuthorsGroupedByItBooks(
             @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @RequestParam(name = "size", defaultValue = "10") Integer size) {
         checkPaginateParams(page, size);
 
-        List<AuthorGroupByBooksDto> response = authorService.findAllAuthorWithBooksCount(page, size, pagination);
+        List<AuthorGroupByBooksDto> response = authorService.findAllAuthorsWithBooksCount(page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
