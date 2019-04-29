@@ -2,6 +2,9 @@ package ua.com.epam;
 
 import com.github.javafaker.Faker;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,6 +16,7 @@ import java.util.stream.IntStream;
 public class DataIngestion {
     public static void main(String[] args) throws ParseException {
         Faker f = new Faker();
+        List<String> bashLines = new ArrayList<>();
         String doPost = "curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d \"%s\" '%s'";
 
         String authorPostEnd = "localhost:8080/api/library/author/new";
@@ -27,7 +31,7 @@ public class DataIngestion {
             if (!authorIds.contains(id)) authorIds.add(id);
         }
 
-        String[] nationalitites = {"Albanian", "American", "Australian", "Austrian", "Belgian",
+        String[] nationalities = {"Albanian", "American", "Australian", "Austrian", "Belgian",
                 "British", "Bulgarian", "Canadian", "Chinese", "Czech", "Dutch", "Egyptian",
                 "French", "German", "Greek", "Indian", "Irish", "Lithuanian", "Malaysian",
                 "Mexican", "Moldovan", "New Zealander", "Romanian", "Scottish", "Spanish",
@@ -45,10 +49,10 @@ public class DataIngestion {
                 .map(id -> getAuthorJSON(
                         id,
                         f.name().firstName(), f.name().lastName(),
-                        nationalitites[new Random().nextInt(nationalitites.length)],
+                        nationalities[new Random().nextInt(nationalities.length)],
                         formatter.format(f.date().between(from, to)), f.address().country(), f.address().city(),
                         f.lorem().paragraph()))
-                .forEach(o -> System.out.println(String.format(doPost, o, authorPostEnd)));
+                .forEach(o -> bashLines.add(String.format(doPost, o, authorPostEnd)));
 
         //genre
         //generate all possible genre names
@@ -67,7 +71,7 @@ public class DataIngestion {
 
         IntStream.range(0, genreIds.size())
                 .mapToObj(i -> getGenreJSON(genreIds.get(i), genreNames.get(i), f.lorem().paragraph()))
-                .forEach(o -> System.out.println(String.format(doPost, o, genrePostEnd)));
+                .forEach(o -> bashLines.add(String.format(doPost, o, genrePostEnd)));
 
         //book
         List<Long> bookIds = new ArrayList<>();
@@ -88,15 +92,21 @@ public class DataIngestion {
                         f.number().randomDouble(1, 5, 40),
                         f.number().randomDouble(1, 5, 40),
                         f.number().numberBetween(1970, 2019)))
-                .forEach(o -> System.out.println(
-                        String.format(doPost, o, String.format(
-                                bookPostEnd,
-                                authorIds.get(new Random().nextInt(authorIds.size() - 1)),
-                                genreIds.get(new Random().nextInt(genreIds.size() - 1))))));
+                .forEach(o -> bashLines.add(String.format(doPost, o, String.format(
+                        bookPostEnd,
+                        authorIds.get(new Random().nextInt(authorIds.size() - 1)),
+                        genreIds.get(new Random().nextInt(genreIds.size() - 1))))));
+
+        File script = new File("src/main/resources/addData.sh");
+        try {
+            script.createNewFile();
+            Files.write(script.toPath(), bashLines);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    private static String getAuthorJSON(long authorId, String first, String second,
-                                        String nationality, String birthDate, String country, String city, String descr) {
+    private static String getAuthorJSON(long authorId, String first, String second, String nationality, String birthDate, String country, String city, String descr) {
         return "{" +
                 "\\\"authorId\\\":" + authorId + "," +
                 "\\\"authorName\\\":{" +

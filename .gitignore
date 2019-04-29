@@ -1,4 +1,5 @@
 /.idea
 /target
-restAPIlibrary.iml
+*.iml
 /src/test
+/src/main/resources/*.sh

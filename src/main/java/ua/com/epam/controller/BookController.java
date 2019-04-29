@@ -78,9 +78,9 @@ public class BookController {
     }
 
     /**
-     * Get array of existed Book Objects. Can sort by any other one json key. If
-     * key not exists in JSON, will be thrown exception. By default sort in ascending
-     * order. Descending order is available too.
+     * Get array of existed Book Objects. Can sort by any other one json key.
+     * If key not exists in JSON, will be thrown exception. By default sort in
+     * ascending order. Descending order is available too.
      * <p>
      * This endpoint can also paginate response: just set page number to 'page'
      * param and needed entities count on one page in 'size' param. By default

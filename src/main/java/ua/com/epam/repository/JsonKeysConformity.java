@@ -20,7 +20,7 @@ public enum JsonKeysConformity {
 
     BOOK_ID("bookId", "bookId"),
     BOOK_NAME("bookName", "bookName"),
-    BOOK_LANGUAGE("bookLang", "bookLang"),
+    BOOK_LANGUAGE("bookLanguage", "bookLang"),
     BOOK_DESCRIPTION("bookDescription", "description"),
     BOOK_PAGE_COUNT("additional.pageCount", "pageCount"),
     BOOK_HEIGHT("additional.size.height", "bookHeight"),
