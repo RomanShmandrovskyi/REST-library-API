@@ -7,11 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.book.BookDto;
 import ua.com.epam.entity.dto.book.BookWithAuthorAndGenreDto;
-import ua.com.epam.entity.exception.NoSuchJsonKeyException;
-import ua.com.epam.entity.exception.book.DimensionNotExistsException;
-import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
-import ua.com.epam.entity.exception.type.InvalidPageValueException;
-import ua.com.epam.entity.exception.type.InvalidSizeValueException;
+import ua.com.epam.exception.entity.NoSuchJsonKeyException;
+import ua.com.epam.exception.entity.book.DimensionNotExistsException;
+import ua.com.epam.exception.entity.type.InvalidOrderTypeException;
+import ua.com.epam.exception.entity.type.InvalidPageValueException;
+import ua.com.epam.exception.entity.type.InvalidSizeValueException;
 import ua.com.epam.repository.JsonKeysConformity;
 import ua.com.epam.service.BookService;
 
@@ -85,7 +85,7 @@ public class BookController {
     }
 
     /**
-     * Get array of existed Book Objects. Can sort by any other one json key.
+     * Get array of existed Book Objects. Can sort by any type one json key.
      * If key not exists in JSON, will be thrown exception. By default sort in
      * ascending order. Descending order is available too.
      * <p>
@@ -133,7 +133,7 @@ public class BookController {
     }
 
     /**
-     * Get array of existed Book Objects in some Genre. Can sort by any other one
+     * Get array of existed Book Objects in some Genre. Can sort by any type one
      * json key. If key not exists in JSON, will be thrown exception. By default
      * sort in ascending order. Descending order is available too.
      * <p>
@@ -175,7 +175,7 @@ public class BookController {
     }
 
     /**
-     * Get array of existed Book Objects of some Author. Can sort by any other one
+     * Get array of existed Book Objects of some Author. Can sort by any type one
      * json key. If key not exists in JSON, will be thrown exception. By default
      * sort in ascending order. Descending order is available too. Any others query
      * params (expect 'sortBy', 'orderType') will be ignored.
@@ -250,7 +250,7 @@ public class BookController {
     /**
      * Update existed Book. Consume full object with needed updated JSON
      * fields. Path param 'bookId' must be the same as in body to update.
-     * In other way will be thrown exception.
+     * In type way will be thrown exception.
      *
      * @param bookId      required -> Long value.
      * @param updatedBook not required -> JSON body with Book object to update

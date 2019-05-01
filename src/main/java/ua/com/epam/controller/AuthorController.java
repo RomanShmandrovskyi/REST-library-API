@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.author.AuthorDto;
 import ua.com.epam.entity.dto.author.AuthorGroupByBooksDto;
-import ua.com.epam.entity.exception.NoSuchJsonKeyException;
-import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
-import ua.com.epam.entity.exception.type.InvalidPageValueException;
-import ua.com.epam.entity.exception.type.InvalidSizeValueException;
+import ua.com.epam.exception.entity.NoSuchJsonKeyException;
+import ua.com.epam.exception.entity.type.InvalidOrderTypeException;
+import ua.com.epam.exception.entity.type.InvalidPageValueException;
+import ua.com.epam.exception.entity.type.InvalidSizeValueException;
 import ua.com.epam.repository.JsonKeysConformity;
 import ua.com.epam.service.AuthorService;
 
@@ -237,7 +237,7 @@ public class AuthorController {
 
     /**
      * Update existed Author. Consume full object with updated JSON fields.
-     * Path param 'authorId' must be the same as in body to update. In other
+     * Path param 'authorId' must be the same as in body to update. In type
      * way will be thrown exception.
      *
      * @param authorId      required -> Long value

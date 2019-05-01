@@ -7,10 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.book.GenreGroupByBooksDto;
 import ua.com.epam.entity.dto.genre.GenreDto;
-import ua.com.epam.entity.exception.NoSuchJsonKeyException;
-import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
-import ua.com.epam.entity.exception.type.InvalidPageValueException;
-import ua.com.epam.entity.exception.type.InvalidSizeValueException;
+import ua.com.epam.exception.entity.NoSuchJsonKeyException;
+import ua.com.epam.exception.entity.type.InvalidOrderTypeException;
+import ua.com.epam.exception.entity.type.InvalidPageValueException;
+import ua.com.epam.exception.entity.type.InvalidSizeValueException;
 import ua.com.epam.repository.JsonKeysConformity;
 import ua.com.epam.service.GenreService;
 
@@ -129,7 +129,7 @@ public class GenreController {
     }
 
     /**
-     * Get array of existed Genre Objects. Can sort by any other one json
+     * Get array of existed Genre Objects. Can sort by any type one json
      * key. If key not exists in JSON, will be thrown exception. By default
      * sort in ascending order. Descending order is available too.
      * <p>
@@ -168,7 +168,7 @@ public class GenreController {
     }
 
     /**
-     * Get all Genres that special Author write in. Can sort by any other one
+     * Get all Genres that special Author write in. Can sort by any type one
      * json key. If key not exists in JSON, will be thrown exception. By default
      * sort in ascending order. Descending order is available too.
      * <p>
@@ -218,7 +218,7 @@ public class GenreController {
 
     /**
      * Update existed Genre. Consume full object with updated JSON fields.
-     * Path param 'genreId' must be the same as in body to update. In other
+     * Path param 'genreId' must be the same as in body to update. In type
      * way will be thrown exception.
      *
      * @param genreId     required -> Long value

@@ -1,10 +1,9 @@
 package ua.com.epam.service.util.deserializer;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import ua.com.epam.entity.exception.type.InvalidTypeException;
+import ua.com.epam.exception.entity.type.InvalidTypeException;
 
 import java.io.IOException;
 

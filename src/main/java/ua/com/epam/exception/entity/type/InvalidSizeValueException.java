@@ -1,4 +1,4 @@
-package ua.com.epam.entity.exception.type;
+package ua.com.epam.exception.entity.type;
 
 public class InvalidSizeValueException extends RuntimeException {
 }

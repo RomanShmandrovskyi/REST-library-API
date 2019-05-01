@@ -1,4 +1,4 @@
-package ua.com.epam.entity;
+package ua.com.epam.exception.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

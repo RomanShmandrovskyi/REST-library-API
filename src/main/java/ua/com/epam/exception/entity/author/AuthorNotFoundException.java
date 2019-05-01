@@ -1,4 +1,4 @@
-package ua.com.epam.entity.exception.author;
+package ua.com.epam.exception.entity.author;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
