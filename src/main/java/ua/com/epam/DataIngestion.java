@@ -120,7 +120,7 @@ public class DataIngestion {
                 "\\\"country\\\":\\\"" + country + "\\\"," +
                 "\\\"city\\\":\\\"" + city + "\\\"" +
                 "}," +
-                "\\\"description\\\":\\\"" + descr + "\\\"" +
+                "\\\"authorDescription\\\":\\\"" + descr + "\\\"" +
                 "}";
     }
 
@@ -128,7 +128,7 @@ public class DataIngestion {
         return "{" +
                 "\\\"genreId\\\":" + genreId + "," +
                 "\\\"genreName\\\":\\\"" + genreName + "\\\"," +
-                "\\\"description\\\":\\\"" + genreDescription + "\\\"" +
+                "\\\"genreDescription\\\":\\\"" + genreDescription + "\\\"" +
                 "}";
     }
 
@@ -137,7 +137,7 @@ public class DataIngestion {
                 "\\\"bookId\\\":" + bookId + "," +
                 "\\\"bookName\\\":\\\"" + bookName + "\\\"," +
                 "\\\"bookLanguage\\\":\\\"" + bookLang + "\\\"," +
-                "\\\"description\\\":\\\"" + bookDescr + "\\\"," +
+                "\\\"bookDescription\\\":\\\"" + bookDescr + "\\\"," +
                 "\\\"additional\\\":{\\\"pageCount\\\":" + pageCount + "," +
                 "\\\"size\\\":{\\\"height\\\":" + height + "," +
                 "\\\"width\\\":" + width + "," +
