@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -22,6 +23,7 @@ import ua.com.epam.entity.exception.author.AuthorNotFoundException;
 import ua.com.epam.entity.exception.author.BooksInAuthorArePresentException;
 import ua.com.epam.entity.exception.book.BookAlreadyExistsException;
 import ua.com.epam.entity.exception.book.BookNotFoundException;
+import ua.com.epam.entity.exception.book.DimensionNotExistsException;
 import ua.com.epam.entity.exception.genre.BooksInGenreArePresentException;
 import ua.com.epam.entity.exception.genre.GenreAlreadyExistsException;
 import ua.com.epam.entity.exception.genre.GenreNameAlreadyExistsException;
@@ -43,7 +45,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = InvalidSizeValueException.class)
     public ResponseEntity<ExceptionResponse> handleInvalidSizeValue() {
-        String message = "Value of 'size' parameter must be positive!";
+        String message = "Value of 'size' parameter must be positive and grater that zero!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
@@ -128,6 +130,19 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
                         String.format(message, nsjpe.getPropName())),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = DimensionNotExistsException.class)
+    public ResponseEntity<ExceptionResponse> handleNoSuchJsonProperty(DimensionNotExistsException dnee) {
+        String message = "Parameter 'dimension' must be 'volume' or 'square'!";
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        message),
                 HttpStatus.BAD_REQUEST);
     }
 
@@ -291,5 +306,16 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.METHOD_NOT_ALLOWED.getReasonPhrase(),
                         String.format(message, ex.getMethod(), request.getDescription(false).split("=")[1])),
                 HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),
+                        HttpStatus.UNSUPPORTED_MEDIA_TYPE.getReasonPhrase(),
+                        ex.getMessage()),
+        HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 }

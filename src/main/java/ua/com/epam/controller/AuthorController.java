@@ -40,7 +40,7 @@ public class AuthorController {
         if (page <= 0) {
             throw new InvalidPageValueException();
         }
-        if (size < 0) {
+        if (size <= 0) {
             throw new InvalidSizeValueException();
         }
     }

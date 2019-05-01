@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.book.BookDto;
 import ua.com.epam.entity.dto.book.BookWithAuthorAndGenreDto;
 import ua.com.epam.entity.exception.NoSuchJsonKeyException;
+import ua.com.epam.entity.exception.book.DimensionNotExistsException;
 import ua.com.epam.entity.exception.type.InvalidOrderTypeException;
 import ua.com.epam.entity.exception.type.InvalidPageValueException;
 import ua.com.epam.entity.exception.type.InvalidSizeValueException;
@@ -40,8 +41,14 @@ public class BookController {
         if (page <= 0) {
             throw new InvalidPageValueException();
         }
-        if (size < 0) {
+        if (size <= 0) {
             throw new InvalidSizeValueException();
+        }
+    }
+
+    private void checkDimension(String dimension) {
+        if (!dimension.equals("volume") && !dimension.equals("square")) {
+            throw new DimensionNotExistsException();
         }
     }
 
@@ -109,6 +116,19 @@ public class BookController {
         checkPaginateParams(page, size);
 
         List<BookDto> response = bookService.findAllBooks(sortBy, orderType, page, size, pagination);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/books/{dimension}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getAllBooksSortedInSomeDimension(
+            @PathVariable String dimension,
+            @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
+            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "size", defaultValue = "10") Integer size) {
+        checkPaginateParams(page, size);
+        checkDimension(dimension);
+
+        List<BookDto> response = bookService.findAllBooksSortedByDimension(dimension, page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -223,7 +243,7 @@ public class BookController {
             @PathVariable Long authorId,
             @PathVariable Long genreId,
             @RequestBody @Valid BookDto newBook) {
-        BookWithAuthorAndGenreDto response = bookService.addNewBook(authorId, genreId, newBook);
+        BookDto response = bookService.addNewBook(authorId, genreId, newBook);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
+import ua.com.epam.entity.Book;
 import ua.com.epam.entity.GroupByBooksCount;
 import ua.com.epam.entity.dto.author.AuthorDto;
 import ua.com.epam.entity.dto.author.AuthorGroupByBooksDto;
@@ -77,17 +78,15 @@ public class AuthorService {
         Sort.Direction orderType = getSortDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
+        List<Author> authors;
+
         if (pagination) {
-            return authorRepository
-                    .getAllAuthorsOrderedPaginated(Sort.by(orderType, sortParam), PageRequest.of(page - 1, size))
-                    .stream()
-                    .map(toDtoMapper::mapAuthorToAuthorDto)
-                    .collect(Collectors.toList());
+            authors = authorRepository.getAllAuthorsOrderedPaginated(Sort.by(orderType, sortParam), PageRequest.of(page - 1, size));
+        } else {
+            authors = authorRepository.getAllAuthorsOrdered(Sort.by(orderType, sortParam));
         }
 
-        return authorRepository
-                .getAllAuthorsOrdered(Sort.by(orderType, sortParam))
-                .stream()
+        return authors.stream()
                 .map(toDtoMapper::mapAuthorToAuthorDto)
                 .collect(Collectors.toList());
     }
@@ -100,17 +99,15 @@ public class AuthorService {
         Sort.Direction orderType = getSortDirection(order);
         String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
+        List<Author> authors;
+
         if (pageable) {
-            return authorRepository
-                    .getAllAuthorsInGenreOrderedPaginated(genreId, Sort.by(orderType, sortParameter), PageRequest.of(page - 1, size))
-                    .stream()
-                    .map(toDtoMapper::mapAuthorToAuthorDto)
-                    .collect(Collectors.toList());
+            authors = authorRepository.getAllAuthorsInGenreOrderedPaginated(genreId, Sort.by(orderType, sortParameter), PageRequest.of(page - 1, size));
+        } else {
+            authors = authorRepository.getAllAuthorsInGenreOrdered(genreId, Sort.by(orderType, sortParameter));
         }
 
-        return authorRepository
-                .getAllAuthorsInGenreOrdered(genreId, Sort.by(orderType, sortParameter))
-                .stream()
+        return authors.stream()
                 .map(toDtoMapper::mapAuthorToAuthorDto)
                 .collect(Collectors.toList());
     }
@@ -128,15 +125,15 @@ public class AuthorService {
     }
 
     public List<AuthorGroupByBooksDto> findAllAuthorsWithBooksCount(int page, int size, boolean pagination) {
+        List<GroupByBooksCount> groupByBooksCount;
+
         if (pagination) {
-            return group.getAllAuthorsGroupByBooksPaginated(PageRequest.of(page - 1, size))
-                    .stream()
-                    .map(toDtoMapper::mapGroupModelToAuthorGroup)
-                    .collect(Collectors.toList());
+            groupByBooksCount = group.getAllAuthorsGroupByBooksPaginated(PageRequest.of(page - 1, size));
+        } else {
+            groupByBooksCount = group.getAllAuthorsGroupByBooks();
         }
 
-        return group.getAllAuthorsGroupByBooks()
-                .stream()
+        return groupByBooksCount.stream()
                 .map(toDtoMapper::mapGroupModelToAuthorGroup)
                 .collect(Collectors.toList());
     }

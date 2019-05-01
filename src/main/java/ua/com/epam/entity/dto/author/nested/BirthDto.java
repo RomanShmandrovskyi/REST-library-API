@@ -29,6 +29,6 @@ public class BirthDto {
     private String country = "";
 
     @JsonDeserialize(using = CustomStringDeserializer.class)
-    @Size(max = 50, message = "Value 'city' cannot be longer than 50 characters!")
+    @Size(max = 100, message = "Value 'city' cannot be longer than 50 characters!")
     private String city = "";
 }

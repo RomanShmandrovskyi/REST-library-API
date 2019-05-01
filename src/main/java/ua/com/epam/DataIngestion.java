@@ -17,6 +17,7 @@ public class DataIngestion {
     public static void main(String[] args) throws ParseException {
         Faker f = new Faker();
         List<String> bashLines = new ArrayList<>();
+        bashLines.add("#!/usr/bin/env bash");
         String doPost = "curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d \"%s\" '%s'";
 
         String authorPostEnd = "localhost:8080/api/library/author/new";
@@ -85,7 +86,7 @@ public class DataIngestion {
         bookIds.stream()
                 .map(bookId -> getBookJSON(bookId,
                         f.book().title(),
-                        languages[new Random().nextInt(languages.length - 1)],
+                        languages[new Random().nextInt(languages.length)],
                         f.lorem().paragraph(),
                         f.number().numberBetween(10, 1000),
                         f.number().randomDouble(1, 5, 40),
@@ -94,8 +95,8 @@ public class DataIngestion {
                         f.number().numberBetween(1970, 2019)))
                 .forEach(o -> bashLines.add(String.format(doPost, o, String.format(
                         bookPostEnd,
-                        authorIds.get(new Random().nextInt(authorIds.size() - 1)),
-                        genreIds.get(new Random().nextInt(genreIds.size() - 1))))));
+                        authorIds.get(new Random().nextInt(authorIds.size())),
+                        genreIds.get(new Random().nextInt(genreIds.size()))))));
 
         File script = new File("src/main/resources/addData.sh");
         try {

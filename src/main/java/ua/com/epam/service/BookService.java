@@ -77,20 +77,40 @@ public class BookService {
     }
 
     public List<BookDto> findAllBooks(String sortBy, String order, int page, int size, boolean pageable) {
-        Sort.Direction orderType = getSortDirection(order);
         String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        Sort.Direction orderType = getSortDirection(order);
+
+        List<Book> books;
 
         if (pageable) {
-            return bookRepository
-                    .getAllBooksOrderedPaginated(Sort.by(orderType, sortParameter), PageRequest.of(page - 1, size))
-                    .stream()
-                    .map(toDtoMapper::mapBookToBookDto)
-                    .collect(Collectors.toList());
+            books = bookRepository.getAllBooksOrderedPaginated(Sort.by(orderType, sortParameter), PageRequest.of(page - 1, size));
+        } else {
+            books = bookRepository.getAllBooksOrdered(Sort.by(orderType, sortParameter));
         }
 
-        return bookRepository
-                .getAllBooksOrdered(Sort.by(orderType, sortParameter))
-                .stream()
+        return books.stream()
+                .map(toDtoMapper::mapBookToBookDto)
+                .collect(Collectors.toList());
+    }
+
+    public List<BookDto> findAllBooksSortedByDimension(String dimension, int page, int size, boolean pagination) {
+        List<Book> books;
+
+        if (dimension.equals("volume")) {
+            if (pagination) {
+                books = bookRepository.getAllBooksOrderedByVolumePaginated(PageRequest.of(page - 1, size));
+            } else {
+                books = bookRepository.getAllBooksOrderedByVolume();
+            }
+        } else {
+            if (pagination) {
+                books = bookRepository.getAllBooksOrderedBySquarePaginated(PageRequest.of(page - 1, size));
+            } else {
+                books = bookRepository.getAllBooksOrderedBySquare();
+            }
+        }
+
+        return books.stream()
                 .map(toDtoMapper::mapBookToBookDto)
                 .collect(Collectors.toList());
     }
@@ -103,17 +123,15 @@ public class BookService {
         Sort.Direction orderType = getSortDirection(order);
         String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
+        List<Book> books;
+
         if (pageable) {
-            return bookRepository
-                    .getAllBooksInGenreOrderedPaginated(genreId, Sort.by(orderType, sortParameter), PageRequest.of(page - 1, size))
-                    .stream()
-                    .map(toDtoMapper::mapBookToBookDto)
-                    .collect(Collectors.toList());
+            books = bookRepository.getAllBooksInGenreOrderedPaginated(genreId, Sort.by(orderType, sortParameter), PageRequest.of(page - 1, size));
+        } else {
+            books = bookRepository.getAllBooksInGenreOrdered(genreId, Sort.by(orderType, sortParameter));
         }
 
-        return bookRepository
-                .getAllBooksInGenreOrdered(genreId, Sort.by(orderType, sortParameter))
-                .stream()
+        return books.stream()
                 .map(toDtoMapper::mapBookToBookDto)
                 .collect(Collectors.toList());
     }
@@ -149,14 +167,12 @@ public class BookService {
                 .collect(Collectors.toList());
     }
 
-    public BookWithAuthorAndGenreDto addNewBook(long authorId, long genreId, BookDto newBook) {
-        Optional<Author> optA = authorRepository.getOneByAuthorId(authorId);
-        if (!optA.isPresent()) {
+    public BookDto addNewBook(long authorId, long genreId, BookDto newBook) {
+        if (!authorRepository.existsByAuthorId(authorId)) {
             throw new AuthorNotFoundException(authorId);
         }
 
-        Optional<Genre> optG = genreRepository.getOneByGenreId(genreId);
-        if (!optG.isPresent()) {
+        if (!genreRepository.existsByGenreId(genreId)) {
             throw new GenreNotFoundException(genreId);
         }
 
@@ -170,7 +186,7 @@ public class BookService {
 
         Book response = bookRepository.save(toPost);
 
-        return toDtoMapper.getBookWithAuthorAndGenreDto(response, optA.get(), optG.get());
+        return toDtoMapper.mapBookToBookDto(response);
     }
 
     public BookDto updateExistedBook(long bookId, BookDto bookDto) {

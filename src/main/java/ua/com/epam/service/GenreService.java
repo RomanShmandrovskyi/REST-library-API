@@ -87,15 +87,15 @@ public class GenreService {
     }
 
     public List<GenreGroupByBooksDto> findAllGenresWithBooksCount(int page, int size, boolean pagination) {
+        List<GroupByBooksCount> groupByBooksCount;
+
         if (pagination) {
-            return group.getAllGenresGroupByBooksPaginated(PageRequest.of(page - 1, size))
-                    .stream()
-                    .map(toDtoMapper::mapGroupModelToGenreGroup)
-                    .collect(Collectors.toList());
+            groupByBooksCount = group.getAllGenresGroupByBooksPaginated(PageRequest.of(page - 1, size));
+        } else {
+            groupByBooksCount = group.getAllGenresGroupByBooks();
         }
 
-        return group.getAllGenresGroupByBooks()
-                .stream()
+        return groupByBooksCount.stream()
                 .map(toDtoMapper::mapGroupModelToGenreGroup)
                 .collect(Collectors.toList());
     }
@@ -104,16 +104,15 @@ public class GenreService {
         Sort.Direction orderType = getSortDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
+        List<Genre> genres;
+
         if (pageable) {
-            return genreRepository
-                    .getAllGenresOrderedPaginated(Sort.by(orderType, sortParam), PageRequest.of(page - 1, size))
-                    .stream()
-                    .map(toDtoMapper::mapGenreToGenreDto)
-                    .collect(Collectors.toList());
+            genres = genreRepository.getAllGenresOrderedPaginated(Sort.by(orderType, sortParam), PageRequest.of(page - 1, size));
+        } else {
+            genres = genreRepository.getAllGenresOrdered(Sort.by(orderType, sortParam));
         }
 
-        return genreRepository.getAllGenresOrdered(Sort.by(orderType, sortParam))
-                .stream()
+        return genres.stream()
                 .map(toDtoMapper::mapGenreToGenreDto)
                 .collect(Collectors.toList());
     }
