@@ -25,7 +25,7 @@ public class AuthorDto {
     private Long authorId;
 
     @Valid
-    @NotNull(message = "Value 'authorName' is required!")
+    @NotNull(message = "Object 'authorName' is required!")
     private NameDto authorName;
 
     @JsonDeserialize(using = CustomStringDeserializer.class)
