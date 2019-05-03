@@ -43,8 +43,8 @@ public class DataIngestion {
                 "Liechtensteiner", "Lithuanian", "Luxembourger", "Maldivan", "Mongolian"};
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-        Date from = formatter.parse("1920-01-02");
-        Date to = formatter.parse("2000-12-31");
+        Date from = formatter.parse("1920-01-01");
+        Date to = formatter.parse("1999-12-31");
 
         authorIds.stream()
                 .map(id -> getAuthorJSON(
@@ -66,7 +66,7 @@ public class DataIngestion {
         //generate unique genre ids
         List<Long> genreIds = new ArrayList<>();
         while (genreIds.size() < genreNames.size()) {
-            long id = f.number().numberBetween(1, 9999);
+            long id = f.number().numberBetween(1L, 9999L);
             if (!genreIds.contains(id)) genreIds.add(id);
         }
 
@@ -77,7 +77,7 @@ public class DataIngestion {
         //book
         List<Long> bookIds = new ArrayList<>();
         while (bookIds.size() < 1200) {
-            long id = f.number().numberBetween(1, 9999);
+            long id = f.number().numberBetween(1L, 9999L);
             if (!bookIds.contains(id)) bookIds.add(id);
         }
 
@@ -90,7 +90,7 @@ public class DataIngestion {
                         f.lorem().paragraph(),
                         f.number().numberBetween(10, 1000),
                         f.number().randomDouble(1, 5, 40),
-                        f.number().randomDouble(1, 5, 40),
+                        f.number().randomDouble(1, 0, 5),
                         f.number().randomDouble(1, 5, 40),
                         f.number().numberBetween(1970, 2019)))
                 .forEach(o -> bashLines.add(String.format(doPost, o, String.format(
