@@ -1,13 +1,12 @@
 package ua.com.epam.controller;
 
-import io.swagger.annotations.Api;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.author.AuthorDto;
-import ua.com.epam.entity.dto.author.AuthorGroupByBooksDto;
 import ua.com.epam.exception.entity.NoSuchJsonKeyException;
 import ua.com.epam.exception.entity.type.InvalidOrderTypeException;
 import ua.com.epam.exception.entity.type.InvalidPageValueException;
@@ -20,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/library")
-@Api(value = "Author")
+@Api(value = "Author", description = "Operations with Author in Library", tags = { "Author" })
 public class AuthorController {
 
     @Autowired
@@ -47,19 +46,16 @@ public class AuthorController {
         }
     }
 
-    /**
-     * Get Author entity by authorId. Return a single Author object.
-     *
-     * @param authorId -> Long value
-     * @return -> ResponseEntity with:
-     *            Author object |
-     *            404 - Author Not Found |
-     *            400 - Bad Request.
-     */
+    @ApiOperation(value = "get Author object by 'authorId'", tags = { "Author" })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Special Author object in JSON", response = AuthorDto.class),
+            @ApiResponse(code = 400, message = "Something wrong..."),
+            @ApiResponse(code = 404, message = "Author not found")
+    })
     @GetMapping(value = "/author/{authorId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthor(
-            @PathVariable Long authorId) {
+            @ApiParam(required = true, value = "existed Author ID", example = "0") @PathVariable Long authorId) {
         AuthorDto response = authorService.findAuthorByAuthorId(authorId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -74,62 +70,12 @@ public class AuthorController {
      *            404 - Book Not Found |
      *            400 - Bad Request.
      */
+    @ApiOperation(value = "get Author of special Book", tags = { "Author" })
     @GetMapping(value = "/book/{bookId}/author",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorOfBook(
             @PathVariable Long bookId) {
         AuthorDto response = authorService.findAuthorOfBook(bookId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Get special Author grouped by books count. Object will contains next
-     * values: 'authorId', 'authorName' (first + second), 'booksCount'.
-     *
-     * @param authorId required -> Long value.
-     * @return -> ResponseEntity with:
-     *            AuthorGroupByBooks object |
-     *            404 - Author Not Found
-     *            400 - Bad Request
-     */
-    @GetMapping(value = "/author/{authorId}/groupByBooks",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAuthorGroupedByItBooks(
-            @PathVariable Long authorId) {
-        AuthorGroupByBooksDto response = authorService.findAuthorWithBooksCount(authorId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Get array of Author grouped by books count. Object will contains next
-     * values: 'authorId', 'authorName' (first + second), 'booksCount'.
-     * <p>
-     * This endpoint can also paginate response: just set page number to 'page'
-     * param and needed entities count on one page in 'size' param. By default
-     * pagination is enabled, but you can disable it: just set 'pagination'
-     * parameter to 'false'. In this case, you get all existed Authors grouped
-     * by books count from DB.
-     * <p>
-     * Any others query params expect 'pagination', 'page' and 'size' will be
-     * ignored.
-     *
-     * @param pagination not required, by default 'true' -> Boolean value.
-     * @param page       not required, by default '1' -> Integer value.
-     * @param size       not required, by default '10' -> Integer value.
-     * @return -> ResponseEntity with:
-     *            AuthorGroupByBooks object |
-     *            empty array |
-     *            400 - Bad Request.
-     */
-    @GetMapping(value = "/authors/groupByBooks",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllAuthorsGroupedByItBooks(
-            @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
-            @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        checkPaginateParams(page, size);
-
-        List<AuthorGroupByBooksDto> response = authorService.findAllAuthorsWithBooksCount(page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -157,6 +103,7 @@ public class AuthorController {
      *            empty array |
      *            400 - Bad Request.
      */
+    @ApiOperation(value = "get all Authors", tags = { "Author" })
     @GetMapping(value = "/authors",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthors(
@@ -200,6 +147,7 @@ public class AuthorController {
      *            404 - Genre Not Found
      *            400 - Bad Request.
      */
+    @ApiOperation(value = "get all Authors in special Genre", tags = { "Author" })
     @GetMapping(value = "/genre/{genreId}/authors",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthorsOfGenre(
@@ -228,6 +176,7 @@ public class AuthorController {
      *            409 - Conflict |
      *            400 - Bad Request.
      */
+    @ApiOperation(value = "create new Author", tags = { "Author" })
     @PostMapping(value = "/author/new",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -249,6 +198,7 @@ public class AuthorController {
      *            404 - Not Found |
      *            400 - Bad Request.
      */
+    @ApiOperation(value = "update existed Author", tags = { "Author" })
     @PutMapping(value = "/author/{authorId}/update",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -273,6 +223,7 @@ public class AuthorController {
      *            404 - Author Not Found |
      *            400 - Bad Request.
      */
+    @ApiOperation(value = "delete existed Author", tags = { "Author" })
     @DeleteMapping(value = "/author/{authorId}/delete",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAuthor(

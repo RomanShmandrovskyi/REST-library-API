@@ -1,11 +1,11 @@
 package ua.com.epam.controller;
 
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.com.epam.entity.dto.book.GenreGroupByBooksDto;
 import ua.com.epam.entity.dto.genre.GenreDto;
 import ua.com.epam.exception.entity.NoSuchJsonKeyException;
 import ua.com.epam.exception.entity.type.InvalidOrderTypeException;
@@ -19,6 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/library")
+@Api(value = "Genre", description = "Operations with Genre in Library", tags = { "Genre" })
 public class GenreController {
 
     @Autowired
@@ -76,55 +77,6 @@ public class GenreController {
     public ResponseEntity<?> getBookGenre(
             @PathVariable Long bookId) {
         GenreDto response = genreService.findGenreOfBook(bookId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Get special Genre grouped by books count. Object will contains next
-     * values: 'authorId', 'authorName' (first + second), 'booksCount'.
-     *
-     * @param genreId required -> Long value.
-     * @return -> ResponseEntity with:
-     *            GroupGroupByBooks object |
-     *            404 - Author Not Found
-     *            400 - Bad Request.
-     */
-    @GetMapping(value = "/genre/{genreId}/groupByBooks",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getGenreGroupedByItBooks(
-            @PathVariable Long genreId) {
-        GenreGroupByBooksDto response = genreService.findGenreWithBooksCount(genreId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    /**
-     * Get array of Genres grouped by books count. Object will contains next
-     * values: 'genreId', 'genreName', 'booksCount'.
-     * <p>
-     * This endpoint can also paginate response: just set page number to 'page'
-     * param and needed entities count on one page in 'size' param. By default
-     * pagination is enabled, but you can disable it: just set 'pagination'
-     * parameter to 'false'. In this case, you get all existed Genres grouped
-     * by books count from DB.
-     * <p>
-     * Any others query params expect 'pagination', 'page' and 'size' will be
-     * ignored.
-     *
-     * @param pagination not required, by default 'true' -> Boolean value.
-     * @param page       not required, by default '1' -> Integer value.
-     * @param size       not required, by default '10' -> Integer value.
-     * @return -> ResponseEntity with:
-     *            GenreGroupByBooks object |
-     *            empty array |
-     *            400 - Bad Request.
-     */
-    @GetMapping(value = "/genres/groupByBooks",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllGenresGroupedByItBooks(
-            @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
-            @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @RequestParam(name = "size", defaultValue = "10") Integer size) {
-        List<GenreGroupByBooksDto> response = genreService.findAllGenresWithBooksCount(page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

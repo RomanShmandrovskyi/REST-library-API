@@ -5,8 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Genre;
-import ua.com.epam.entity.GroupByBooksCount;
-import ua.com.epam.entity.dto.book.GenreGroupByBooksDto;
 import ua.com.epam.entity.dto.genre.GenreDto;
 import ua.com.epam.exception.entity.IdMismatchException;
 import ua.com.epam.exception.entity.author.AuthorNotFoundException;
@@ -15,7 +13,10 @@ import ua.com.epam.exception.entity.genre.BooksInGenreArePresentException;
 import ua.com.epam.exception.entity.genre.GenreAlreadyExistsException;
 import ua.com.epam.exception.entity.genre.GenreNameAlreadyExistsException;
 import ua.com.epam.exception.entity.genre.GenreNotFoundException;
-import ua.com.epam.repository.*;
+import ua.com.epam.repository.AuthorRepository;
+import ua.com.epam.repository.BookRepository;
+import ua.com.epam.repository.GenreRepository;
+import ua.com.epam.repository.JsonKeysConformity;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
@@ -34,9 +35,6 @@ public class GenreService {
 
     @Autowired
     private BookRepository bookRepository;
-
-    @Autowired
-    private GroupByBooksRepository group;
 
     @Autowired
     private ModelToDtoMapper toDtoMapper;
@@ -73,31 +71,6 @@ public class GenreService {
 
         Genre toGet = genreRepository.getGenreOfBook(bookId);
         return toDtoMapper.mapGenreToGenreDto(toGet);
-    }
-
-    public GenreGroupByBooksDto findGenreWithBooksCount(long genreId) {
-        Optional<GroupByBooksCount> opt = group.getGenreGroupByBooks(genreId);
-
-        if (!opt.isPresent()) {
-            throw new GenreNotFoundException(genreId);
-        }
-
-        GroupByBooksCount toGet = opt.get();
-        return toDtoMapper.mapGroupModelToGenreGroup(toGet);
-    }
-
-    public List<GenreGroupByBooksDto> findAllGenresWithBooksCount(int page, int size, boolean pagination) {
-        List<GroupByBooksCount> groupByBooksCount;
-
-        if (pagination) {
-            groupByBooksCount = group.getAllGenresGroupByBooksPaginated(PageRequest.of(page - 1, size));
-        } else {
-            groupByBooksCount = group.getAllGenresGroupByBooks();
-        }
-
-        return groupByBooksCount.stream()
-                .map(toDtoMapper::mapGroupModelToGenreGroup)
-                .collect(Collectors.toList());
     }
 
     public List<GenreDto> findAllGenres(String sortBy, String order, int page, int size, boolean pageable) {
