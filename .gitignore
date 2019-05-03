@@ -3,3 +3,6 @@
 *.iml
 /src/test
 /src/main/resources/*.sh
+/out
+/build
+/.gradle
