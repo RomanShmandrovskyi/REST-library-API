@@ -1,6 +1,7 @@
 package ua.com.epam.entity.dto.genre;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,7 @@ import javax.validation.constraints.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ApiModel(value = "Genre")
 public class GenreDto {
 
     @JsonDeserialize(using = CustomLongDeserializer.class)

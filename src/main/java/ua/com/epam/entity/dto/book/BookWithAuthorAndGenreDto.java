@@ -1,5 +1,6 @@
 package ua.com.epam.entity.dto.book;
 
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import ua.com.epam.entity.dto.genre.SimpleGenreDto;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ApiModel(value = "BookFull")
 public class BookWithAuthorAndGenreDto {
     private Long bookId;
     private String bookName;

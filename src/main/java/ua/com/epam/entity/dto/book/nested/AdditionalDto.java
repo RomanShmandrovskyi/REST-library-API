@@ -1,6 +1,7 @@
 package ua.com.epam.entity.dto.book.nested;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import javax.validation.constraints.PositiveOrZero;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@ApiModel(value = "Additional")
 public class AdditionalDto {
 
     @JsonDeserialize(using = CustomIntegerDeserializer.class)
