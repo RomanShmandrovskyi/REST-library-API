@@ -41,7 +41,6 @@ public class SwaggerConfig {
     public UiConfiguration uiConfig() {
         return UiConfigurationBuilder.builder()
                 .displayOperationId(false)
-                .displayRequestDuration(true)
                 .defaultModelsExpandDepth(0)
                 .docExpansion(DocExpansion.LIST)
                 .operationsSorter(OperationsSorter.ALPHA)

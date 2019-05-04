@@ -188,7 +188,6 @@ public class AuthorService {
         Author toDelete = opt.get();
         log.debug("Get books count of Author with 'authorId' = " + authorId + "...");
         long booksCount = bookRepository.getAllAuthorBooks(authorId).size();
-        log.debug("Author has " + booksCount + " books!");
 
         if (booksCount > 0 && !forcibly) {
             log.error("Author has " + booksCount + " books! Cannot be deleted!");

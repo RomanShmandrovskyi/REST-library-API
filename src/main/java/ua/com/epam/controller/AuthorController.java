@@ -55,62 +55,45 @@ public class AuthorController {
     @GetMapping(value = "/author/{authorId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthor(
-            @ApiParam(required = true, value = "existed Author ID", example = "0") @PathVariable Long authorId) {
+            @ApiParam(required = true, value = "existed Author ID")
+            @PathVariable Long authorId) {
         AuthorDto response = authorService.findAuthorByAuthorId(authorId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    /**
-     * Return Author of special book using 'bookId'. Return a single Author
-     * object.
-     *
-     * @param bookId required -> Long value.
-     * @return -> ResponseEntity with:
-     *            Author object |
-     *            404 - Book Not Found |
-     *            400 - Bad Request.
-     */
     @ApiOperation(value = "get Author of special Book", tags = { "Author" })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Author object of special Book in JSON", response = AuthorDto.class),
+            @ApiResponse(code = 400, message = "Something wrong..."),
+            @ApiResponse(code = 404, message = "Book not found")
+    })
     @GetMapping(value = "/book/{bookId}/author",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorOfBook(
+            @ApiParam(required = true, value = "existed Book ID")
             @PathVariable Long bookId) {
         AuthorDto response = authorService.findAuthorOfBook(bookId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    /**
-     * Get array of Author objects. It is possible to set one custom 'sortBy'
-     * parameter and order type ('asc' or 'desc'). All unsuitable parameters
-     * that not exist in JSON, will produce a fault.
-     * <p>
-     * This endpoint can also paginate response: just set page number to 'page'
-     * param and needed entities count on one page in 'size' param. By default
-     * pagination is enabled, but you can disable it: just set 'pagination'
-     * parameter to 'false'. In this case, you get all existed Author objects
-     * from DB.
-     * <p>
-     * Any others query params expect 'sortBy', 'orderType', 'page', 'size'
-     * and 'pagination' will be ignored.
-     *
-     * @param pagination not required, by default 'true' -> Boolean value.
-     * @param page       not required, by default '1' -> Integer value.
-     * @param size       not required, by default '10' -> Integer value.
-     * @param sortBy     not required, by default 'authorId' -> String value.
-     * @param orderType  not required, by default 'asc' -> String value.
-     * @return -> ResponseEntity with:
-     *            array of Authors |
-     *            empty array |
-     *            400 - Bad Request.
-     */
     @ApiOperation(value = "get all Authors", tags = { "Author" })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Array of Authors objects",
+                    responseContainer = "Set", response = AuthorDto.class),
+            @ApiResponse(code = 400, message = "Something wrong...")
+    })
     @GetMapping(value = "/authors",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthors(
+            @ApiParam(value = "paginate response")
             @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
+            @ApiParam(value = "page number")
             @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @ApiParam(value = "count of objects on one page")
             @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @ApiParam(value = "custom sort parameter")
             @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
+            @ApiParam(allowableValues = "asc,desc", value = "sorting order")
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
@@ -120,42 +103,27 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    /**
-     * Return array of Author objects that write in special Genre. It is possible
-     * to set one custom 'sortBy' parameter (just like in your JSON) and order
-     * type ('asc' or 'desc'). All unsuitable parameters that not exist in JSON
-     * for 'sortBy' param, will produce a fault. Other unpredictable params will
-     * be ignored.
-     * <p>
-     * This endpoint can also paginate response: just set page number to 'page'
-     * param (this value must positive and grater that zero) and needed entities
-     * count on one page in 'size' param. By default pagination is enabled, but
-     * you can disable it. In this case, you get all existed Authors from DB.
-     * <p>
-     * Any others query params expect 'sortBy', 'orderType', 'page', 'size'
-     * and 'pagination' will be ignored.
-     *
-     * @param genreId    required -> Long value
-     * @param pagination not required, by default 'true' -> Boolean value.
-     * @param page       not required, by default '1' -> Integer value.
-     * @param size       not required, by default '10' -> Integer value.
-     * @param sortBy     not required, by default 'authorId' -> String value.
-     * @param orderType  not required, by default 'asc' -> String value.
-     * @return -> ResponseEntity with:
-     *            array of Authors |
-     *            empty array |
-     *            404 - Genre Not Found
-     *            400 - Bad Request.
-     */
     @ApiOperation(value = "get all Authors in special Genre", tags = { "Author" })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Array of Authors objects",
+                    responseContainer = "Set", response = AuthorDto.class),
+            @ApiResponse(code = 400, message = "Something wrong..."),
+            @ApiResponse(code = 404, message = "Genre not found")
+    })
     @GetMapping(value = "/genre/{genreId}/authors",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthorsOfGenre(
+            @ApiParam(required = true, value = "existed Genre ID")
             @PathVariable Long genreId,
+            @ApiParam(value = "paginate response")
             @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
+            @ApiParam(value = "page number")
             @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @ApiParam(value = "count of objects on one page")
             @RequestParam(name = "size", defaultValue = "10") Integer size,
-            @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
+            @ApiParam(value = "custom sort parameter")
+            @RequestParam(name = "sortBy") String sortBy,
+            @ApiParam(allowableValues = "asc,desc", value = "sorting order")
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
@@ -165,18 +133,13 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    /**
-     * Create new Author. Fields: 'authorId', 'authorName.first', 'authorName.second'
-     * are mandatory. If field is skipped in JSON body it will assign empty string
-     * for String type values and null for Date type.
-     *
-     * @param postAuthor required -> JSON body with new Author object
-     * @return -> ResponseEntity with:
-     *            created Author object |
-     *            409 - Conflict |
-     *            400 - Bad Request.
-     */
     @ApiOperation(value = "create new Author", tags = { "Author" })
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "newly created Author", response = AuthorDto.class),
+            @ApiResponse(code = 400, message = "Something wrong..."),
+            @ApiResponse(code = 409, message = "Author with such id already exists")
+    })
+    @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping(value = "/author/new",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -186,48 +149,35 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    /**
-     * Update existed Author. Consume full object with updated JSON fields.
-     * Path param 'authorId' must be the same as in body to update. In type
-     * way will be thrown exception.
-     *
-     * @param authorId      required -> Long value
-     * @param updatedAuthor not required -> JSON body with Author object to update
-     * @return -> ResponseEntity with:
-     *            updated Author object |
-     *            404 - Not Found |
-     *            400 - Bad Request.
-     */
     @ApiOperation(value = "update existed Author", tags = { "Author" })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "updated Author object", response = AuthorDto.class),
+            @ApiResponse(code = 400, message = "Something wrong..."),
+            @ApiResponse(code = 404, message = "Author to update not found")
+    })
     @PutMapping(value = "/author/{authorId}/update",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateAuthor(
+            @ApiParam(required = true, value = "existed Author ID")
             @PathVariable Long authorId,
             @RequestBody @Valid AuthorDto updatedAuthor) {
         AuthorDto response = authorService.updateExistedAuthor(authorId, updatedAuthor);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    /**
-     * Delete existed Author by 'authorId'. If Author with such 'authorId' doesn't
-     * exist it will produce 404 - Not Found. If Author has some related Books and
-     * 'forcibly' is set as 'false' you will be informed, that Author has some Books.
-     * If 'forcibly' indicator defining as 'true' it will delete Author and all related
-     * Books.
-     *
-     * @param authorId required -> Long value
-     * @param forcibly not required, by default 'false' -> Boolean value
-     * @return -> ResponseEntity with:
-     *            deleted Author object |
-     *            404 - Author Not Found |
-     *            400 - Bad Request.
-     */
     @ApiOperation(value = "delete existed Author", tags = { "Author" })
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "deleted Author object", response = AuthorDto.class),
+            @ApiResponse(code = 400, message = "Something wrong..."),
+            @ApiResponse(code = 404, message = "Author to delete not found")
+    })
     @DeleteMapping(value = "/author/{authorId}/delete",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAuthor(
+            @ApiParam(required = true, value = "existed Author ID")
             @PathVariable Long authorId,
+            @ApiParam(value = "if false and Author has related Books, it will produce fault")
             @RequestParam(name = "forcibly", defaultValue = "false") Boolean forcibly) {
         AuthorDto response = authorService.deleteExistedAuthor(authorId, forcibly);
         return new ResponseEntity<>(response, HttpStatus.OK);

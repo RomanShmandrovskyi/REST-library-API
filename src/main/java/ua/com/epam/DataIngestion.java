@@ -14,6 +14,10 @@ import java.util.Random;
 import java.util.stream.IntStream;
 
 public class DataIngestion {
+    private final static int authorsCount = 250;
+    private final static int genresCount = 30;
+    private final static int booksCount = 2000;
+
     public static void main(String[] args) throws ParseException {
         Faker f = new Faker();
         List<String> bashLines = new ArrayList<>();
@@ -27,20 +31,18 @@ public class DataIngestion {
         //Author
         //generate unique Author ids;
         List<Long> authorIds = new ArrayList<>();
-        while (authorIds.size() < 150) {
+        while (authorIds.size() < authorsCount) {
             long id = f.number().numberBetween(1L, 9999L);
             if (!authorIds.contains(id)) authorIds.add(id);
         }
 
-        String[] nationalities = {"Albanian", "American", "Australian", "Austrian", "Belgian",
-                "British", "Bulgarian", "Canadian", "Chinese", "Czech", "Dutch", "Egyptian",
-                "French", "German", "Greek", "Indian", "Irish", "Lithuanian", "Malaysian",
-                "Mexican", "Moldovan", "New Zealander", "Romanian", "Scottish", "Spanish",
-                "Swedish", "Turkish", "Ukrainian", "Welsh", "Syrian", "Slovenian", "Slovakian",
-                "Polish", "Peruvian", "Namibian", "Nepalese", "Afghan", "Andorran", "Angolan",
-                "Armenian", "Bahamian", "Cambodian", "Central African", "Colombian", "Cuban",
-                "Equatorial Guinean", "Icelander", "Indonesian", "Kittian and Nevisian",
-                "Liechtensteiner", "Lithuanian", "Luxembourger", "Maldivan", "Mongolian"};
+        String[] nationalities = {"Albanian", "American", "Australian", "Austrian", "Belgian", "British", "Bulgarian",
+                "Canadian", "Chinese", "Czech", "Dutch", "Egyptian", "French", "German", "Greek", "Indian", "Irish",
+                "Lithuanian", "Malaysian", "Mexican", "Moldovan", "New Zealander", "Romanian", "Scottish", "Spanish",
+                "Swedish", "Turkish", "Ukrainian", "Welsh", "Syrian", "Slovenian", "Slovakian", "Polish", "Peruvian",
+                "Namibian", "Nepalese", "Afghan", "Andorran", "Angolan", "Armenian", "Bahamian", "Cambodian",
+                "Central African", "Colombian", "Cuban", "Equatorial Guinean", "Icelander", "Indonesian",
+                "Kittian and Nevisian", "Liechtensteiner", "Lithuanian", "Luxembourger", "Maldivan", "Mongolian"};
 
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         Date from = formatter.parse("1920-01-01");
@@ -58,7 +60,7 @@ public class DataIngestion {
         //genre
         //generate all possible genre names
         List<String> genreNames = new ArrayList<>();
-        while (genreNames.size() < 30) {
+        while (genreNames.size() < genresCount) {
             String name = f.book().genre();
             if (!genreNames.contains(name)) genreNames.add(name);
         }
@@ -76,7 +78,7 @@ public class DataIngestion {
 
         //book
         List<Long> bookIds = new ArrayList<>();
-        while (bookIds.size() < 1200) {
+        while (bookIds.size() < booksCount) {
             long id = f.number().numberBetween(1L, 9999L);
             if (!bookIds.contains(id)) bookIds.add(id);
         }
@@ -107,7 +109,8 @@ public class DataIngestion {
         }
     }
 
-    private static String getAuthorJSON(long authorId, String first, String second, String nationality, String birthDate, String country, String city, String descr) {
+    private static String getAuthorJSON(long authorId, String first, String second, String nationality,
+                                        String birthDate, String country, String city, String descr) {
         return "{" +
                 "\\\"authorId\\\":" + authorId + "," +
                 "\\\"authorName\\\":{" +
@@ -132,7 +135,8 @@ public class DataIngestion {
                 "}";
     }
 
-    private static String getBookJSON(long bookId, String bookName, String bookLang, String bookDescr, int pageCount, double height, double width, double length, int pubYear) {
+    private static String getBookJSON(long bookId, String bookName, String bookLang, String bookDescr, int pageCount,
+                                      double height, double width, double length, int pubYear) {
         return "{" +
                 "\\\"bookId\\\":" + bookId + "," +
                 "\\\"bookName\\\":\\\"" + bookName + "\\\"," +
