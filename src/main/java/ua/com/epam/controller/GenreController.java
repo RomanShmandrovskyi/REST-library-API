@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ua.com.epam.entity.dto.author.AuthorDto;
 import ua.com.epam.entity.dto.genre.GenreDto;
 import ua.com.epam.exception.entity.NoSuchJsonKeyException;
 import ua.com.epam.exception.entity.type.InvalidOrderTypeException;
@@ -112,7 +111,7 @@ public class GenreController {
     })
     @GetMapping(value = "/author/{authorId}/genres",
             produces = MediaType.APPLICATION_JSON_VALUE)
-    private ResponseEntity<?> getAllAuthorGenres(
+    public ResponseEntity<?> getAllAuthorGenres(
             @ApiParam(required = true, value = "existed Author ID")
             @PathVariable Long authorId,
             @ApiParam(value = "custom sort parameter")
