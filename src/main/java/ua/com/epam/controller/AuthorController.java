@@ -78,7 +78,7 @@ public class AuthorController {
 
     @ApiOperation(value = "get all Authors", tags = { "Author" })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Array of Authors objects",
+            @ApiResponse(code = 200, message = "Array of Author objects",
                     responseContainer = "Set", response = AuthorDto.class),
             @ApiResponse(code = 400, message = "Something wrong...")
     })
@@ -89,7 +89,7 @@ public class AuthorController {
             @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
             @ApiParam(value = "page number")
             @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @ApiParam(value = "count of objects on one page")
+            @ApiParam(value = "count of objects per one page")
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @ApiParam(value = "custom sort parameter")
             @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
