@@ -49,7 +49,9 @@ public class SwaggerConfig {
                 .title("REST Library")
                 .description("Simple REST API to reproduce Library")
                 .version("1.0")
-                .contact(new Contact("Roman Shmandrovskyi", "https://github.com/RoshS/REST-library", "roman.shmandrovskyj.ki.2014@gmail.com"))
+                .contact(new Contact("Roman Shmandrovskyi",
+                        "https://github.com/RoshS/REST-library",
+                        "roman.shmandrovskyj.ki.2014@gmail.com"))
                 .build();
     }
 }

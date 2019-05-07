@@ -36,6 +36,6 @@ public class BirthDto {
 
     @ApiModelProperty(position = 2)
     @JsonDeserialize(using = CustomStringDeserializer.class)
-    @Size(max = 100, message = "Value 'city' cannot be longer than 50 characters!")
+    @Size(max = 100, message = "Value 'city' cannot be longer than 100 characters!")
     private String city = "";
 }

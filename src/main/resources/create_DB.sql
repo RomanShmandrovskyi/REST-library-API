@@ -8,8 +8,8 @@ create table author (
     author_id bigint unique not null,
     first_name varchar(50) not null,
     second_name varchar(50) not null,
-    birth_city varchar(50),
-    birth_country varchar(50),
+    birth_city varchar(100),
+    birth_country varchar(100),
     birth_date date,
     author_descr varchar(1000),
     nationality varchar(30)
