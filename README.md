@@ -33,6 +33,8 @@ private final static int genresCount = 30;
 private final static int booksCount = 2000;
 ```
 
+Max count of Genres is 30 (if set more, generator will work endlessly).
+
 When main method will finish generating, go to `resources`. Here will be generated `addData.sh` script file. Just run it.
 
 After that you can fully feel all opportunities of this API.
