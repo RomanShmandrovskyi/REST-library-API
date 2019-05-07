@@ -16,7 +16,7 @@ mvn clean install
 spring.datasource.username=<username>
 spring.datasource.password=<password>
 ```
-4. Open MySQL Workbanch and run the `create_DB.sql` script from `src/main/resources`
+4. Open MySQL Workbench and run the `create_DB.sql` script from `src/main/resources`
 5. Run main method in `App` class from `src/main/java/ua/com/epam/app` package;
 6. Swagger with documentation will be available on:
 ```
