@@ -92,7 +92,7 @@ public class DataIngestion {
                         f.lorem().paragraph(),
                         f.number().numberBetween(10, 1000),
                         f.number().randomDouble(1, 5, 40),
-                        f.number().randomDouble(1, 0, 5),
+                        f.number().randomDouble(1, 1, 5),
                         f.number().randomDouble(1, 5, 40),
                         f.number().numberBetween(1970, 2019)))
                 .forEach(o -> bashLines.add(String.format(doPost, o, String.format(

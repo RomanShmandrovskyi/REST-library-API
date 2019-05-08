@@ -136,6 +136,7 @@ public class GenreController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewGenre(
+            @ApiParam(required = true, value = "Genre to add", name = "Genre object")
             @RequestBody @Valid GenreDto postGenre) {
         GenreDto response = genreService.addNewGenre(postGenre);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -153,6 +154,7 @@ public class GenreController {
     public ResponseEntity<?> updateGenre(
             @ApiParam(required = true, value = "existed Genre ID")
             @PathVariable Long genreId,
+            @ApiParam(required = true, value = "Genre to update", name = "Genre object")
             @RequestBody @Valid GenreDto updateGenre) {
         GenreDto response = genreService.updateExistedGenre(genreId, updateGenre);
         return new ResponseEntity<>(response, HttpStatus.OK);

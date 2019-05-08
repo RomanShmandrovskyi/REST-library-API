@@ -219,6 +219,7 @@ public class BookController {
             @PathVariable Long authorId,
             @ApiParam(required = true, value = "existed Genre ID")
             @PathVariable Long genreId,
+            @ApiParam(required = true, value = "Book to add", name = "Book object")
             @RequestBody @Valid BookDto newBook) {
         BookDto response = bookService.addNewBook(authorId, genreId, newBook);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -236,6 +237,7 @@ public class BookController {
     public ResponseEntity<?> updateBook(
             @ApiParam(required = true, value = "existed Book ID")
             @PathVariable Long bookId,
+            @ApiParam(required = true, value = "Book to update", name = "Book object")
             @RequestBody @Valid BookDto updatedBook) {
         BookDto response = bookService.updateExistedBook(bookId, updatedBook);
         return new ResponseEntity<>(response, HttpStatus.OK);

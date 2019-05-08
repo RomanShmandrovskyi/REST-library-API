@@ -121,8 +121,8 @@ public class AuthorController {
             @RequestParam(name = "page", defaultValue = "1") Integer page,
             @ApiParam(value = "count of objects on one page")
             @RequestParam(name = "size", defaultValue = "10") Integer size,
-            @ApiParam(value = "custom sort parameter")
-            @RequestParam(name = "sortBy") String sortBy,
+            @ApiParam(value = "custom sort parameter", defaultValue = "authorId")
+            @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
             @ApiParam(allowableValues = "asc,desc", value = "sorting order")
             @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
         checkSortByKeyInGroup(sortBy);
@@ -144,6 +144,7 @@ public class AuthorController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewAuthor(
+            @ApiParam(required = true, value = "Author to add", name = "Author object")
             @RequestBody @Valid AuthorDto postAuthor) {
         AuthorDto response = authorService.addNewAuthor(postAuthor);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -161,6 +162,7 @@ public class AuthorController {
     public ResponseEntity<?> updateAuthor(
             @ApiParam(required = true, value = "existed Author ID")
             @PathVariable Long authorId,
+            @ApiParam(required = true, value = "Author to update", name = "Author object")
             @RequestBody @Valid AuthorDto updatedAuthor) {
         AuthorDto response = authorService.updateExistedAuthor(authorId, updatedAuthor);
         return new ResponseEntity<>(response, HttpStatus.OK);
