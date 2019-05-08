@@ -16,7 +16,7 @@ mvn clean install
 spring.datasource.username=<username>
 spring.datasource.password=<password>
 ```
-4. Open MySQL Workbanch and run the `create_DB.sql` script from `src/main/resources`
+4. Open MySQL Workbench and run the `create_DB.sql` script from `src/main/resources`
 5. Run main method in `App` class from `src/main/java/ua/com/epam/app` package;
 6. Swagger with documentation will be available on:
 ```
@@ -33,6 +33,8 @@ private final static int genresCount = 30;
 private final static int booksCount = 2000;
 ```
 
-When main method will finish generating, go to `resources`. Here will be generated `addData.sh` script file. Just run it.
+Max count of Genres is 30 (if set more, generator will work endlessly).
 
-After that you can fully feel all opportunities of this API.
+When main method will finish generating, go to `resources`. Here will be generated `addData.sh` script file. Just run it and wait for DB filling.
+
+After that you can fully feel all opportunities of REST Library API.
