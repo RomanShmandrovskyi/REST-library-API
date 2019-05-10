@@ -35,6 +35,6 @@ private final static int booksCount = 2000;
 
 Max count of Genres is 30 (if set more, generator will work endlessly).
 
-When main method will finish generating, go to `resources`. Here will be generated `addData.sh` script file. Just run it and wait for DB filling.
+When generation will be finished, go to `resources`. Here will be generated `addData.sh` script file. Just run it and wait for DB filling.
 
 After that you can fully feel all opportunities of REST Library API.
