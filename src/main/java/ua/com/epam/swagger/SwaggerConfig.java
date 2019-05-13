@@ -41,6 +41,7 @@ public class SwaggerConfig {
                 .defaultModelsExpandDepth(0)
                 .docExpansion(DocExpansion.LIST)
                 .operationsSorter(OperationsSorter.ALPHA)
+                .defaultModelsExpandDepth(1)
                 .build();
     }
 
