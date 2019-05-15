@@ -13,7 +13,7 @@ public class JsonUtils {
 
     private Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
 
-    public  <T> String sortJsonsByKey(List<T> jsons, String key) {
+    public <T> String sortJsonsByKey(List<T> jsons, String key) {
         Map<Object, Object> sorted = new TreeMap<>(Comparator.comparingInt(Object::hashCode));
         for (Object single : jsons) {
             Object keyValue = JsonPath.read(gson.toJson(single), "$." + key);
@@ -58,8 +58,8 @@ public class JsonUtils {
         return path.toString();
     }
 
-    public  <T> List<T> filterByJsonPath(List<T> dtos, Map<String, String> params, Class<T> clazz) {
-        if (params.size() == 0) {
+    public <T> List<T> filterByJsonPath(List<T> dtos, Map<String, String> params, Class<T> clazz) {
+        if (params.isEmpty()) {
             return dtos;
         }
 

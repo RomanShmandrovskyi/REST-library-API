@@ -54,13 +54,9 @@ public class GenreService {
     }
 
     public GenreDto findGenreByGenreId(long genreId) {
-        Optional<Genre> exist = genreRepository.getOneByGenreId(genreId);
+        Genre toGet = genreRepository.getOneByGenreId(genreId)
+                .orElseThrow(() -> new GenreNotFoundException(genreId));
 
-        if (!exist.isPresent()) {
-            throw new GenreNotFoundException(genreId);
-        }
-
-        Genre toGet = exist.get();
         return toDtoMapper.mapGenreToGenreDto(toGet);
     }
 
@@ -70,6 +66,7 @@ public class GenreService {
         }
 
         Genre toGet = genreRepository.getGenreOfBook(bookId);
+
         return toDtoMapper.mapGenreToGenreDto(toGet);
     }
 
@@ -77,13 +74,9 @@ public class GenreService {
         Sort.Direction orderType = getSortDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        List<Genre> genres;
-
-        if (pageable) {
-            genres = genreRepository.getAllGenresOrderedPaginated(Sort.by(orderType, sortParam), PageRequest.of(page - 1, size));
-        } else {
-            genres = genreRepository.getAllGenresOrdered(Sort.by(orderType, sortParam));
-        }
+        List<Genre> genres = pageable ?
+                genreRepository.getAllGenresOrderedPaginated(Sort.by(orderType, sortParam), PageRequest.of(page - 1, size)) :
+                genreRepository.getAllGenresOrdered(Sort.by(orderType, sortParam));
 
         return genres.stream()
                 .map(toDtoMapper::mapGenreToGenreDto)
@@ -141,13 +134,9 @@ public class GenreService {
     }
 
     public GenreDto deleteExistedGenre(long genreId, boolean forcibly) {
-        Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
+        Genre toDelete = genreRepository.getOneByGenreId(genreId)
+                .orElseThrow(() -> new GenreNotFoundException(genreId));
 
-        if (!opt.isPresent()) {
-            throw new GenreNotFoundException(genreId);
-        }
-
-        Genre toDelete = opt.get();
         long booksCount = bookRepository.getAllBooksInGenre(genreId).size();
 
         if (booksCount > 0 && !forcibly) {
@@ -155,6 +144,7 @@ public class GenreService {
         }
 
         genreRepository.delete(toDelete);
+
         return toDtoMapper.mapGenreToGenreDto(toDelete);
     }
 }
