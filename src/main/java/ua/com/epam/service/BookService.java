@@ -196,12 +196,10 @@ public class BookService {
         return toDtoMapper.mapBookToBookDto(updated);
     }
 
-    public BookDto deleteExistedBook(long bookId) {
+    public void deleteExistedBook(long bookId) {
         Book toDelete = bookRepository.getOneByBookId(bookId)
                 .orElseThrow(() -> new BookNotFoundException(bookId));
 
         bookRepository.delete(toDelete);
-
-        return toDtoMapper.mapBookToBookDto(toDelete);
     }
 }

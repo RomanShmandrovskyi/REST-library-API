@@ -1,6 +1,5 @@
 package ua.com.epam.service;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -137,7 +136,7 @@ public class AuthorService {
         return toDtoMapper.mapAuthorToAuthorDto(updated);
     }
 
-    public AuthorDto deleteExistedAuthor(long authorId, boolean forcibly) {
+    public void deleteExistedAuthor(long authorId, boolean forcibly) {
         Author toDelete = authorRepository.getOneByAuthorId(authorId)
                 .orElseThrow(() -> new AuthorNotFoundException(authorId));
 
@@ -148,7 +147,5 @@ public class AuthorService {
         }
 
         authorRepository.delete(toDelete);
-
-        return toDtoMapper.mapAuthorToAuthorDto(toDelete);
     }
 }

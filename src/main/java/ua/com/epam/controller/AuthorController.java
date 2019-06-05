@@ -170,10 +170,11 @@ public class AuthorController {
 
     @ApiOperation(value = "delete existed Author", tags = { "Author" })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "deleted Author object", response = AuthorDto.class),
+            @ApiResponse(code = 204, message = "Author deleted successfully"),
             @ApiResponse(code = 400, message = "Something wrong..."),
             @ApiResponse(code = 404, message = "Author to delete not found")
     })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/author/{authorId}/delete",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAuthor(
@@ -181,7 +182,7 @@ public class AuthorController {
             @PathVariable Long authorId,
             @ApiParam(value = "if false and Author has related Books, it will produce fault")
             @RequestParam(name = "forcibly", defaultValue = "false") Boolean forcibly) {
-        AuthorDto response = authorService.deleteExistedAuthor(authorId, forcibly);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        authorService.deleteExistedAuthor(authorId, forcibly);
+        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
 }

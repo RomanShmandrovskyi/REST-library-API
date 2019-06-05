@@ -245,16 +245,17 @@ public class BookController {
 
     @ApiOperation(value = "delete existed Book", tags = { "Book" })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "deleted Book object", response = BookDto.class),
+            @ApiResponse(code = 204, message = "Book deleted successfully"),
             @ApiResponse(code = 400, message = "Something wrong..."),
             @ApiResponse(code = 404, message = "Book to delete not found")
     })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/book/{bookId}/delete",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteBook(
             @ApiParam(required = true, value = "existed Book ID")
             @PathVariable Long bookId) {
-        BookDto response = bookService.deleteExistedBook(bookId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        bookService.deleteExistedBook(bookId);
+        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
 }
