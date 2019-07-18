@@ -22,6 +22,7 @@ spring.datasource.password=<password>
 mvn spring-boot:run
 ```
 Or just run main method in App class from src/main/java/ua/com/epam/app package;
+
 6. Swagger with documentation will be available on:
 ```
 http://localhost:8080/swagger-ui.html
