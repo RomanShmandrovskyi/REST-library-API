@@ -136,7 +136,7 @@ public class AuthorService {
         return toDtoMapper.mapAuthorToAuthorDto(updated);
     }
 
-    public AuthorDto deleteExistedAuthor(long authorId, boolean forcibly) {
+    public void deleteExistedAuthor(long authorId, boolean forcibly) {
         Author toDelete = authorRepository.getOneByAuthorId(authorId)
                 .orElseThrow(() -> new AuthorNotFoundException(authorId));
 
@@ -147,7 +147,5 @@ public class AuthorService {
         }
 
         authorRepository.delete(toDelete);
-
-        return toDtoMapper.mapAuthorToAuthorDto(toDelete);
     }
 }

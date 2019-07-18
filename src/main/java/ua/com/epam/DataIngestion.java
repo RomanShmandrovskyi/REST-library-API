@@ -112,40 +112,45 @@ public class DataIngestion {
     private static String getAuthorJSON(long authorId, String first, String second, String nationality,
                                         String birthDate, String country, String city, String descr) {
         return "{" +
-                "\\\"authorId\\\":" + authorId + "," +
-                "\\\"authorName\\\":{" +
-                "\\\"first\\\":\\\"" + first + "\\\"," +
-                "\\\"second\\\":\\\"" + second + "\\\"" +
-                "}," +
-                "\\\"nationality\\\":\\\"" + nationality + "\\\"," +
-                "\\\"birth\\\":{" +
-                "\\\"date\\\":\\\"" + birthDate + "\\\"," +
-                "\\\"country\\\":\\\"" + country + "\\\"," +
-                "\\\"city\\\":\\\"" + city + "\\\"" +
-                "}," +
-                "\\\"authorDescription\\\":\\\"" + descr + "\\\"" +
-                "}";
+                    "\\\"authorId\\\":" + authorId + "," +
+                    "\\\"authorName\\\":{" +
+                        "\\\"first\\\":\\\"" + first + "\\\"," +
+                        "\\\"second\\\":\\\"" + second + "\\\"" +
+                    "}," +
+                    "\\\"nationality\\\":\\\"" + nationality + "\\\"," +
+                    "\\\"birth\\\":{" +
+                        "\\\"date\\\":\\\"" + birthDate + "\\\"," +
+                        "\\\"country\\\":\\\"" + country + "\\\"," +
+                        "\\\"city\\\":\\\"" + city + "\\\"" +
+                    "}," +
+                    "\\\"authorDescription\\\":\\\"" + descr + "\\\"" +
+               "}";
     }
 
     private static String getGenreJSON(long genreId, String genreName, String genreDescription) {
         return "{" +
-                "\\\"genreId\\\":" + genreId + "," +
-                "\\\"genreName\\\":\\\"" + genreName + "\\\"," +
-                "\\\"genreDescription\\\":\\\"" + genreDescription + "\\\"" +
-                "}";
+                    "\\\"genreId\\\":" + genreId + "," +
+                    "\\\"genreName\\\":\\\"" + genreName + "\\\"," +
+                    "\\\"genreDescription\\\":\\\"" + genreDescription + "\\\"" +
+               "}";
     }
 
     private static String getBookJSON(long bookId, String bookName, String bookLang, String bookDescr, int pageCount,
                                       double height, double width, double length, int pubYear) {
         return "{" +
-                "\\\"bookId\\\":" + bookId + "," +
-                "\\\"bookName\\\":\\\"" + bookName + "\\\"," +
-                "\\\"bookLanguage\\\":\\\"" + bookLang + "\\\"," +
-                "\\\"bookDescription\\\":\\\"" + bookDescr + "\\\"," +
-                "\\\"additional\\\":{\\\"pageCount\\\":" + pageCount + "," +
-                "\\\"size\\\":{\\\"height\\\":" + height + "," +
-                "\\\"width\\\":" + width + "," +
-                "\\\"length\\\":" + length + "}}," +
-                "\\\"publicationYear\\\":" + pubYear + "}";
+                    "\\\"bookId\\\":" + bookId + "," +
+                    "\\\"bookName\\\":\\\"" + bookName + "\\\"," +
+                    "\\\"bookLanguage\\\":\\\"" + bookLang + "\\\"," +
+                    "\\\"bookDescription\\\":\\\"" + bookDescr + "\\\"," +
+                    "\\\"additional\\\":{" +
+                        "\\\"pageCount\\\":" + pageCount + "," +
+                        "\\\"size\\\":{" +
+                            "\\\"height\\\":" + height + "," +
+                            "\\\"width\\\":" + width + "," +
+                            "\\\"length\\\":" + length +
+                        "}" +
+                    "}," +
+                    "\\\"publicationYear\\\":" + pubYear +
+               "}";
     }
 }

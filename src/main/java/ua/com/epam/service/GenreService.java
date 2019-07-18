@@ -133,7 +133,7 @@ public class GenreService {
         return toDtoMapper.mapGenreToGenreDto(updated);
     }
 
-    public GenreDto deleteExistedGenre(long genreId, boolean forcibly) {
+    public void deleteExistedGenre(long genreId, boolean forcibly) {
         Genre toDelete = genreRepository.getOneByGenreId(genreId)
                 .orElseThrow(() -> new GenreNotFoundException(genreId));
 
@@ -144,7 +144,5 @@ public class GenreService {
         }
 
         genreRepository.delete(toDelete);
-
-        return toDtoMapper.mapGenreToGenreDto(toDelete);
     }
 }

@@ -161,10 +161,11 @@ public class GenreController {
 
     @ApiOperation(value = "delete existed Genre", tags = { "Genre" })
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "deleted Genre object", response = GenreDto.class),
+            @ApiResponse(code = 204, message = "Genre deleted successfully"),
             @ApiResponse(code = 400, message = "Something wrong..."),
             @ApiResponse(code = 404, message = "Genre to delete not found")
     })
+    @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/genre/{genreId}/delete",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteGenre(
@@ -172,7 +173,7 @@ public class GenreController {
             @PathVariable Long genreId,
             @ApiParam(value = "if false and Author has related Books, it will produce fault")
             @RequestParam(name = "forcibly", defaultValue = "false") Boolean forcibly) {
-        GenreDto response = genreService.deleteExistedGenre(genreId, forcibly);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        genreService.deleteExistedGenre(genreId, forcibly);
+        return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
 }
