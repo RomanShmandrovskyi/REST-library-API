@@ -19,7 +19,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/library")
-@Api(value = "Author", description = "Operations with Author in Library", tags = { "Author" })
+@Api(value = "Author", description = "Author endpoints", tags = {"Author"})
 public class AuthorController {
 
     @Autowired
@@ -46,7 +46,7 @@ public class AuthorController {
         }
     }
 
-    @ApiOperation(value = "get Author object by 'authorId'", tags = { "Author" })
+    @ApiOperation(value = "get Author object by 'authorId'", tags = {"Author"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Special Author object in JSON", response = AuthorDto.class),
             @ApiResponse(code = 400, message = "Something wrong..."),
@@ -61,7 +61,7 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "get Author of special Book", tags = { "Author" })
+    @ApiOperation(value = "get Author of special Book", tags = {"Author"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Author object of special Book in JSON", response = AuthorDto.class),
             @ApiResponse(code = 400, message = "Something wrong..."),
@@ -76,7 +76,7 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "get all Authors", tags = { "Author" })
+    @ApiOperation(value = "get all Authors", tags = {"Author"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of Author objects",
                     responseContainer = "Set", response = AuthorDto.class),
@@ -103,15 +103,14 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "get all Authors in special Genre", tags = { "Author" })
+    @ApiOperation(value = "get all Authors in special Genre", tags = {"Author"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of Authors objects",
                     responseContainer = "Set", response = AuthorDto.class),
             @ApiResponse(code = 400, message = "Something wrong..."),
             @ApiResponse(code = 404, message = "Genre not found")
     })
-    @GetMapping(value = "/genre/{genreId}/authors",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    //@GetMapping(value = "/genre/{genreId}/authors", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthorsOfGenre(
             @ApiParam(required = true, value = "existed Genre ID")
             @PathVariable Long genreId,
@@ -119,7 +118,7 @@ public class AuthorController {
             @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
             @ApiParam(value = "page number")
             @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @ApiParam(value = "count of objects on one page")
+            @ApiParam(value = "count of objects per one page")
             @RequestParam(name = "size", defaultValue = "10") Integer size,
             @ApiParam(value = "custom sort parameter", defaultValue = "authorId")
             @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
@@ -133,7 +132,7 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "create new Author", tags = { "Author" })
+    @ApiOperation(value = "create new Author", tags = {"Author"})
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "newly created Author", response = AuthorDto.class),
             @ApiResponse(code = 400, message = "Something wrong..."),
@@ -150,7 +149,7 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "update existed Author", tags = { "Author" })
+    @ApiOperation(value = "update existed Author", tags = {"Author"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "updated Author object", response = AuthorDto.class),
             @ApiResponse(code = 400, message = "Something wrong..."),
@@ -168,7 +167,7 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "delete existed Author", tags = { "Author" })
+    @ApiOperation(value = "delete existed Author", tags = {"Author"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "deleted Author object", response = AuthorDto.class),
             @ApiResponse(code = 400, message = "Something wrong..."),

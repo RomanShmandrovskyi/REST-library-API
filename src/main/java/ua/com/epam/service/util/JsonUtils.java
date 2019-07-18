@@ -7,7 +7,7 @@ import org.json.JSONArray;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class JsonUtils {
 
@@ -30,11 +30,26 @@ public class JsonUtils {
             sorted.put(keyValue, single);
         }
 
-        return new JSONArray(sorted.values()
-                .stream()
+        return new JSONArray(Stream
+                .of(sorted.values())
                 .limit(count)
                 .collect(Collectors.toList()))
                 .toString();
+    }
+
+    public <T> List<T> filterByJsonPath(List<T> dtos, Map<String, String> params, Class<T> clazz) {
+        if (params.isEmpty()) {
+            return dtos;
+        }
+
+        String jsonPathFilterStr = parseParamMapToJsonPathFilter(params);
+        String jsonArrayFromDTOs = new JSONArray(dtos).toString();
+        String jsonArrayFilteredStr = JsonPath.read(jsonArrayFromDTOs, jsonPathFilterStr).toString();
+        JSONArray jsonArrayFiltered = new JSONArray(jsonArrayFilteredStr);
+
+        return Stream.of(jsonArrayFiltered)
+                .map(s -> gson.fromJson(s.toString(), clazz))
+                .collect(Collectors.toList());
     }
 
     private String parseParamMapToJsonPathFilter(Map<String, String> params) {
@@ -56,21 +71,5 @@ public class JsonUtils {
 
         path.append(andFilters.stream().collect(Collectors.joining("&&", "(", ")"))).append(suffix);
         return path.toString();
-    }
-
-    public <T> List<T> filterByJsonPath(List<T> dtos, Map<String, String> params, Class<T> clazz) {
-        if (params.isEmpty()) {
-            return dtos;
-        }
-
-        String jsonPathFilterStr = parseParamMapToJsonPathFilter(params);
-        String jsonArrayFromDTOs = new JSONArray(dtos).toString();
-        String jsonArrayFilteredStr = JsonPath.read(jsonArrayFromDTOs, jsonPathFilterStr).toString();
-        JSONArray jsonArrayFiltered = new JSONArray(jsonArrayFilteredStr);
-
-        return IntStream.range(0, jsonArrayFiltered.length())
-                .mapToObj(i -> jsonArrayFiltered.get(i).toString())
-                .map(s -> gson.fromJson(s, clazz))
-                .collect(Collectors.toList());
     }
 }
