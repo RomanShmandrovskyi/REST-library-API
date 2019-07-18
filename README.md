@@ -1,7 +1,7 @@
 # REST-library
-A simple REST API that represent Library. 
+A simple REST API that represent Library.
 
-There are 3 tables: Author, Genre and Book. 
+There are 3 tables: Author, Genre and Book.
 
 One Author has many Books (for Genre too) and one Book must has one Author and one Genre.
 
@@ -11,18 +11,21 @@ One Author has many Books (for Genre too) and one Book must has one Author and o
 ```
 mvn clean install
 ```
-3. Go to `application.properties` file and change values for this two rows that will be suitable for your MySQL Data Base:
+3. Go to `application.properties` (here you can find also some other properties) file and change values for this two rows that will be suitable for your MySQL Data Base:
 ```
 spring.datasource.username=<username>
 spring.datasource.password=<password>
 ```
 4. Open MySQL Workbench and run the `create_DB.sql` script from `src/main/resources`;
-5. Run main method in `App` class from `src/main/java/ua/com/epam/app` package;
+5. Load root project folder and run:
+```
+mvn spring-boot:run
+```
+Or just run main method in App class from src/main/java/ua/com/epam/app package;
 6. Swagger with documentation will be available on:
 ```
 http://localhost:8080/swagger-ui.html
 ```
-
 ## Data ingestion
 It is realized random data ingestion in `DataIngestion` class by `src/main/java/ua/com/epam` path. To generate some random data run main method from this class;
 
