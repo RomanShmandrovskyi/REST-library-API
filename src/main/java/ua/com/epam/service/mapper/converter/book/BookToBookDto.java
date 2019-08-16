@@ -24,8 +24,8 @@ public class BookToBookDto implements Converter<Book, BookDto> {
         SizeDto size = new SizeDto();
         adds.setPageCount(source.getPageCount());
         size.setHeight(source.getBookHeight());
-        size.setLength(source.getBookWidth());
-        size.setWidth(source.getBookLength());
+        size.setLength(source.getBookLength());
+        size.setWidth(source.getBookWidth());
         adds.setSize(size);
 
         dto.setAdditional(adds);

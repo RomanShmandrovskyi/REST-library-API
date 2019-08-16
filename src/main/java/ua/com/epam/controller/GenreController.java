@@ -109,7 +109,7 @@ public class GenreController {
             @ApiResponse(code = 400, message = "Something wrong..."),
             @ApiResponse(code = 404, message = "Author not found")
     })
-    //@GetMapping(value = "/author/{authorId}/genres", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/author/{authorId}/genres", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthorGenres(
             @ApiParam(required = true, value = "existed Author ID")
             @PathVariable Long authorId,

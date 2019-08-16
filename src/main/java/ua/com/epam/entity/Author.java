@@ -13,6 +13,7 @@ import java.util.Date;
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
+
 @Entity
 public class Author implements Serializable {
 
@@ -38,7 +39,7 @@ public class Author implements Serializable {
     @Column(name = "birth_date")
     private Date birthDate;
 
-    @Column(name = "birth_country", length = 50)
+    @Column(name = "birth_country", length = 60)
     private String birthCountry;
 
     @Column(name = "birth_city", length = 50)

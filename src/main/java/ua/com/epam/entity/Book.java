@@ -12,6 +12,7 @@ import java.io.Serializable;
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
+
 @Entity
 public class Book implements Serializable {
 
