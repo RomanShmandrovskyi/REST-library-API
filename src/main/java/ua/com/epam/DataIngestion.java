@@ -14,9 +14,9 @@ import java.util.Random;
 import java.util.stream.IntStream;
 
 public class DataIngestion {
-    private final static int authorsCount = 250;
+    private final static int authorsCount = 150;
     private final static int genresCount = 30;
-    private final static int booksCount = 2000;
+    private final static int booksCount = 1000;
 
     public static void main(String[] args) throws ParseException {
         Faker f = new Faker();

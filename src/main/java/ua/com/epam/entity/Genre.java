@@ -9,6 +9,7 @@ import java.io.Serializable;
 @Setter
 @EqualsAndHashCode
 @NoArgsConstructor
+
 @Entity
 public class Genre implements Serializable {
 

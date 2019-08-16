@@ -75,7 +75,7 @@ public class BookController {
             @ApiResponse(code = 400, message = "Something wrong..."),
             @ApiResponse(code = 404, message = "Book not found")
     })
-    //@GetMapping(value = "/book/{bookId}/author/genre", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/book/{bookId}/author/genre", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBookWithAuthorAndGenre(
             @ApiParam(required = true, value = "existed Book ID")
             @PathVariable Long bookId) {
@@ -116,7 +116,7 @@ public class BookController {
                     responseContainer = "Set", response = BookDto.class),
             @ApiResponse(code = 400, message = "Something wrong...")
     })
-    //@GetMapping(value = "/books/{dimension}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/books/{dimension}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllBooksSortedInSomeDimension(
             @ApiParam(required = true, allowableValues = "volume,square", value = "dimension type")
             @PathVariable String dimension,
