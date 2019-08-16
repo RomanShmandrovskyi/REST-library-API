@@ -1,29 +1,33 @@
 # REST-library
 A simple REST API that represent Library.
 
-There are 3 tables: Author, Genre and Book.
+There are 3 tables: `Author`, `Genre` and `Book`.
 
 One Author has many Books (for Genre too) and one Book must has one Author and one Genre.
 
 ## Getting started
-1. Clone project and import it like Maven project;
-2. After that install mvn:
+1. Clone project:
 ```
-mvn clean install
+git clone https://github.com/RoshS/REST-library.git
 ```
-3. Go to `application.properties` (here you can find also some other properties) file and change values for this two rows that will be suitable for your MySQL Data Base:
+
+2. Open `src/main/resources/application.properties` file and enter instead `<data_base_name>` name you want for your data base:
 ```
-spring.datasource.username=<username>
-spring.datasource.password=<password>
+spring.datasource.dbname=<data_base_name>
 ```
-4. Open MySQL Workbench and run the `create_DB.sql` script from `src/main/resources`;
-5. Load root project folder and run:
+The API will up on built in data base H2 and DB file will store here: `src/main/resources/db`, so if you restart API you don't lose your data.
+Also you can change DB file location if you want:
+```
+spring.datasource.dbpath=./src/main/resources/db
+```
+
+3. Load root project folder and run:
 ```
 mvn spring-boot:run
 ```
-Or just run main method in App class from src/main/java/ua/com/epam/app package;
+Or import project as Maven project and just run main method in `App` class from `src/main/java/ua/com/epam/app` package;
 
-6. Swagger with documentation will be available on:
+4. Swagger with documentation will be available on:
 ```
 http://localhost:8080/swagger-ui.html
 ```
@@ -32,12 +36,11 @@ It is realized random data ingestion in `DataIngestion` class by `src/main/java/
 
 It is possible to configure counts of every object:
 ```
-private final static int authorsCount = 250;
+private final static int authorsCount = 150;
 private final static int genresCount = 30;
-private final static int booksCount = 2000;
+private final static int booksCount = 1000;
 ```
-
-Max count of Genres is 30 (if you set more, generator works endlessly).
+Note the comments on these fields.
 
 When generation will be finished, go to `resources`. Here will be generated `addData.sh` script file. Just run it and wait for DB filling.
 

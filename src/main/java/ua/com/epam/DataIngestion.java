@@ -14,9 +14,12 @@ import java.util.Random;
 import java.util.stream.IntStream;
 
 public class DataIngestion {
-    private final static int authorsCount = 150;
-    private final static int genresCount = 30;
-    private final static int booksCount = 1000;
+    private final static String fileName = "data.sh";
+    private final static String fileLocation = "src/main/resources";
+
+    private final static int authorsCount = 150; // 9999 - is maximum (if set to max it greatly increase generation time)
+    private final static int genresCount = 30;   // 30 is maximum; if set more, will work endlessly!!!
+    private final static int booksCount = 1000;  // 9999 - is maximum (if set to max it greatly increase generation time)
 
     public static void main(String[] args) throws ParseException {
         Faker f = new Faker();
@@ -100,10 +103,11 @@ public class DataIngestion {
                         authorIds.get(new Random().nextInt(authorIds.size())),
                         genreIds.get(new Random().nextInt(genreIds.size()))))));
 
-        File script = new File("src/main/resources/addData.sh");
+        File script = new File(fileLocation + "/" + fileName);
         try {
             script.createNewFile();
             Files.write(script.toPath(), bashLines);
+            System.out.println("File " + fileName + " created in: " + fileLocation + "!");
         } catch (IOException e) {
             e.printStackTrace();
         }
