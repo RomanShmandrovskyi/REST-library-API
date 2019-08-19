@@ -53,6 +53,12 @@ public class GenreService {
         return orderType;
     }
 
+    private List<GenreDto> mapToDto(List<Genre> genres) {
+        return genres.stream()
+                .map(toDtoMapper::mapGenreToGenreDto)
+                .collect(Collectors.toList());
+    }
+
     public GenreDto findGenreByGenreId(long genreId) {
         Genre toGet = genreRepository.getOneByGenreId(genreId)
                 .orElseThrow(() -> new GenreNotFoundException(genreId));
@@ -77,14 +83,14 @@ public class GenreService {
 
         if (!pageable) {
             int genreCount = (int) genreRepository.count();
-            genres = genreRepository.getAllGenresOrderedPaginated(PageRequest.of(0, genreCount, Sort.by(orderType, sortParam)));
+            genres = genreRepository.getAllGenresOrderedPaginated(
+                    PageRequest.of(0, genreCount, Sort.by(orderType, sortParam)));
         } else {
-            genres = genreRepository.getAllGenresOrderedPaginated(PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
+            genres = genreRepository.getAllGenresOrderedPaginated(
+                    PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
         }
 
-        return genres.stream()
-                .map(toDtoMapper::mapGenreToGenreDto)
-                .collect(Collectors.toList());
+        return mapToDto(genres);
     }
 
     public List<GenreDto> findAllGenresOfAuthor(long authorId, String sortBy, String order) {
@@ -95,11 +101,7 @@ public class GenreService {
         Sort.Direction orderType = resolveDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        return genreRepository
-                .getAllGenresOfAuthorOrdered(authorId, Sort.by(orderType, sortParam))
-                .stream()
-                .map(toDtoMapper::mapGenreToGenreDto)
-                .collect(Collectors.toList());
+        return mapToDto(genreRepository.getAllGenresOfAuthorOrdered(authorId, Sort.by(orderType, sortParam)));
     }
 
     public GenreDto addNewGenre(GenreDto genre) {

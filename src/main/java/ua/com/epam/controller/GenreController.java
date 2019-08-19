@@ -55,7 +55,8 @@ public class GenreController {
     @GetMapping(value = "/genre/{genreId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGenre(
-            @PathVariable Long genreId) {
+            @PathVariable
+                    Long genreId) {
         GenreDto response = genreService.findGenreByGenreId(genreId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -70,7 +71,8 @@ public class GenreController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBookGenre(
             @ApiParam(required = true, value = "existed Book ID")
-            @PathVariable Long bookId) {
+            @PathVariable
+                    Long bookId) {
         GenreDto response = genreService.findGenreOfBook(bookId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -85,15 +87,24 @@ public class GenreController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllGenres(
             @ApiParam(value = "paginate response")
-            @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
+            @RequestParam(name = "pagination", defaultValue = "true")
+                    Boolean pagination,
+
             @ApiParam(value = "custom sort parameter")
-            @RequestParam(name = "sortBy", defaultValue = "genreId") String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = "genreId")
+                    String sortBy,
+
             @ApiParam(allowableValues = "asc,desc", value = "sorting order")
-            @RequestParam(name = "orderType", defaultValue = "asc") String orderType,
+            @RequestParam(name = "orderType", defaultValue = "asc")
+                    String orderType,
+
             @ApiParam(value = "page number")
-            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "page", defaultValue = "1")
+                    Integer page,
+
             @ApiParam(value = "count of objects per one page")
-            @RequestParam(name = "size", defaultValue = "10") Integer size) {
+            @RequestParam(name = "size", defaultValue = "10")
+                    Integer size) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
         checkPaginateParams(page, size);
@@ -102,7 +113,7 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "get all Genres of special Author", tags = { "Genre" })
+    @ApiOperation(value = "get all Genres of special Author", tags = {"Genre"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of Genre objects",
                     responseContainer = "Set", response = GenreDto.class),
@@ -112,11 +123,16 @@ public class GenreController {
     @GetMapping(value = "/author/{authorId}/genres", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthorGenres(
             @ApiParam(required = true, value = "existed Author ID")
-            @PathVariable Long authorId,
+            @PathVariable
+                    Long authorId,
+
             @ApiParam(value = "custom sort parameter")
-            @RequestParam(name = "sortBy", defaultValue = "genreId") String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = "genreId")
+                    String sortBy,
+
             @ApiParam(allowableValues = "asc,desc", value = "sorting order")
-            @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
+            @RequestParam(name = "orderType", defaultValue = "asc")
+                    String orderType) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
 
@@ -124,7 +140,7 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "create new Genre", tags = { "Genre" })
+    @ApiOperation(value = "create new Genre", tags = {"Genre"})
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "newly created Genre", response = GenreDto.class),
             @ApiResponse(code = 400, message = "Something wrong..."),
@@ -136,12 +152,13 @@ public class GenreController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewGenre(
             @ApiParam(required = true, value = "Genre to add", name = "Genre object")
-            @RequestBody @Valid GenreDto postGenre) {
+            @RequestBody @Valid
+                    GenreDto postGenre) {
         GenreDto response = genreService.addNewGenre(postGenre);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "update existed Genre", tags = { "Genre" })
+    @ApiOperation(value = "update existed Genre", tags = {"Genre"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "updated Genre object", response = GenreDto.class),
             @ApiResponse(code = 400, message = "Something wrong..."),
@@ -152,14 +169,17 @@ public class GenreController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateGenre(
             @ApiParam(required = true, value = "existed Genre ID")
-            @PathVariable Long genreId,
+            @PathVariable
+                    Long genreId,
+
             @ApiParam(required = true, value = "Genre to update", name = "Genre object")
-            @RequestBody @Valid GenreDto updateGenre) {
+            @RequestBody @Valid
+                    GenreDto updateGenre) {
         GenreDto response = genreService.updateExistedGenre(genreId, updateGenre);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "delete existed Genre", tags = { "Genre" })
+    @ApiOperation(value = "delete existed Genre", tags = {"Genre"})
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Genre deleted successfully"),
             @ApiResponse(code = 400, message = "Something wrong..."),
@@ -170,9 +190,12 @@ public class GenreController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteGenre(
             @ApiParam(required = true, value = "existed Genre ID")
-            @PathVariable Long genreId,
+            @PathVariable
+                    Long genreId,
+
             @ApiParam(value = "if false and Author has related Books, it will produce fault")
-            @RequestParam(name = "forcibly", defaultValue = "false") Boolean forcibly) {
+            @RequestParam(name = "forcibly", defaultValue = "false")
+                    Boolean forcibly) {
         genreService.deleteExistedGenre(genreId, forcibly);
         return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }

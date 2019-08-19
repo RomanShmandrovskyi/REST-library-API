@@ -56,7 +56,8 @@ public class AuthorController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthor(
             @ApiParam(required = true, value = "existed Author ID")
-            @PathVariable Long authorId) {
+            @PathVariable
+                    Long authorId) {
         AuthorDto response = authorService.findAuthorByAuthorId(authorId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -71,7 +72,8 @@ public class AuthorController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAuthorOfBook(
             @ApiParam(required = true, value = "existed Book ID")
-            @PathVariable Long bookId) {
+            @PathVariable
+                    Long bookId) {
         AuthorDto response = authorService.findAuthorOfBook(bookId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -86,15 +88,24 @@ public class AuthorController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthors(
             @ApiParam(value = "paginate response")
-            @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
+            @RequestParam(name = "pagination", defaultValue = "true")
+                    Boolean pagination,
+
             @ApiParam(value = "page number")
-            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "page", defaultValue = "1")
+                    Integer page,
+
             @ApiParam(value = "count of objects per one page")
-            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "size", defaultValue = "10")
+                    Integer size,
+
             @ApiParam(value = "custom sort parameter")
-            @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = "authorId")
+                    String sortBy,
+
             @ApiParam(allowableValues = "asc,desc", value = "sorting order")
-            @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
+            @RequestParam(name = "orderType", defaultValue = "asc")
+                    String orderType) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
         checkPaginateParams(page, size);
@@ -113,17 +124,28 @@ public class AuthorController {
     @GetMapping(value = "/genre/{genreId}/authors", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthorsOfGenre(
             @ApiParam(required = true, value = "existed Genre ID")
-            @PathVariable Long genreId,
+            @PathVariable
+                    Long genreId,
+
             @ApiParam(value = "paginate response")
-            @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
+            @RequestParam(name = "pagination", defaultValue = "true")
+                    Boolean pagination,
+
             @ApiParam(value = "page number")
-            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "page", defaultValue = "1")
+                    Integer page,
+
             @ApiParam(value = "count of objects per one page")
-            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "size", defaultValue = "10")
+                    Integer size,
+
             @ApiParam(value = "custom sort parameter", defaultValue = "authorId")
-            @RequestParam(name = "sortBy", defaultValue = "authorId") String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = "authorId")
+                    String sortBy,
+
             @ApiParam(allowableValues = "asc,desc", value = "sorting order")
-            @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
+            @RequestParam(name = "orderType", defaultValue = "asc")
+                    String orderType) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
         checkPaginateParams(page, size);
@@ -144,7 +166,8 @@ public class AuthorController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewAuthor(
             @ApiParam(required = true, value = "Author to add", name = "Author object")
-            @RequestBody @Valid AuthorDto postAuthor) {
+            @RequestBody @Valid
+                    AuthorDto postAuthor) {
         AuthorDto response = authorService.addNewAuthor(postAuthor);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -160,9 +183,12 @@ public class AuthorController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateAuthor(
             @ApiParam(required = true, value = "existed Author ID")
-            @PathVariable Long authorId,
+            @PathVariable
+                    Long authorId,
+
             @ApiParam(required = true, value = "Author to update", name = "Author object")
-            @RequestBody @Valid AuthorDto updatedAuthor) {
+            @RequestBody @Valid
+                    AuthorDto updatedAuthor) {
         AuthorDto response = authorService.updateExistedAuthor(authorId, updatedAuthor);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -178,9 +204,12 @@ public class AuthorController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAuthor(
             @ApiParam(required = true, value = "existed Author ID")
-            @PathVariable Long authorId,
+            @PathVariable
+                    Long authorId,
+
             @ApiParam(value = "if false and Author has related Books, it will produce fault")
-            @RequestParam(name = "forcibly", defaultValue = "false") Boolean forcibly) {
+            @RequestParam(name = "forcibly", defaultValue = "false")
+                    Boolean forcibly) {
         authorService.deleteExistedAuthor(authorId, forcibly);
         return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }

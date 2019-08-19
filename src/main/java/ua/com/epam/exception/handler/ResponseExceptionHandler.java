@@ -45,7 +45,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = InvalidSizeValueException.class)
     public ResponseEntity<ExceptionResponse> handleInvalidSizeValue() {
-        String message = "Value of 'size' parameter must be positive and grater that zero!";
+        String message = "Value of 'size' parameter must be positive and greater than zero!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
@@ -58,7 +58,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = InvalidPageValueException.class)
     public ResponseEntity<ExceptionResponse> handleInvalidPageValue() {
-        String message = "Value of 'page' parameter must be positive and grater that zero!";
+        String message = "Value of 'page' parameter must be positive and greater than zero!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),

@@ -79,9 +79,11 @@ public class AuthorService {
 
         if (!pageable) {
             int authorsCount = (int) authorRepository.count();
-            authors = authorRepository.getAllAuthorsOrderedPaginated(PageRequest.of(0, authorsCount, Sort.by(orderType, sortParam)));
+            authors = authorRepository.getAllAuthorsOrderedPaginated(
+                    PageRequest.of(0, authorsCount, Sort.by(orderType, sortParam)));
         } else {
-            authors =  authorRepository.getAllAuthorsOrderedPaginated(PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
+            authors =  authorRepository.getAllAuthorsOrderedPaginated(
+                    PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
         }
 
         return authors.stream()
@@ -100,9 +102,11 @@ public class AuthorService {
 
         if (!pageable) {
             int authorsCount = (int) authorRepository.count();
-            authors = authorRepository.getAllAuthorsInGenreOrderedPaginated(genreId, PageRequest.of(0, authorsCount, Sort.by(orderType, sortParam)));
+            authors = authorRepository.getAllAuthorsInGenreOrderedPaginated(
+                    genreId, PageRequest.of(0, authorsCount, Sort.by(orderType, sortParam)));
         } else {
-            authors = authorRepository.getAllAuthorsInGenreOrderedPaginated(genreId, PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
+            authors = authorRepository.getAllAuthorsInGenreOrderedPaginated(
+                    genreId, PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
         }
 
         return authors.stream()
@@ -151,7 +155,7 @@ public class AuthorService {
         Author toDelete = authorRepository.getOneByAuthorId(authorId)
                 .orElseThrow(() -> new AuthorNotFoundException(authorId));
 
-        long booksCount = bookRepository.getAllAuthorBooksOrdered(authorId, Sort.by(Sort.Direction.ASC)).size();
+        long booksCount = bookRepository.getAllAuthorBooks(authorId).size();
 
         if (booksCount > 0 && !forcibly) {
             throw new BooksInAuthorArePresentException(authorId, booksCount);

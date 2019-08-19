@@ -64,7 +64,8 @@ public class BookController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBook(
             @ApiParam(required = true, value = "existed Book ID")
-            @PathVariable Long bookId) {
+            @PathVariable
+                    Long bookId) {
         BookDto response = bookService.findBookByBookId(bookId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -78,7 +79,8 @@ public class BookController {
     @GetMapping(value = "/book/{bookId}/author/genre", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBookWithAuthorAndGenre(
             @ApiParam(required = true, value = "existed Book ID")
-            @PathVariable Long bookId) {
+            @PathVariable
+                    Long bookId) {
         BookWithAuthorAndGenreDto response = bookService.findBookWithAuthorAndGenreInfo(bookId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -93,15 +95,24 @@ public class BookController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllBooks(
             @ApiParam(value = "paginate response")
-            @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
+            @RequestParam(name = "pagination", defaultValue = "true")
+                    Boolean pagination,
+
             @ApiParam(value = "page number")
-            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "page", defaultValue = "1")
+                    Integer page,
+
             @ApiParam(value = "count of objects per one page")
-            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "size", defaultValue = "10")
+                    Integer size,
+
             @ApiParam(value = "custom sort parameter")
-            @RequestParam(name = "sortBy", defaultValue = "bookId") String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = "bookId")
+                    String sortBy,
+
             @ApiParam(allowableValues = "asc,desc", value = "sorting order")
-            @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
+            @RequestParam(name = "orderType", defaultValue = "asc")
+                    String orderType) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
         checkPaginateParams(page, size);
@@ -119,17 +130,34 @@ public class BookController {
     @GetMapping(value = "/books/{dimension}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllBooksSortedInSomeDimension(
             @ApiParam(required = true, allowableValues = "volume,square", value = "dimension type")
-            @PathVariable String dimension,
+            @PathVariable
+                    String dimension,
+
+            /*@ApiParam(allowableValues = "asc,desc", value = "sorting order")
+            @RequestParam(name = "orderType", defaultValue = "asc")
+                    String orderType,*/
+
             @ApiParam(value = "paginate response")
-            @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
+            @RequestParam(name = "pagination", defaultValue = "true")
+                    Boolean pagination,
+
             @ApiParam(value = "page number")
-            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "page", defaultValue = "1")
+                    Integer page,
+
             @ApiParam(value = "count of objects per one page")
-            @RequestParam(name = "size", defaultValue = "10") Integer size) {
+            @RequestParam(name = "size", defaultValue = "10")
+                    Integer size) {
         checkPaginateParams(page, size);
         checkDimension(dimension);
+        List<BookDto> response;
 
-        List<BookDto> response = bookService.findAllBooksSortedByDimension(dimension, page, size, pagination);
+        if (dimension.equals("square")) {
+            response = bookService.findAllBooksSortedBySquare(page, size, pagination);
+        } else {
+            response = bookService.findAllBooksSortedByVolume(page, size, pagination);
+        }
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -143,17 +171,28 @@ public class BookController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllBooksInGenre(
             @ApiParam(required = true, value = "existed Genre ID")
-            @PathVariable Long genreId,
+            @PathVariable
+                    Long genreId,
+
             @ApiParam(value = "paginate response")
-            @RequestParam(name = "pagination", defaultValue = "true") Boolean pagination,
+            @RequestParam(name = "pagination", defaultValue = "true")
+                    Boolean pagination,
+
             @ApiParam(value = "page number")
-            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "page", defaultValue = "1")
+                    Integer page,
+
             @ApiParam(value = "count of objects per one page")
-            @RequestParam(name = "size", defaultValue = "10") Integer size,
+            @RequestParam(name = "size", defaultValue = "10")
+                    Integer size,
+
             @ApiParam(value = "custom sort parameter")
-            @RequestParam(name = "sortBy", defaultValue = "bookId") String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = "bookId")
+                    String sortBy,
+
             @ApiParam(allowableValues = "asc,desc", value = "sorting order")
-            @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
+            @RequestParam(name = "orderType", defaultValue = "asc")
+                    String orderType) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
         checkPaginateParams(page, size);
@@ -172,11 +211,16 @@ public class BookController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthorBooks(
             @ApiParam(required = true, value = "existed Author ID")
-            @PathVariable Long authorId,
+            @PathVariable
+                    Long authorId,
+
             @ApiParam(value = "custom sort parameter")
-            @RequestParam(name = "sortBy", defaultValue = "bookId") String sortBy,
+            @RequestParam(name = "sortBy", defaultValue = "bookId")
+                    String sortBy,
+
             @ApiParam(allowableValues = "asc,desc", value = "sorting order")
-            @RequestParam(name = "orderType", defaultValue = "asc") String orderType) {
+            @RequestParam(name = "orderType", defaultValue = "asc")
+                    String orderType) {
         checkSortByKeyInGroup(sortBy);
         checkOrdering(orderType);
 
@@ -195,9 +239,12 @@ public class BookController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthorBooksInGenre(
             @ApiParam(required = true, value = "existed Author ID")
-            @PathVariable Long authorId,
+            @PathVariable
+                    Long authorId,
+
             @ApiParam(required = true, value = "existed Genre ID")
-            @PathVariable Long genreId) {
+            @PathVariable
+                    Long genreId) {
         List<BookDto> response = bookService.findBooksOfAuthorInGenre(authorId, genreId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -214,11 +261,16 @@ public class BookController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewBook(
             @ApiParam(required = true, value = "existed Author ID")
-            @PathVariable Long authorId,
+            @PathVariable
+                    Long authorId,
+
             @ApiParam(required = true, value = "existed Genre ID")
-            @PathVariable Long genreId,
+            @PathVariable
+                    Long genreId,
+
             @ApiParam(required = true, value = "Book to add", name = "Book object")
-            @RequestBody @Valid BookDto newBook) {
+            @RequestBody @Valid
+                    BookDto newBook) {
         BookDto response = bookService.addNewBook(authorId, genreId, newBook);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -234,9 +286,12 @@ public class BookController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateBook(
             @ApiParam(required = true, value = "existed Book ID")
-            @PathVariable Long bookId,
+            @PathVariable
+                    Long bookId,
+
             @ApiParam(required = true, value = "Book to update", name = "Book object")
-            @RequestBody @Valid BookDto updatedBook) {
+            @RequestBody @Valid
+                    BookDto updatedBook) {
         BookDto response = bookService.updateExistedBook(bookId, updatedBook);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -252,7 +307,8 @@ public class BookController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteBook(
             @ApiParam(required = true, value = "existed Book ID")
-            @PathVariable Long bookId) {
+            @PathVariable
+                    Long bookId) {
         bookService.deleteExistedBook(bookId);
         return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
