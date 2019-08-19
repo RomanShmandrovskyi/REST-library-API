@@ -19,9 +19,12 @@ import ua.com.epam.repository.JsonKeysConformity;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static ua.com.epam.repository.JsonKeysConformity.AUTHOR_ID;
 
 @Service
 public class AuthorService {
@@ -41,7 +44,7 @@ public class AuthorService {
     @Autowired
     private DtoToModelMapper toModelMapper;
 
-    private Sort.Direction getSortDirection(String order) {
+    private Sort.Direction resolveDirection(String order) {
         Sort.Direction orderType = null;
 
         if (order.equals("desc"))
@@ -70,12 +73,16 @@ public class AuthorService {
     }
 
     public List<AuthorDto> findAllAuthors(String sortBy, String order, int page, int size, boolean pageable) {
-        Sort.Direction orderType = getSortDirection(order);
+        Sort.Direction orderType = resolveDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        List<Author> authors;
 
-        List<Author> authors = pageable ?
-                authorRepository.getAllAuthorsOrderedPaginated(Sort.by(orderType, sortParam), PageRequest.of(page - 1, size)) :
-                authorRepository.getAllAuthorsOrdered(Sort.by(orderType, sortParam));
+        if (!pageable) {
+            int authorsCount = (int) authorRepository.count();
+            authors = authorRepository.getAllAuthorsOrderedPaginated(PageRequest.of(0, authorsCount, Sort.by(orderType, sortParam)));
+        } else {
+            authors =  authorRepository.getAllAuthorsOrderedPaginated(PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
+        }
 
         return authors.stream()
                 .map(toDtoMapper::mapAuthorToAuthorDto)
@@ -87,12 +94,16 @@ public class AuthorService {
             throw new GenreNotFoundException(genreId);
         }
 
-        Sort.Direction orderType = getSortDirection(order);
-        String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        Sort.Direction orderType = resolveDirection(order);
+        String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        List<Author> authors;
 
-        List<Author> authors = pageable ?
-                authorRepository.getAllAuthorsInGenreOrderedPaginated(genreId, Sort.by(orderType, sortParameter), PageRequest.of(page - 1, size)) :
-                authorRepository.getAllAuthorsInGenreOrdered(genreId, Sort.by(orderType, sortParameter));
+        if (!pageable) {
+            int authorsCount = (int) authorRepository.count();
+            authors = authorRepository.getAllAuthorsInGenreOrderedPaginated(genreId, PageRequest.of(0, authorsCount, Sort.by(orderType, sortParam)));
+        } else {
+            authors = authorRepository.getAllAuthorsInGenreOrderedPaginated(genreId, PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
+        }
 
         return authors.stream()
                 .map(toDtoMapper::mapAuthorToAuthorDto)
@@ -140,7 +151,7 @@ public class AuthorService {
         Author toDelete = authorRepository.getOneByAuthorId(authorId)
                 .orElseThrow(() -> new AuthorNotFoundException(authorId));
 
-        long booksCount = bookRepository.getAllAuthorBooks(authorId).size();
+        long booksCount = bookRepository.getAllAuthorBooksOrdered(authorId, Sort.by(Sort.Direction.ASC)).size();
 
         if (booksCount > 0 && !forcibly) {
             throw new BooksInAuthorArePresentException(authorId, booksCount);

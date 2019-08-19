@@ -17,18 +17,12 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
 
     Optional<Author> getOneByAuthorId(long authorId);
 
-    @Query(value = "SELECT a FROM Author a")
-    List<Author> getAllAuthorsOrdered(Sort sort);
-
-    @Query(value = "SELECT a FROM Author a")
-    List<Author> getAllAuthorsOrderedPaginated(Sort sort, PageRequest page);
-
-    @Query(value = "SELECT DISTINCT a FROM Author a JOIN Book b ON a.authorId = b.authorId AND b.genreId = ?1")
-    List<Author> getAllAuthorsInGenreOrdered(long genreId, Sort sort);
-
-    @Query(value = "SELECT DISTINCT a FROM Author a JOIN Book b ON a.authorId = b.authorId AND b.genreId = ?1")
-    List<Author> getAllAuthorsInGenreOrderedPaginated(long genreId, Sort sort, PageRequest page);
-
     @Query(value = "SELECT a FROM Author a JOIN Book b ON b.authorId = a.authorId AND b.bookId = ?1")
     Author getAuthorOfBook(long bookId);
+
+    @Query(value = "SELECT a FROM Author a")
+    List<Author> getAllAuthorsOrderedPaginated(PageRequest page);
+
+    @Query(value = "SELECT DISTINCT a FROM Author a JOIN Book b ON a.authorId = b.authorId AND b.genreId = ?1")
+    List<Author> getAllAuthorsInGenreOrderedPaginated(long genreId, PageRequest page);
 }

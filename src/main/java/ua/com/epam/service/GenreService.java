@@ -42,7 +42,7 @@ public class GenreService {
     @Autowired
     private DtoToModelMapper toModelMapper;
 
-    private Sort.Direction getSortDirection(String order) {
+    private Sort.Direction resolveDirection(String order) {
         Sort.Direction orderType = null;
 
         if (order.equals("desc"))
@@ -71,12 +71,16 @@ public class GenreService {
     }
 
     public List<GenreDto> findAllGenres(String sortBy, String order, int page, int size, boolean pageable) {
-        Sort.Direction orderType = getSortDirection(order);
+        Sort.Direction orderType = resolveDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        List<Genre> genres;
 
-        List<Genre> genres = pageable ?
-                genreRepository.getAllGenresOrderedPaginated(Sort.by(orderType, sortParam), PageRequest.of(page - 1, size)) :
-                genreRepository.getAllGenresOrdered(Sort.by(orderType, sortParam));
+        if (!pageable) {
+            int genreCount = (int) genreRepository.count();
+            genres = genreRepository.getAllGenresOrderedPaginated(PageRequest.of(0, genreCount, Sort.by(orderType, sortParam)));
+        } else {
+            genres = genreRepository.getAllGenresOrderedPaginated(PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
+        }
 
         return genres.stream()
                 .map(toDtoMapper::mapGenreToGenreDto)
@@ -88,7 +92,7 @@ public class GenreService {
             throw new AuthorNotFoundException(authorId);
         }
 
-        Sort.Direction orderType = getSortDirection(order);
+        Sort.Direction orderType = resolveDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
         return genreRepository

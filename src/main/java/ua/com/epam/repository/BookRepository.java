@@ -18,25 +18,16 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     boolean existsByBookId(long bookId);
 
     @Query(value = "SELECT b FROM Book b")
-    List<Book> getAllBooksOrderedPaginated(Sort sort, PageRequest page);
+    List<Book> getAllBooksOrderedPaginated(PageRequest page);
 
-    @Query(value = "SELECT b FROM Book b")
-    List<Book> getAllBooksOrdered(Sort sort);
-
-    @Query(value = "SELECT b FROM Book b WHERE b.authorId=?1")
-    List<Book> getAllAuthorBooks(long authorId);
+    @Query(value = "SELECT b FROM Book b WHERE b.genreId=?1")
+    List<Book> getAllBooksInGenreOrderedPaginated(long genreId, PageRequest page);
 
     @Query(value = "SELECT b FROM Book b WHERE b.authorId=?1")
     List<Book> getAllAuthorBooksOrdered(long authorId, Sort sort);
 
     @Query(value = "SELECT b FROM Book b WHERE b.genreId=?1")
     List<Book> getAllBooksInGenre(long genreId);
-
-    @Query(value = "SELECT b FROM Book b WHERE b.genreId=?1")
-    List<Book> getAllBooksInGenreOrdered(long genreId, Sort sort);
-
-    @Query(value = "SELECT b FROM Book b WHERE b.genreId=?1")
-    List<Book> getAllBooksInGenreOrderedPaginated(long genreId, Sort sort, PageRequest page);
 
     @Query(value = "SELECT b FROM Book b WHERE b.authorId=?1 AND b.genreId=?2")
     List<Book> getAllAuthorBooksInGenre(long authorId, long genreId);

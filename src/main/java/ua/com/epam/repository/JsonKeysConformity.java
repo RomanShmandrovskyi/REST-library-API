@@ -1,9 +1,12 @@
 package ua.com.epam.repository;
 
+import lombok.Getter;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Getter
 public enum JsonKeysConformity {
     AUTHOR_FIRST_NAME("authorName.first", "firstName"),
     AUTHOR_SECOND_NAME("authorName.second", "secondName"),
