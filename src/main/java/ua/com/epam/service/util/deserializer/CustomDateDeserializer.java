@@ -23,7 +23,7 @@ public class CustomDateDeserializer extends StdDeserializer<LocalDate> {
     public LocalDate deserialize(JsonParser jp, DeserializationContext dc) throws IOException {
         String date = jp.getValueAsString();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-d");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDate parsed;
 
         try {
