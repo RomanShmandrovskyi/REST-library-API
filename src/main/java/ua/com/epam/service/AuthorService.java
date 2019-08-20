@@ -42,14 +42,7 @@ public class AuthorService {
     private DtoToModelMapper toModelMapper;
 
     private Sort.Direction resolveDirection(String order) {
-        Sort.Direction orderType = null;
-
-        if (order.equals("desc"))
-            orderType = Sort.Direction.DESC;
-        else if (order.equals("asc"))
-            orderType = Sort.Direction.ASC;
-
-        return orderType;
+        return Sort.Direction.fromString(order);
     }
 
     private List<AuthorDto> mapToDto(List<Author> authors) {
@@ -76,17 +69,17 @@ public class AuthorService {
     }
 
     public List<AuthorDto> findAllAuthors(String sortBy, String order, int page, int size, boolean pageable) {
-        Sort.Direction orderType = resolveDirection(order);
+        Sort.Direction direction = resolveDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
         List<Author> authors;
 
         if (!pageable) {
             int authorsCount = (int) authorRepository.count();
             authors = authorRepository.getAllAuthorsOrderedPaginated(
-                    PageRequest.of(0, authorsCount, Sort.by(orderType, sortParam)));
+                    PageRequest.of(0, authorsCount, Sort.by(direction, sortParam)));
         } else {
             authors = authorRepository.getAllAuthorsOrderedPaginated(
-                    PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
+                    PageRequest.of(page - 1, size, Sort.by(direction, sortParam)));
         }
 
         return mapToDto(authors);
@@ -97,17 +90,17 @@ public class AuthorService {
             throw new GenreNotFoundException(genreId);
         }
 
-        Sort.Direction orderType = resolveDirection(order);
+        Sort.Direction direction = resolveDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
         List<Author> authors;
 
         if (!pageable) {
             int authorsCount = (int) authorRepository.count();
             authors = authorRepository.getAllAuthorsInGenreOrderedPaginated(
-                    genreId, PageRequest.of(0, authorsCount, Sort.by(orderType, sortParam)));
+                    genreId, PageRequest.of(0, authorsCount, Sort.by(direction, sortParam)));
         } else {
             authors = authorRepository.getAllAuthorsInGenreOrderedPaginated(
-                    genreId, PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
+                    genreId, PageRequest.of(page - 1, size, Sort.by(direction, sortParam)));
         }
 
         return mapToDto(authors);

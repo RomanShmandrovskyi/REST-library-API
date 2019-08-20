@@ -133,9 +133,9 @@ public class BookController {
             @PathVariable
                     String dimension,
 
-            /*@ApiParam(allowableValues = "asc,desc", value = "sorting order")
+            @ApiParam(allowableValues = "asc,desc", value = "sorting order")
             @RequestParam(name = "orderType", defaultValue = "asc")
-                    String orderType,*/
+                    String orderType,
 
             @ApiParam(value = "paginate response")
             @RequestParam(name = "pagination", defaultValue = "true")
@@ -153,9 +153,9 @@ public class BookController {
         List<BookDto> response;
 
         if (dimension.equals("square")) {
-            response = bookService.findAllBooksSortedBySquare(page, size, pagination);
+            response = bookService.findAllBooksSortedBySquare(orderType, page, size, pagination);
         } else {
-            response = bookService.findAllBooksSortedByVolume(page, size, pagination);
+            response = bookService.findAllBooksSortedByVolume(orderType, page, size, pagination);
         }
 
         return new ResponseEntity<>(response, HttpStatus.OK);

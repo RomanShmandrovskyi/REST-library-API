@@ -44,14 +44,7 @@ public class BookService {
     private DtoToModelMapper toModelMapper;
 
     private Sort.Direction resolveDirection(String order) {
-        Sort.Direction orderType = null;
-
-        if (order.equals("desc"))
-            orderType = Sort.Direction.DESC;
-        else if (order.equals("asc"))
-            orderType = Sort.Direction.ASC;
-
-        return orderType;
+        return Sort.Direction.fromString(order);
     }
 
     private List<BookDto> mapToDto(List<Book> books) {
@@ -79,46 +72,48 @@ public class BookService {
 
     public List<BookDto> findAllBooks(String sortBy, String order, int page, int size, boolean pageable) {
         String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
-        Sort.Direction orderType = resolveDirection(order);
+        Sort.Direction direction = resolveDirection(order);
         List<Book> books;
 
         if (!pageable) {
             int bookCount = (int) bookRepository.count();
             books = bookRepository.getAllBooksOrderedPaginated(
-                    PageRequest.of(0, bookCount, Sort.by(orderType, sortParameter)));
+                    PageRequest.of(0, bookCount, Sort.by(direction, sortParameter)));
         } else {
             books = bookRepository.getAllBooksOrderedPaginated(
-                    PageRequest.of(page - 1, size, Sort.by(orderType, sortParameter)));
+                    PageRequest.of(page - 1, size, Sort.by(direction, sortParameter)));
         }
 
         return mapToDto(books);
     }
 
-    public List<BookDto> findAllBooksSortedBySquare(int page, int size, boolean pageable) {
+    public List<BookDto> findAllBooksSortedBySquare(String order, int page, int size, boolean pageable) {
+        Sort.Direction direction = resolveDirection(order);
         List<Book> books;
 
         if (!pageable) {
             int booksCount = (int) bookRepository.count();
-            books = bookRepository.getAllBooksOrderedBySquarePaginated(
-                    PageRequest.of(0, booksCount));
+            books = bookRepository.getAllBooksOrderedPaginated(
+                    PageRequest.of(0, booksCount, Sort.by(direction, "square")));
         } else {
-            books = bookRepository.getAllBooksOrderedBySquarePaginated(
-                    PageRequest.of(page - 1, size));
+            books = bookRepository.getAllBooksOrderedPaginated(
+                    PageRequest.of(page - 1, size, Sort.by(direction, "square")));
         }
 
         return mapToDto(books);
     }
 
-    public List<BookDto> findAllBooksSortedByVolume(int page, int size, boolean pageable) {
+    public List<BookDto> findAllBooksSortedByVolume(String order, int page, int size, boolean pageable) {
+        Sort.Direction direction = resolveDirection(order);
         List<Book> books;
 
         if (!pageable) {
             int booksCount = (int) bookRepository.count();
-            books = bookRepository.getAllBooksOrderedByVolumePaginated(
-                    PageRequest.of(0, booksCount));
+            books = bookRepository.getAllBooksOrderedPaginated(
+                    PageRequest.of(0, booksCount, Sort.by(direction, "volume")));
         } else {
-            books = bookRepository.getAllBooksOrderedByVolumePaginated(
-                    PageRequest.of(page - 1, size));
+            books = bookRepository.getAllBooksOrderedPaginated(
+                    PageRequest.of(page - 1, size, Sort.by(direction, "volume")));
         }
 
         return mapToDto(books);
@@ -129,17 +124,17 @@ public class BookService {
             throw new GenreNotFoundException(genreId);
         }
 
-        Sort.Direction orderType = resolveDirection(order);
+        Sort.Direction direction = resolveDirection(order);
         String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
         List<Book> books;
 
         if (!pageable) {
             int booksCount = (int) bookRepository.count();
             books = bookRepository.getAllBooksInGenreOrderedPaginated(
-                    genreId, PageRequest.of(0, booksCount, Sort.by(orderType, sortParameter)));
+                    genreId, PageRequest.of(0, booksCount, Sort.by(direction, sortParameter)));
         } else {
             books = bookRepository.getAllBooksInGenreOrderedPaginated(
-                    genreId, PageRequest.of(page - 1, size, Sort.by(orderType, sortParameter)));
+                    genreId, PageRequest.of(page - 1, size, Sort.by(direction, sortParameter)));
         }
 
         return mapToDto(books);
@@ -150,10 +145,10 @@ public class BookService {
             throw new AuthorNotFoundException(authorId);
         }
 
-        Sort.Direction orderType = resolveDirection(order);
+        Sort.Direction direction = resolveDirection(order);
         String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        return mapToDto(bookRepository.getAllAuthorBooksOrdered(authorId, Sort.by(orderType, sortParameter)));
+        return mapToDto(bookRepository.getAllAuthorBooksOrdered(authorId, Sort.by(direction, sortParameter)));
     }
 
     public List<BookDto> findBooksOfAuthorInGenre(long authorId, long genreId) {

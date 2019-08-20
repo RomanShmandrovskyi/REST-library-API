@@ -43,14 +43,7 @@ public class GenreService {
     private DtoToModelMapper toModelMapper;
 
     private Sort.Direction resolveDirection(String order) {
-        Sort.Direction orderType = null;
-
-        if (order.equals("desc"))
-            orderType = Sort.Direction.DESC;
-        else if (order.equals("asc"))
-            orderType = Sort.Direction.ASC;
-
-        return orderType;
+        return Sort.Direction.fromString(order);
     }
 
     private List<GenreDto> mapToDto(List<Genre> genres) {
@@ -77,17 +70,17 @@ public class GenreService {
     }
 
     public List<GenreDto> findAllGenres(String sortBy, String order, int page, int size, boolean pageable) {
-        Sort.Direction orderType = resolveDirection(order);
+        Sort.Direction direction = resolveDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
         List<Genre> genres;
 
         if (!pageable) {
             int genreCount = (int) genreRepository.count();
             genres = genreRepository.getAllGenresOrderedPaginated(
-                    PageRequest.of(0, genreCount, Sort.by(orderType, sortParam)));
+                    PageRequest.of(0, genreCount, Sort.by(direction, sortParam)));
         } else {
             genres = genreRepository.getAllGenresOrderedPaginated(
-                    PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
+                    PageRequest.of(page - 1, size, Sort.by(direction, sortParam)));
         }
 
         return mapToDto(genres);
@@ -98,10 +91,10 @@ public class GenreService {
             throw new AuthorNotFoundException(authorId);
         }
 
-        Sort.Direction orderType = resolveDirection(order);
+        Sort.Direction direction = resolveDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
 
-        return mapToDto(genreRepository.getAllGenresOfAuthorOrdered(authorId, Sort.by(orderType, sortParam)));
+        return mapToDto(genreRepository.getAllGenresOfAuthorOrdered(authorId, Sort.by(direction, sortParam)));
     }
 
     public GenreDto addNewGenre(GenreDto genre) {

@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -43,6 +44,12 @@ public class Book implements Serializable {
 
     @Column(name = "book_length")
     private Double bookLength;
+
+    @Formula(value = "book_height * book_width * book_length")
+    private Double volume;
+
+    @Formula(value = "book_width * book_length")
+    private Double square;
 
     @Column(name = "publication_year")
     private Integer publicationYear;
