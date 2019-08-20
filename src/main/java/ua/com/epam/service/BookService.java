@@ -25,8 +25,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ua.com.epam.repository.JsonKeysConformity.AUTHOR_ID;
-
 @Service
 public class BookService {
 

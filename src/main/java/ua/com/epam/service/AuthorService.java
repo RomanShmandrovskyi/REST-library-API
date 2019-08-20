@@ -19,12 +19,9 @@ import ua.com.epam.repository.JsonKeysConformity;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static ua.com.epam.repository.JsonKeysConformity.AUTHOR_ID;
 
 @Service
 public class AuthorService {
@@ -55,6 +52,12 @@ public class AuthorService {
         return orderType;
     }
 
+    private List<AuthorDto> mapToDto(List<Author> authors) {
+        return authors.stream()
+                .map(toDtoMapper::mapAuthorToAuthorDto)
+                .collect(Collectors.toList());
+    }
+
     public AuthorDto findAuthorByAuthorId(long authorId) {
         Author toGet = authorRepository.getOneByAuthorId(authorId)
                 .orElseThrow(() -> new AuthorNotFoundException(authorId));
@@ -82,13 +85,11 @@ public class AuthorService {
             authors = authorRepository.getAllAuthorsOrderedPaginated(
                     PageRequest.of(0, authorsCount, Sort.by(orderType, sortParam)));
         } else {
-            authors =  authorRepository.getAllAuthorsOrderedPaginated(
+            authors = authorRepository.getAllAuthorsOrderedPaginated(
                     PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
         }
 
-        return authors.stream()
-                .map(toDtoMapper::mapAuthorToAuthorDto)
-                .collect(Collectors.toList());
+        return mapToDto(authors);
     }
 
     public List<AuthorDto> findAllAuthorsOfGenre(long genreId, String sortBy, String order, int page, int size, boolean pageable) {
@@ -109,9 +110,7 @@ public class AuthorService {
                     genreId, PageRequest.of(page - 1, size, Sort.by(orderType, sortParam)));
         }
 
-        return authors.stream()
-                .map(toDtoMapper::mapAuthorToAuthorDto)
-                .collect(Collectors.toList());
+        return mapToDto(authors);
     }
 
     public AuthorDto addNewAuthor(AuthorDto author) {
