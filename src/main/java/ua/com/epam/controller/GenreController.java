@@ -55,6 +55,7 @@ public class GenreController {
     @GetMapping(value = "/genre/{genreId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGenre(
+            @ApiParam(required = true, value = "existed Genre ID")
             @PathVariable
                     Long genreId) {
         GenreDto response = genreService.findGenreByGenreId(genreId);
