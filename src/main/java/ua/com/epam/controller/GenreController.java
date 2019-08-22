@@ -147,7 +147,7 @@ public class GenreController {
             @ApiResponse(code = 409, message = "Genre with such id already exists")
     })
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping(value = "/genre/new",
+    @PostMapping(value = "/genre",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewGenre(
@@ -164,7 +164,7 @@ public class GenreController {
             @ApiResponse(code = 400, message = "Something wrong..."),
             @ApiResponse(code = 404, message = "Genre to update not found")
     })
-    @PutMapping(value = "/genre/{genreId}/update",
+    @PutMapping(value = "/genre/{genreId}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateGenre(
@@ -186,7 +186,7 @@ public class GenreController {
             @ApiResponse(code = 404, message = "Genre to delete not found")
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping(value = "/genre/{genreId}/delete",
+    @DeleteMapping(value = "/genre/{genreId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteGenre(
             @ApiParam(required = true, value = "existed Genre ID")

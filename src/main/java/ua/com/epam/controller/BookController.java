@@ -256,7 +256,7 @@ public class BookController {
             @ApiResponse(code = 409, message = "Book with such id already exists")
     })
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping(value = "/book/{authorId}/{genreId}/new",
+    @PostMapping(value = "/book/{authorId}/{genreId}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewBook(
@@ -281,7 +281,7 @@ public class BookController {
             @ApiResponse(code = 400, message = "Something wrong..."),
             @ApiResponse(code = 404, message = "Book to update not found")
     })
-    @PutMapping(value = "/book/{bookId}/update",
+    @PutMapping(value = "/book/{bookId}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateBook(
@@ -303,7 +303,7 @@ public class BookController {
             @ApiResponse(code = 404, message = "Book to delete not found")
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping(value = "/book/{bookId}/delete",
+    @DeleteMapping(value = "/book/{bookId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteBook(
             @ApiParam(required = true, value = "existed Book ID")

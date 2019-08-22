@@ -161,7 +161,7 @@ public class AuthorController {
             @ApiResponse(code = 409, message = "Author with such id already exists")
     })
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping(value = "/author/new",
+    @PostMapping(value = "/author",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewAuthor(
@@ -178,7 +178,7 @@ public class AuthorController {
             @ApiResponse(code = 400, message = "Something wrong..."),
             @ApiResponse(code = 404, message = "Author to update not found")
     })
-    @PutMapping(value = "/author/{authorId}/update",
+    @PutMapping(value = "/author/{authorId}",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateAuthor(
@@ -200,7 +200,7 @@ public class AuthorController {
             @ApiResponse(code = 404, message = "Author to delete not found")
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping(value = "/author/{authorId}/delete",
+    @DeleteMapping(value = "/author/{authorId}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteAuthor(
             @ApiParam(required = true, value = "existed Author ID")
