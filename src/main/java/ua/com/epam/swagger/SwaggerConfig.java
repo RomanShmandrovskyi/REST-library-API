@@ -1,7 +1,5 @@
 package ua.com.epam.swagger;
 
-import com.fasterxml.classmate.TypeResolver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -20,8 +18,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-    @Autowired
-    private TypeResolver typeResolver;
 
     @Bean
     public Docket api() {
@@ -37,6 +33,7 @@ public class SwaggerConfig {
     @Bean
     public UiConfiguration uiConfig() {
         return UiConfigurationBuilder.builder()
+                .displayRequestDuration(true)
                 .displayOperationId(false)
                 .docExpansion(DocExpansion.LIST)
                 .operationsSorter(OperationsSorter.ALPHA)

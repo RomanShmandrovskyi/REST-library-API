@@ -71,6 +71,12 @@ public class BookService {
     }
 
     public List<BookDto> findAllBooks(String sortBy, String order, int page, int size, boolean pageable) {
+        if (sortBy.equalsIgnoreCase("square")) {
+            return findAllBooksSortedBySquare(order, page, size, pageable);
+        } else if (sortBy.equalsIgnoreCase("volume")) {
+            return findAllBooksSortedByVolume(order, page, size, pageable);
+        }
+
         String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
         Sort.Direction direction = resolveDirection(order);
         List<Book> books;
@@ -87,7 +93,7 @@ public class BookService {
         return mapToDto(books);
     }
 
-    public List<BookDto> findAllBooksSortedBySquare(String order, int page, int size, boolean pageable) {
+    private List<BookDto> findAllBooksSortedBySquare(String order, int page, int size, boolean pageable) {
         Sort.Direction direction = resolveDirection(order);
         List<Book> books;
 
@@ -103,7 +109,7 @@ public class BookService {
         return mapToDto(books);
     }
 
-    public List<BookDto> findAllBooksSortedByVolume(String order, int page, int size, boolean pageable) {
+    private List<BookDto> findAllBooksSortedByVolume(String order, int page, int size, boolean pageable) {
         Sort.Direction direction = resolveDirection(order);
         List<Book> books;
 

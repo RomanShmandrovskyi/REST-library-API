@@ -34,7 +34,9 @@ public class BookController {
     }
 
     private void checkSortByKeyInGroup(String sortBy) {
-        if (!JsonKeysConformity.ifJsonKeyExistsInGroup(sortBy, JsonKeysConformity.Group.BOOK)) {
+        if (!JsonKeysConformity.ifJsonKeyExistsInGroup(sortBy, JsonKeysConformity.Group.BOOK)
+                && !sortBy.equalsIgnoreCase("volume")
+                && !sortBy.equalsIgnoreCase("square")) {
             throw new NoSuchJsonKeyException(sortBy);
         }
     }
@@ -106,7 +108,7 @@ public class BookController {
             @RequestParam(name = "size", defaultValue = "10")
                     Integer size,
 
-            @ApiParam(value = "custom sort parameter")
+            @ApiParam(value = "custom sort parameter\ncan also assume 'square' and 'volume' parameters")
             @RequestParam(name = "sortBy", defaultValue = "bookId")
                     String sortBy,
 
@@ -118,46 +120,6 @@ public class BookController {
         checkPaginateParams(page, size);
 
         List<BookDto> response = bookService.findAllBooks(sortBy, orderType, page, size, pagination);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "get all Books sorted by dimension in ascending order", tags = { "Book" })
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Array of Book objects",
-                    responseContainer = "Set", response = BookDto.class),
-            @ApiResponse(code = 400, message = "Something wrong...")
-    })
-    @GetMapping(value = "/books/{dimension}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllBooksSortedInSomeDimension(
-            @ApiParam(required = true, allowableValues = "volume,square", value = "dimension type")
-            @PathVariable
-                    String dimension,
-
-            @ApiParam(allowableValues = "asc,desc", value = "sorting order")
-            @RequestParam(name = "orderType", defaultValue = "asc")
-                    String orderType,
-
-            @ApiParam(value = "paginate response")
-            @RequestParam(name = "pagination", defaultValue = "true")
-                    Boolean pagination,
-
-            @ApiParam(value = "page number")
-            @RequestParam(name = "page", defaultValue = "1")
-                    Integer page,
-
-            @ApiParam(value = "count of objects per one page")
-            @RequestParam(name = "size", defaultValue = "10")
-                    Integer size) {
-        checkPaginateParams(page, size);
-        checkDimension(dimension);
-        List<BookDto> response;
-
-        if (dimension.equals("square")) {
-            response = bookService.findAllBooksSortedBySquare(orderType, page, size, pagination);
-        } else {
-            response = bookService.findAllBooksSortedByVolume(orderType, page, size, pagination);
-        }
-
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
