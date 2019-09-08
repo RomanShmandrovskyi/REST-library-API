@@ -27,9 +27,9 @@ public class DataIngestion {
         bashLines.add("#!/usr/bin/env bash");
         String doPost = "curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d \"%s\" '%s'";
 
-        String authorPostEnd = "localhost:8080/api/library/author/new";
-        String genrePostEnd = "localhost:8080/api/library/genre/new";
-        String bookPostEnd = "localhost:8080/api/library/book/%s/%s/new";
+        String authorPostEnd = "localhost:8080/api/library/author";
+        String genrePostEnd = "localhost:8080/api/library/genre";
+        String bookPostEnd = "localhost:8080/api/library/book/%s/%s";
 
         //Author
         //generate unique Author ids;
