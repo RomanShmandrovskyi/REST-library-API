@@ -58,7 +58,7 @@ public class AuthorController {
             @ApiParam(required = true, value = "existed Author ID")
             @PathVariable
                     Long authorId) {
-        AuthorDto response = authorService.findAuthorByAuthorId(authorId);
+        AuthorDto response = authorService.findAuthor(authorId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -150,7 +150,7 @@ public class AuthorController {
         checkOrdering(orderType);
         checkPaginateParams(page, size);
 
-        List<AuthorDto> response = authorService.findAllAuthorsOfGenre(genreId, sortBy, orderType, page, size, pagination);
+        List<AuthorDto> response = authorService.findAllAuthorsInGenre(genreId, sortBy, orderType, page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

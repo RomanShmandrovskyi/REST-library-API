@@ -51,7 +51,7 @@ public class AuthorService {
                 .collect(Collectors.toList());
     }
 
-    public AuthorDto findAuthorByAuthorId(long authorId) {
+    public AuthorDto findAuthor(long authorId) {
         Author toGet = authorRepository.getOneByAuthorId(authorId)
                 .orElseThrow(() -> new AuthorNotFoundException(authorId));
 
@@ -71,36 +71,36 @@ public class AuthorService {
     public List<AuthorDto> findAllAuthors(String sortBy, String order, int page, int size, boolean pageable) {
         Sort.Direction direction = resolveDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        Sort sorter = Sort.by(direction, sortParam);
+
         List<Author> authors;
 
         if (!pageable) {
-            int authorsCount = (int) authorRepository.count();
-            authors = authorRepository.getAllAuthorsOrderedPaginated(
-                    PageRequest.of(0, authorsCount, Sort.by(direction, sortParam)));
+            authors = authorRepository.findAll(sorter);
         } else {
-            authors = authorRepository.getAllAuthorsOrderedPaginated(
-                    PageRequest.of(page - 1, size, Sort.by(direction, sortParam)));
+            authors = authorRepository
+                    .getAllAuthorsOrderedPaginated(PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(authors);
     }
 
-    public List<AuthorDto> findAllAuthorsOfGenre(long genreId, String sortBy, String order, int page, int size, boolean pageable) {
+    public List<AuthorDto> findAllAuthorsInGenre(long genreId, String sortBy, String order, int page, int size, boolean pageable) {
         if (!genreRepository.existsByGenreId(genreId)) {
             throw new GenreNotFoundException(genreId);
         }
 
         Sort.Direction direction = resolveDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        Sort sorter = Sort.by(direction, sortParam);
+
         List<Author> authors;
 
         if (!pageable) {
-            int authorsCount = (int) authorRepository.count();
-            authors = authorRepository.getAllAuthorsInGenreOrderedPaginated(
-                    genreId, PageRequest.of(0, authorsCount, Sort.by(direction, sortParam)));
+            authors = authorRepository.findAll(sorter);
         } else {
-            authors = authorRepository.getAllAuthorsInGenreOrderedPaginated(
-                    genreId, PageRequest.of(page - 1, size, Sort.by(direction, sortParam)));
+            authors = authorRepository
+                    .getAllAuthorsInGenreOrderedPaginated(genreId, PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(authors);
@@ -147,7 +147,7 @@ public class AuthorService {
         Author toDelete = authorRepository.getOneByAuthorId(authorId)
                 .orElseThrow(() -> new AuthorNotFoundException(authorId));
 
-        long booksCount = bookRepository.getAllAuthorBooks(authorId).size();
+        long booksCount = bookRepository.getAllBooksOfAuthorCount(authorId);
 
         if (booksCount > 0 && !forcibly) {
             throw new BooksInAuthorArePresentException(authorId, booksCount);

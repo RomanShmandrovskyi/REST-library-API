@@ -58,7 +58,7 @@ public class GenreController {
             @ApiParam(required = true, value = "existed Genre ID")
             @PathVariable
                     Long genreId) {
-        GenreDto response = genreService.findGenreByGenreId(genreId);
+        GenreDto response = genreService.findGenre(genreId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

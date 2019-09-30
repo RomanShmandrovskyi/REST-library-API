@@ -7,7 +7,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.book.BookDto;
-import ua.com.epam.entity.dto.book.BookWithAuthorAndGenreDto;
 import ua.com.epam.exception.entity.NoSuchJsonKeyException;
 import ua.com.epam.exception.entity.book.DimensionNotExistsException;
 import ua.com.epam.exception.entity.type.InvalidOrderTypeException;
@@ -21,7 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/library")
-@Api(value = "Book", description = "Book endpoints", tags = { "Book" })
+@Api(value = "Book", description = "Book endpoints", tags = {"Book"})
 public class BookController {
 
     @Autowired
@@ -56,7 +55,7 @@ public class BookController {
         }
     }
 
-    @ApiOperation(value = "get Book object by 'bookId'", tags = { "Book" })
+    @ApiOperation(value = "get Book object by 'bookId'", tags = {"Book"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Special Book object in JSON", response = BookDto.class),
             @ApiResponse(code = 400, message = "Something wrong..."),
@@ -68,26 +67,11 @@ public class BookController {
             @ApiParam(required = true, value = "existed Book ID")
             @PathVariable
                     Long bookId) {
-        BookDto response = bookService.findBookByBookId(bookId);
+        BookDto response = bookService.findBook(bookId);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "get Book object by 'bookId' with simple info about Author and Genre", tags = { "Book" })
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Special Book object in JSON", response = BookWithAuthorAndGenreDto.class),
-            @ApiResponse(code = 400, message = "Something wrong..."),
-            @ApiResponse(code = 404, message = "Book not found")
-    })
-    @GetMapping(value = "/book/{bookId}/author/genre", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getBookWithAuthorAndGenre(
-            @ApiParam(required = true, value = "existed Book ID")
-            @PathVariable
-                    Long bookId) {
-        BookWithAuthorAndGenreDto response = bookService.findBookWithAuthorAndGenreInfo(bookId);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
-    @ApiOperation(value = "get all Books", tags = { "Book" })
+    @ApiOperation(value = "get all Books", tags = {"Book"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of Book objects",
                     responseContainer = "Set", response = BookDto.class),
@@ -123,7 +107,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "get all Books of special Genre", tags = { "Book" })
+    @ApiOperation(value = "get all Books of special Genre", tags = {"Book"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of Book objects",
                     responseContainer = "Set", response = BookDto.class),
@@ -163,7 +147,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "get all Books of special Author", tags = { "Book" })
+    @ApiOperation(value = "get all Books of special Author", tags = {"Book"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of Book objects",
                     responseContainer = "Set", response = BookDto.class),
@@ -190,7 +174,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "get all Books of special Author in special Genre", tags = { "Book" })
+    @ApiOperation(value = "get all Books of special Author in special Genre", tags = {"Book"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of Book objects",
                     responseContainer = "Set", response = BookDto.class),
@@ -211,7 +195,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "create new Book", tags = { "Book" })
+    @ApiOperation(value = "create new Book", tags = {"Book"})
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "newly created Book", response = BookDto.class),
             @ApiResponse(code = 400, message = "Something wrong..."),
@@ -237,7 +221,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @ApiOperation(value = "update existed Book", tags = { "Book" })
+    @ApiOperation(value = "update existed Book", tags = {"Book"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "updated Book object", response = BookDto.class),
             @ApiResponse(code = 400, message = "Something wrong..."),
@@ -258,7 +242,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "delete existed Book", tags = { "Book" })
+    @ApiOperation(value = "delete existed Book", tags = {"Book"})
     @ApiResponses(value = {
             @ApiResponse(code = 204, message = "Book deleted successfully"),
             @ApiResponse(code = 400, message = "Something wrong..."),

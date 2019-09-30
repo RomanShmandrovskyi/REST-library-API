@@ -52,7 +52,7 @@ public class GenreService {
                 .collect(Collectors.toList());
     }
 
-    public GenreDto findGenreByGenreId(long genreId) {
+    public GenreDto findGenre(long genreId) {
         Genre toGet = genreRepository.getOneByGenreId(genreId)
                 .orElseThrow(() -> new GenreNotFoundException(genreId));
 
@@ -60,10 +60,8 @@ public class GenreService {
     }
 
     public GenreDto findGenreOfBook(long bookId) {
-        if (!bookRepository.existsByBookId(bookId)) {
-            throw new BookNotFoundException(bookId);
-        }
-
+        bookRepository.getOneByBookId(bookId)
+                .orElseThrow(() -> new BookNotFoundException(bookId));
         Genre toGet = genreRepository.getGenreOfBook(bookId);
 
         return toDtoMapper.mapGenreToGenreDto(toGet);
@@ -72,15 +70,14 @@ public class GenreService {
     public List<GenreDto> findAllGenres(String sortBy, String order, int page, int size, boolean pageable) {
         Sort.Direction direction = resolveDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        Sort sorter = Sort.by(direction, sortParam);
+
         List<Genre> genres;
 
         if (!pageable) {
-            int genreCount = (int) genreRepository.count();
-            genres = genreRepository.getAllGenresOrderedPaginated(
-                    PageRequest.of(0, genreCount, Sort.by(direction, sortParam)));
+            genres = genreRepository.findAll(sorter);
         } else {
-            genres = genreRepository.getAllGenresOrderedPaginated(
-                    PageRequest.of(page - 1, size, Sort.by(direction, sortParam)));
+            genres = genreRepository.getAllGenresOrderedPaginated(PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(genres);
@@ -93,8 +90,9 @@ public class GenreService {
 
         Sort.Direction direction = resolveDirection(order);
         String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        Sort sorter = Sort.by(direction, sortParam);
 
-        return mapToDto(genreRepository.getAllGenresOfAuthorOrdered(authorId, Sort.by(direction, sortParam)));
+        return mapToDto(genreRepository.getAllGenresOfAuthorOrdered(authorId, sorter));
     }
 
     public GenreDto addNewGenre(GenreDto genre) {
@@ -136,7 +134,7 @@ public class GenreService {
         Genre toDelete = genreRepository.getOneByGenreId(genreId)
                 .orElseThrow(() -> new GenreNotFoundException(genreId));
 
-        long booksCount = bookRepository.getAllBooksInGenre(genreId).size();
+        long booksCount = bookRepository.getAllBooksInGenreCount(genreId);
 
         if (booksCount > 0 && !forcibly) {
             throw new BooksInGenreArePresentException(genreId, booksCount);
