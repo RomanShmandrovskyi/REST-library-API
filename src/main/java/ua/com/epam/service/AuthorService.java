@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
 import ua.com.epam.entity.dto.author.AuthorDto;
 import ua.com.epam.exception.entity.IdMismatchException;
+import ua.com.epam.exception.entity.SearchQueryIsTooShortException;
 import ua.com.epam.exception.entity.author.AuthorAlreadyExistsException;
 import ua.com.epam.exception.entity.author.AuthorNotFoundException;
 import ua.com.epam.exception.entity.author.BooksInAuthorArePresentException;
@@ -86,6 +87,14 @@ public class AuthorService {
     }
 
     public List<AuthorDto> searchForExistedAuthors(String searchQuery) {
+        if (searchQuery.trim().isEmpty()) {
+            throw new SearchQueryIsTooShortException(searchQuery, true, false);
+        }
+
+        if (searchQuery.length() <= 2) {
+            throw new SearchQueryIsTooShortException(searchQuery, false, true);
+        }
+
         return mapToDto(searchFor.authors(searchQuery));
     }
 

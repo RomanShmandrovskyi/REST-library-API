@@ -17,7 +17,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ua.com.epam.exception.entity.IdMismatchException;
 import ua.com.epam.exception.entity.NoSuchJsonKeyException;
-import ua.com.epam.exception.model.ExceptionResponse;
+import ua.com.epam.exception.entity.SearchQueryIsTooShortException;
 import ua.com.epam.exception.entity.author.AuthorAlreadyExistsException;
 import ua.com.epam.exception.entity.author.AuthorNotFoundException;
 import ua.com.epam.exception.entity.author.BooksInAuthorArePresentException;
@@ -29,6 +29,7 @@ import ua.com.epam.exception.entity.genre.GenreAlreadyExistsException;
 import ua.com.epam.exception.entity.genre.GenreNameAlreadyExistsException;
 import ua.com.epam.exception.entity.genre.GenreNotFoundException;
 import ua.com.epam.exception.entity.type.*;
+import ua.com.epam.exception.model.ExceptionResponse;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -236,7 +237,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(value = BooksInGenreArePresentException.class)
-    public ResponseEntity<ExceptionResponse> handleBookInGenrePresent(BooksInGenreArePresentException bigap) {
+    public ResponseEntity<ExceptionResponse> handleBooksInGenreArePresent(BooksInGenreArePresentException bigap) {
         long booksCount = bigap.getBooksCount();
         String b = booksCount == 1 ? " book! " : " books! ";
         String message = "Genre with 'genreId' = '%d' has '%d'" + b + "To delete - set 'forcibly' parameter to 'true'!";
@@ -246,6 +247,21 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
                         String.format(message, bigap.getGenreId(), booksCount)),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = SearchQueryIsTooShortException.class)
+    public ResponseEntity<ExceptionResponse> handleSearchedPhraseIsTooShort(SearchQueryIsTooShortException sqits) {
+        String reason = "";
+        if (sqits.isBlank()) reason = "Searched phrase can not be blank!";
+        else if (sqits.isTooShort()) reason = "Searched phrase '" + sqits.getSearchedQuery() + "' is too short! Try at least 3 symbols!";
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        reason),
                 HttpStatus.BAD_REQUEST);
     }
 
@@ -316,6 +332,6 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.UNSUPPORTED_MEDIA_TYPE.value(),
                         HttpStatus.UNSUPPORTED_MEDIA_TYPE.getReasonPhrase(),
                         ex.getMessage()),
-        HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+                HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 }

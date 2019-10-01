@@ -55,12 +55,15 @@ public class SearchFor {
     private List search(List<String> columnNames, List<String> valuesToSearch, Class clazz) {
         String prefix = "SELECT t FROM " + clazz.getName() + " t WHERE ";
 
-        List<String> valsMods = valuesToSearch.stream().filter(v -> !v.equals("")).collect(Collectors.toList());
+        List<String> valsMods = valuesToSearch.stream()
+                .filter(v -> !v.equals(""))
+                .collect(Collectors.toList());
+
         if (valsMods.size() == 0) {
             return new ArrayList<>();
         }
 
-        String queryToExecute = prefix + buildQuery(columnNames, valuesToSearch);
+        String queryToExecute = prefix + buildQuery(columnNames, valsMods);
 
         return entityManager.createQuery(queryToExecute).getResultList();
     }
