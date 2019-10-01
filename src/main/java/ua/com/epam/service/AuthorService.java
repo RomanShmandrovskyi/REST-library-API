@@ -12,10 +12,7 @@ import ua.com.epam.exception.entity.author.AuthorNotFoundException;
 import ua.com.epam.exception.entity.author.BooksInAuthorArePresentException;
 import ua.com.epam.exception.entity.book.BookNotFoundException;
 import ua.com.epam.exception.entity.genre.GenreNotFoundException;
-import ua.com.epam.repository.AuthorRepository;
-import ua.com.epam.repository.BookRepository;
-import ua.com.epam.repository.GenreRepository;
-import ua.com.epam.repository.JsonKeysConformity;
+import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
@@ -34,6 +31,9 @@ public class AuthorService {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private SearchFor searchFor;
 
     @Autowired
     private ModelToDtoMapper toDtoMapper;
@@ -83,6 +83,10 @@ public class AuthorService {
         }
 
         return mapToDto(authors);
+    }
+
+    public List<AuthorDto> searchForExistedAuthors(String searchQuery) {
+        return mapToDto(searchFor.authors(searchQuery));
     }
 
     public List<AuthorDto> findAllAuthorsInGenre(long genreId, String sortBy, String order, int page, int size, boolean pageable) {

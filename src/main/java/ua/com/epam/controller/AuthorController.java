@@ -114,6 +114,13 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/authors/search",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> searchForAuthors(@RequestParam(name = "query") String query) {
+        List<AuthorDto> response = authorService.searchForExistedAuthors(query);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @ApiOperation(value = "get all Authors in special Genre", tags = {"Author"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of Authors objects",
