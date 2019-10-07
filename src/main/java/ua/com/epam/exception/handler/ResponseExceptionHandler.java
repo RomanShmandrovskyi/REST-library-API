@@ -17,7 +17,6 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ua.com.epam.exception.entity.IdMismatchException;
 import ua.com.epam.exception.entity.NoSuchJsonKeyException;
-import ua.com.epam.exception.entity.SearchQueryIsTooShortException;
 import ua.com.epam.exception.entity.author.AuthorAlreadyExistsException;
 import ua.com.epam.exception.entity.author.AuthorNotFoundException;
 import ua.com.epam.exception.entity.author.BooksInAuthorArePresentException;
@@ -28,6 +27,9 @@ import ua.com.epam.exception.entity.genre.BooksInGenreArePresentException;
 import ua.com.epam.exception.entity.genre.GenreAlreadyExistsException;
 import ua.com.epam.exception.entity.genre.GenreNameAlreadyExistsException;
 import ua.com.epam.exception.entity.genre.GenreNotFoundException;
+import ua.com.epam.exception.entity.search.SearchQueryIsBlankException;
+import ua.com.epam.exception.entity.search.SearchQueryIsTooShortException;
+import ua.com.epam.exception.entity.search.SearchKeywordsIsTooShortException;
 import ua.com.epam.exception.entity.type.*;
 import ua.com.epam.exception.model.ExceptionResponse;
 
@@ -253,15 +255,36 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = SearchQueryIsTooShortException.class)
     public ResponseEntity<ExceptionResponse> handleSearchedPhraseIsTooShort(SearchQueryIsTooShortException sqits) {
-        String reason = "";
-        if (sqits.isBlank()) reason = "Searched phrase can not be blank!";
-        else if (sqits.isTooShort()) reason = "Searched phrase '" + sqits.getSearchedQuery() + "' is too short! Try at least 3 symbols!";
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        reason),
+                        "Searched phrase '" + sqits.getSearchedQuery() + "' is too short! Try at least 3 symbols (excluding spaces)!"),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = SearchKeywordsIsTooShortException.class)
+    public ResponseEntity<ExceptionResponse> handleKeywordsIsTooShort() {
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        "Searched query keywords is too short! Try at least 3 symbols per keyword!"),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = SearchQueryIsBlankException.class)
+    public ResponseEntity<ExceptionResponse> handleSearchedPhraseIsTooShort() {
+        return new ResponseEntity<>(
+                new ExceptionResponse(
+                        generateDate(),
+                        HttpStatus.BAD_REQUEST.value(),
+                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                        "Searched phrase can not be blank!"),
                 HttpStatus.BAD_REQUEST);
     }
 

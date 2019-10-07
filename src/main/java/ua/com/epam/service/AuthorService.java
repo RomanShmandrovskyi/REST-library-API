@@ -7,7 +7,8 @@ import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
 import ua.com.epam.entity.dto.author.AuthorDto;
 import ua.com.epam.exception.entity.IdMismatchException;
-import ua.com.epam.exception.entity.SearchQueryIsTooShortException;
+import ua.com.epam.exception.entity.search.SearchQueryIsBlankException;
+import ua.com.epam.exception.entity.search.SearchQueryIsTooShortException;
 import ua.com.epam.exception.entity.author.AuthorAlreadyExistsException;
 import ua.com.epam.exception.entity.author.AuthorNotFoundException;
 import ua.com.epam.exception.entity.author.BooksInAuthorArePresentException;
@@ -17,6 +18,7 @@ import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -87,15 +89,23 @@ public class AuthorService {
     }
 
     public List<AuthorDto> searchForExistedAuthors(String searchQuery) {
-        if (searchQuery.trim().isEmpty()) {
-            throw new SearchQueryIsTooShortException(searchQuery, true, false);
+        String searchQueryTrimmed = searchQuery.trim();
+
+        if (searchQueryTrimmed.isEmpty()) {
+            throw new SearchQueryIsBlankException();
         }
 
-        if (searchQuery.length() <= 2) {
-            throw new SearchQueryIsTooShortException(searchQuery, false, true);
+        if (searchQueryTrimmed.length() <= 2) {
+            throw new SearchQueryIsTooShortException(searchQueryTrimmed);
         }
 
-        return mapToDto(searchFor.authors(searchQuery));
+        List<String> keywords = Arrays.stream(searchQuery.split(" "))
+                .filter(e -> e.length() > 2)
+                .collect(Collectors.toList());
+
+        List<Author> searched = searchFor.authors(searchQuery, keywords);
+
+        return mapToDto(searched);
     }
 
     public List<AuthorDto> findAllAuthorsInGenre(long genreId, String sortBy, String order, int page, int size, boolean pageable) {

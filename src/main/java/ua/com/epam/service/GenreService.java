@@ -13,10 +13,7 @@ import ua.com.epam.exception.entity.genre.BooksInGenreArePresentException;
 import ua.com.epam.exception.entity.genre.GenreAlreadyExistsException;
 import ua.com.epam.exception.entity.genre.GenreNameAlreadyExistsException;
 import ua.com.epam.exception.entity.genre.GenreNotFoundException;
-import ua.com.epam.repository.AuthorRepository;
-import ua.com.epam.repository.BookRepository;
-import ua.com.epam.repository.GenreRepository;
-import ua.com.epam.repository.JsonKeysConformity;
+import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
@@ -35,6 +32,9 @@ public class GenreService {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private SearchFor searchFor;
 
     @Autowired
     private ModelToDtoMapper toDtoMapper;
@@ -82,6 +82,20 @@ public class GenreService {
 
         return mapToDto(genres);
     }
+
+/*    public List<GenreDto> searchForExistedGenres(String searchQuery) {
+        String searchQueryTrimmed = searchQuery.trim();
+
+        if (searchQueryTrimmed.isEmpty()) {
+            throw new SearchQueryIsBlankException();
+        }
+
+        if (searchQueryTrimmed.length() <= 2) {
+            throw new SearchQueryIsTooShortException(searchQueryTrimmed);
+        }
+
+
+    }*/
 
     public List<GenreDto> findAllGenresOfAuthor(long authorId, String sortBy, String order) {
         if (!authorRepository.existsByAuthorId(authorId)) {

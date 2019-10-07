@@ -1,4 +1,4 @@
-package ua.com.epam.exception.entity;
+package ua.com.epam.exception.entity.search;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,6 +9,4 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SearchQueryIsTooShortException extends RuntimeException {
     private String searchedQuery;
-    private boolean isBlank;
-    private boolean tooShort;
 }
