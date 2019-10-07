@@ -114,6 +114,21 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "search for genre by it genre name", tags = "Genre")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Array of Genre objects",
+                    responseContainer = "Set", response = GenreDto.class),
+            @ApiResponse(code = 400, message = "Something wrong...")
+    })
+    @GetMapping(value = "/genres/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> searchForExistedGenres(
+            @ApiParam(value = "Searched query. At least 3 symbols exclude spaces in each word.", required = true)
+            @RequestParam(name = "query")
+                    String query) {
+        List<GenreDto> response = genreService.searchForExistedGenres(query);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @ApiOperation(value = "get all Genres of special Author", tags = {"Genre"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of Genre objects",

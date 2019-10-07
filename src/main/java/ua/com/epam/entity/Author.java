@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -30,9 +29,6 @@ public class Author implements Serializable {
 
     @Column(name = "second_name", nullable = false, length = 50)
     private String secondName;
-
-    @Formula(value = "concat(first_name, ' ', second_name)")
-    private String fullName;
 
     @Column(name = "author_descr", length = 1000)
     private String description;
