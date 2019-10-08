@@ -20,7 +20,7 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
     Optional<Genre> getOneByGenreId(long genreId);
 
     @Query(value = "SELECT g FROM Genre g")
-    List<Genre> getAllGenresOrderedPaginated(PageRequest page);
+    List<Genre> getAllGenres(PageRequest page);
 
     @Query(value = "SELECT DISTINCT g FROM Genre g JOIN Book b ON g.genreId = b.genreId AND b.authorId = ?1")
     List<Genre> getAllGenresOfAuthorOrdered(long authorId, Sort sort);

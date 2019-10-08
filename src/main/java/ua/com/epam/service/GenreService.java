@@ -13,13 +13,13 @@ import ua.com.epam.exception.entity.genre.BooksInGenreArePresentException;
 import ua.com.epam.exception.entity.genre.GenreAlreadyExistsException;
 import ua.com.epam.exception.entity.genre.GenreNameAlreadyExistsException;
 import ua.com.epam.exception.entity.genre.GenreNotFoundException;
-import ua.com.epam.repository.AuthorRepository;
-import ua.com.epam.repository.BookRepository;
-import ua.com.epam.repository.GenreRepository;
-import ua.com.epam.repository.JsonKeysConformity;
+import ua.com.epam.exception.entity.search.SearchQueryIsBlankException;
+import ua.com.epam.exception.entity.search.SearchQueryIsTooShortException;
+import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,6 +35,9 @@ public class GenreService {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private SearchFor searchFor;
 
     @Autowired
     private ModelToDtoMapper toDtoMapper;
@@ -77,10 +80,30 @@ public class GenreService {
         if (!pageable) {
             genres = genreRepository.findAll(sorter);
         } else {
-            genres = genreRepository.getAllGenresOrderedPaginated(PageRequest.of(page - 1, size, sorter));
+            genres = genreRepository.getAllGenres(PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(genres);
+    }
+
+    public List<GenreDto> searchForExistedGenres(String searchQuery) {
+        String searchQueryTrimmed = searchQuery.trim();
+
+        if (searchQueryTrimmed.isEmpty()) {
+            throw new SearchQueryIsBlankException();
+        }
+
+        if (searchQueryTrimmed.length() <= 2) {
+            throw new SearchQueryIsTooShortException(searchQueryTrimmed, 3);
+        }
+
+        List<String> keywords = Arrays.stream(searchQuery.split(" "))
+                .filter(e -> e.length() > 2)
+                .collect(Collectors.toList());
+
+        List<Genre> searched = searchFor.genres(searchQueryTrimmed, keywords);
+
+        return mapToDto(searched);
     }
 
     public List<GenreDto> findAllGenresOfAuthor(long authorId, String sortBy, String order) {

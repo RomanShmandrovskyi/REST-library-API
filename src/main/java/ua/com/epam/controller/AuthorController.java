@@ -114,6 +114,22 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "search for author by it name and surname", tags = "Author")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Array of Authors objects",
+                    responseContainer = "Set", response = AuthorDto.class),
+            @ApiResponse(code = 400, message = "Something wrong...")
+    })
+    @GetMapping(value = "/authors/search",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> searchForAuthors(
+            @ApiParam(value = "Searched query. At least 3 symbols exclude spaces in each word.", required = true)
+            @RequestParam(name = "query")
+                    String query) {
+        List<AuthorDto> response = authorService.searchForExistedAuthors(query);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @ApiOperation(value = "get all Authors in special Genre", tags = {"Author"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of Authors objects",
@@ -121,7 +137,8 @@ public class AuthorController {
             @ApiResponse(code = 400, message = "Something wrong..."),
             @ApiResponse(code = 404, message = "Genre not found")
     })
-    @GetMapping(value = "/genre/{genreId}/authors", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/genre/{genreId}/authors",
+            produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthorsOfGenre(
             @ApiParam(required = true, value = "existed Genre ID")
             @PathVariable

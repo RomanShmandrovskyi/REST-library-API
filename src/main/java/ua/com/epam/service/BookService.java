@@ -11,13 +11,13 @@ import ua.com.epam.exception.entity.author.AuthorNotFoundException;
 import ua.com.epam.exception.entity.book.BookAlreadyExistsException;
 import ua.com.epam.exception.entity.book.BookNotFoundException;
 import ua.com.epam.exception.entity.genre.GenreNotFoundException;
-import ua.com.epam.repository.AuthorRepository;
-import ua.com.epam.repository.BookRepository;
-import ua.com.epam.repository.GenreRepository;
-import ua.com.epam.repository.JsonKeysConformity;
+import ua.com.epam.exception.entity.search.SearchQueryIsBlankException;
+import ua.com.epam.exception.entity.search.SearchQueryIsTooShortException;
+import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +33,9 @@ public class BookService {
 
     @Autowired
     private GenreRepository genreRepository;
+
+    @Autowired
+    private SearchFor searchFor;
 
     @Autowired
     private ModelToDtoMapper toDtoMapper;
@@ -73,7 +76,7 @@ public class BookService {
         if (!pageable) {
             books = bookRepository.findAll(sorter);
         } else {
-            books = bookRepository.getAllBooksOrderedPaginated(PageRequest.of(page - 1, size, sorter));
+            books = bookRepository.getAllBooks(PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(books);
@@ -88,7 +91,7 @@ public class BookService {
         if (!pageable) {
             books = bookRepository.findAll(sorter);
         } else {
-            books = bookRepository.getAllBooksOrderedPaginated(PageRequest.of(page - 1, size, sorter));
+            books = bookRepository.getAllBooks(PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(books);
@@ -103,7 +106,7 @@ public class BookService {
         if (!pageable) {
             books = bookRepository.findAll(sorter);
         } else {
-            books = bookRepository.getAllBooksOrderedPaginated(PageRequest.of(page - 1, size, sorter));
+            books = bookRepository.getAllBooks(PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(books);
@@ -123,7 +126,7 @@ public class BookService {
         if (!pageable) {
             books = bookRepository.findAll(sorter);
         } else {
-            books = bookRepository.getAllBooksInGenreOrderedPaginated(genreId, PageRequest.of(page - 1, size, sorter));
+            books = bookRepository.getAllBooksInGenre(genreId, PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(books);
@@ -151,6 +154,26 @@ public class BookService {
         }
 
         return mapToDto(bookRepository.getAllAuthorBooksInGenre(authorId, genreId));
+    }
+
+    public List<BookDto> searchForExistedBooks(String searchQuery) {
+        String searchQueryTrimmed = searchQuery.trim();
+
+        if (searchQueryTrimmed.isEmpty()) {
+            throw new SearchQueryIsBlankException();
+        }
+
+        if (searchQueryTrimmed.length() <= 4) {
+            throw new SearchQueryIsTooShortException(searchQueryTrimmed, 5);
+        }
+
+        List<String> keywords = Arrays.stream(searchQuery.split(" "))
+                .filter(e -> e.length() > 4)
+                .collect(Collectors.toList());
+
+        List<Book> searched = searchFor.books(searchQuery, keywords);
+
+        return mapToDto(searched);
     }
 
     public BookDto addNewBook(long authorId, long genreId, BookDto newBook) {

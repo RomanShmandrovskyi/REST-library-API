@@ -12,13 +12,13 @@ import ua.com.epam.exception.entity.author.AuthorNotFoundException;
 import ua.com.epam.exception.entity.author.BooksInAuthorArePresentException;
 import ua.com.epam.exception.entity.book.BookNotFoundException;
 import ua.com.epam.exception.entity.genre.GenreNotFoundException;
-import ua.com.epam.repository.AuthorRepository;
-import ua.com.epam.repository.BookRepository;
-import ua.com.epam.repository.GenreRepository;
-import ua.com.epam.repository.JsonKeysConformity;
+import ua.com.epam.exception.entity.search.SearchQueryIsBlankException;
+import ua.com.epam.exception.entity.search.SearchQueryIsTooShortException;
+import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,6 +34,9 @@ public class AuthorService {
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private SearchFor searchFor;
 
     @Autowired
     private ModelToDtoMapper toDtoMapper;
@@ -78,11 +81,30 @@ public class AuthorService {
         if (!pageable) {
             authors = authorRepository.findAll(sorter);
         } else {
-            authors = authorRepository
-                    .getAllAuthorsOrderedPaginated(PageRequest.of(page - 1, size, sorter));
+            authors = authorRepository.getAllAuthors(PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(authors);
+    }
+
+    public List<AuthorDto> searchForExistedAuthors(String searchQuery) {
+        String searchQueryTrimmed = searchQuery.trim();
+
+        if (searchQueryTrimmed.isEmpty()) {
+            throw new SearchQueryIsBlankException();
+        }
+
+        if (searchQueryTrimmed.length() <= 2) {
+            throw new SearchQueryIsTooShortException(searchQueryTrimmed, 3);
+        }
+
+        List<String> keywords = Arrays.stream(searchQuery.split(" "))
+                .filter(e -> e.length() > 2)
+                .collect(Collectors.toList());
+
+        List<Author> searched = searchFor.authors(searchQuery, keywords);
+
+        return mapToDto(searched);
     }
 
     public List<AuthorDto> findAllAuthorsInGenre(long genreId, String sortBy, String order, int page, int size, boolean pageable) {
@@ -99,8 +121,7 @@ public class AuthorService {
         if (!pageable) {
             authors = authorRepository.findAll(sorter);
         } else {
-            authors = authorRepository
-                    .getAllAuthorsInGenreOrderedPaginated(genreId, PageRequest.of(page - 1, size, sorter));
+            authors = authorRepository.getAllAuthorsInGenre(genreId, PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(authors);
