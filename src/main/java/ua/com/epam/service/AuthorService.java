@@ -96,7 +96,7 @@ public class AuthorService {
         }
 
         if (searchQueryTrimmed.length() <= 2) {
-            throw new SearchQueryIsTooShortException(searchQueryTrimmed);
+            throw new SearchQueryIsTooShortException(searchQueryTrimmed, 3);
         }
 
         List<String> keywords = Arrays.stream(searchQuery.split(" "))

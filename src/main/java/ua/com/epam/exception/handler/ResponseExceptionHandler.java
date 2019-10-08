@@ -260,7 +260,8 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        "Searched phrase '" + sqits.getSearchedQuery() + "' is too short! Try at least 3 symbols (excluding spaces)!"),
+                        "Searched phrase '" + sqits.getSearchedQuery() + "' is too short! Try at least "
+                                + sqits.getMinSearchedQueryLength() + " symbols (excluding spaces)!"),
                 HttpStatus.BAD_REQUEST);
     }
 

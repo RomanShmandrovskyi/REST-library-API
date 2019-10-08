@@ -195,6 +195,21 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "search for books by book name", tags = {"Book"})
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Array of Book objects",
+                    responseContainer = "Set", response = BookDto.class),
+            @ApiResponse(code = 400, message = "Something wrong...")
+    })
+    @GetMapping(value = "/books/search",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> searchForExistedBooks(
+            @ApiParam(value = "Searched query. At least 4 symbols exclude spaces in each word.", required = true)
+            @RequestParam(name = "query") String query) {
+        List<BookDto> response = bookService.searchForExistedBooks(query);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @ApiOperation(value = "create new Book", tags = {"Book"})
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "newly created Book", response = BookDto.class),

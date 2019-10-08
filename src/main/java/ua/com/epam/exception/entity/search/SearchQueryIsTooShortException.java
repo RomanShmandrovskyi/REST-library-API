@@ -9,4 +9,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SearchQueryIsTooShortException extends RuntimeException {
     private String searchedQuery;
+    private int minSearchedQueryLength;
 }

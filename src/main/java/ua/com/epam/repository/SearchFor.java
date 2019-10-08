@@ -20,30 +20,17 @@ public class SearchFor {
     private EntityManager entityManager;
 
     public List<Author> authors(String query, List<String> keywordsToSearch) {
-        List<String> columns = new ArrayList<>(Arrays.asList("first_name", "second_name"));
-
-        String fullName = "CONCAT(first_name, ' ', second_name)";
-
-        String contains = buildQueryContains(Collections.singletonList(fullName), Collections.singletonList(query));
-        String anyMatch, full;
-
-        if (!keywordsToSearch.isEmpty()) {
-            anyMatch = buildQueryContains(columns, keywordsToSearch);
-            full = String.join(" OR ", contains, anyMatch);
-        } else {
-            full = String.join(" OR ", contains);
-        }
-
-        return performSearch(full, Author.class);
+        List<String> columns = new ArrayList<>(Collections.singletonList("fullName"));
+        return getList(query, keywordsToSearch, columns, Author.class);
     }
 
     public List<Genre> genres(String query, List<String> keywordsToSearch) {
-        List<String> columns = Collections.singletonList("genre_name");
+        List<String> columns = Collections.singletonList("genreName");
         return getList(query, keywordsToSearch, columns, Genre.class);
     }
 
     public List<Book> books(String query, List<String> keywordsToSearch) {
-        List<String> columns = Collections.singletonList("book_name");
+        List<String> columns = Collections.singletonList("bookName");
         return getList(query, keywordsToSearch, columns, Book.class);
     }
 
@@ -64,18 +51,18 @@ public class SearchFor {
     private String buildQueryContains(List<String> columnNames, List<String> valuesToSearch) {
         String or = " OR ";
         String like = " LIKE ";
-        String valueContains = "\"%%%s%%\"";
+        String valueContains = "'%%%s%%'";
 
         return columnNames.stream()
                 .map(c -> valuesToSearch.stream()
-                        .map(v -> c + like + String.format(valueContains, v))
+                        .map(v -> "t." + c + like + String.format(valueContains, v.replace("'", "''")))
                         .collect(Collectors.joining(or)))
                 .collect(Collectors.joining(or));
     }
 
     private <T> List<T> performSearch(String query, Class clazz) {
-        String prefix = "SELECT * FROM " + clazz.getSimpleName().toLowerCase() + " WHERE ";
+        String prefix = "SELECT t FROM " + clazz.getName() + " t WHERE ";
         String queryToExecute = prefix + query;
-        return entityManager.createNativeQuery(queryToExecute, clazz).getResultList();
+        return entityManager.createQuery(queryToExecute, clazz).getResultList();
     }
 }
