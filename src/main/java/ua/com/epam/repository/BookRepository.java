@@ -18,7 +18,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     boolean existsByBookId(long bookId);
 
     @Query(value = "SELECT b FROM Book b")
-    List<Book> getAllBooksOrderedPaginated(PageRequest page);
+    List<Book> getAllBooks(PageRequest page);
 
     @Query(value = "SELECT COUNT(b) FROM Book b WHERE b.genreId=?1")
     Long getAllBooksInGenreCount(long genreId);
@@ -27,7 +27,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     Long getAllBooksOfAuthorCount(long authorId);
 
     @Query(value = "SELECT b FROM Book b WHERE b.genreId=?1")
-    List<Book> getAllBooksInGenreOrderedPaginated(long genreId, PageRequest page);
+    List<Book> getAllBooksInGenre(long genreId, PageRequest page);
 
     @Query(value = "SELECT b FROM Book b WHERE b.authorId=?1")
     List<Book> getAllAuthorBooksOrdered(long authorId, Sort sort);

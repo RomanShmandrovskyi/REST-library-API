@@ -80,7 +80,7 @@ public class GenreService {
         if (!pageable) {
             genres = genreRepository.findAll(sorter);
         } else {
-            genres = genreRepository.getAllGenresOrderedPaginated(PageRequest.of(page - 1, size, sorter));
+            genres = genreRepository.getAllGenres(PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(genres);

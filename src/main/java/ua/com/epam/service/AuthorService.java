@@ -7,13 +7,13 @@ import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
 import ua.com.epam.entity.dto.author.AuthorDto;
 import ua.com.epam.exception.entity.IdMismatchException;
-import ua.com.epam.exception.entity.search.SearchQueryIsBlankException;
-import ua.com.epam.exception.entity.search.SearchQueryIsTooShortException;
 import ua.com.epam.exception.entity.author.AuthorAlreadyExistsException;
 import ua.com.epam.exception.entity.author.AuthorNotFoundException;
 import ua.com.epam.exception.entity.author.BooksInAuthorArePresentException;
 import ua.com.epam.exception.entity.book.BookNotFoundException;
 import ua.com.epam.exception.entity.genre.GenreNotFoundException;
+import ua.com.epam.exception.entity.search.SearchQueryIsBlankException;
+import ua.com.epam.exception.entity.search.SearchQueryIsTooShortException;
 import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
@@ -81,8 +81,7 @@ public class AuthorService {
         if (!pageable) {
             authors = authorRepository.findAll(sorter);
         } else {
-            authors = authorRepository
-                    .getAllAuthorsOrderedPaginated(PageRequest.of(page - 1, size, sorter));
+            authors = authorRepository.getAllAuthors(PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(authors);
@@ -122,8 +121,7 @@ public class AuthorService {
         if (!pageable) {
             authors = authorRepository.findAll(sorter);
         } else {
-            authors = authorRepository
-                    .getAllAuthorsInGenreOrderedPaginated(genreId, PageRequest.of(page - 1, size, sorter));
+            authors = authorRepository.getAllAuthorsInGenre(genreId, PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(authors);

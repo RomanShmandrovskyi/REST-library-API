@@ -21,8 +21,8 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
     Author getAuthorOfBook(long bookId);
 
     @Query(value = "SELECT a FROM Author a")
-    List<Author> getAllAuthorsOrderedPaginated(PageRequest page);
+    List<Author> getAllAuthors(PageRequest page);
 
     @Query(value = "SELECT DISTINCT a FROM Author a JOIN Book b ON a.authorId = b.authorId AND b.genreId = ?1")
-    List<Author> getAllAuthorsInGenreOrderedPaginated(long genreId, PageRequest page);
+    List<Author> getAllAuthorsInGenre(long genreId, PageRequest page);
 }

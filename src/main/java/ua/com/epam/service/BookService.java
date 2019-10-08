@@ -76,7 +76,7 @@ public class BookService {
         if (!pageable) {
             books = bookRepository.findAll(sorter);
         } else {
-            books = bookRepository.getAllBooksOrderedPaginated(PageRequest.of(page - 1, size, sorter));
+            books = bookRepository.getAllBooks(PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(books);
@@ -91,7 +91,7 @@ public class BookService {
         if (!pageable) {
             books = bookRepository.findAll(sorter);
         } else {
-            books = bookRepository.getAllBooksOrderedPaginated(PageRequest.of(page - 1, size, sorter));
+            books = bookRepository.getAllBooks(PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(books);
@@ -106,7 +106,7 @@ public class BookService {
         if (!pageable) {
             books = bookRepository.findAll(sorter);
         } else {
-            books = bookRepository.getAllBooksOrderedPaginated(PageRequest.of(page - 1, size, sorter));
+            books = bookRepository.getAllBooks(PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(books);
@@ -126,7 +126,7 @@ public class BookService {
         if (!pageable) {
             books = bookRepository.findAll(sorter);
         } else {
-            books = bookRepository.getAllBooksInGenreOrderedPaginated(genreId, PageRequest.of(page - 1, size, sorter));
+            books = bookRepository.getAllBooksInGenre(genreId, PageRequest.of(page - 1, size, sorter));
         }
 
         return mapToDto(books);
