@@ -18,7 +18,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/library")
+@RequestMapping("${server.base.url}")
 @Api(value = "Author", description = "Author endpoints", tags = {"Author"})
 public class AuthorController {
 

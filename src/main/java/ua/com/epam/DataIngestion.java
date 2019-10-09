@@ -1,16 +1,15 @@
 package ua.com.epam;
 
 import com.github.javafaker.Faker;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class DataIngestion {
@@ -21,8 +20,9 @@ public class DataIngestion {
     private final static int genresCount = 30;   // 30 is maximum; if set more, will work endlessly!!!
     private final static int booksCount = 1000;  // 9999 - is maximum (if set to max it greatly increase generation time)
 
+    private static Faker f = new Faker();
+
     public static void main(String[] args) throws ParseException {
-        Faker f = new Faker();
         List<String> bashLines = new ArrayList<>();
         bashLines.add("#!/usr/bin/env bash");
         String doPost = "curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d \"%s\" '%s'";
@@ -86,11 +86,12 @@ public class DataIngestion {
             if (!bookIds.contains(id)) bookIds.add(id);
         }
 
-        String[] languages = {"ukrainian", "german", "russian", "polish", "spanish", "belorussian", "chinese", "english"};
+        String[] languages = {"ukrainian", "german", "russian", "polish", "spanish", "belorussian", "chinese", "english",
+                "portuguese", "croatian", "french", "arabic", "armenian", "urdu", "farsi"};
 
         bookIds.stream()
                 .map(bookId -> getBookJSON(bookId,
-                        f.book().title(),
+                        generateBookName(),
                         languages[new Random().nextInt(languages.length)],
                         f.lorem().paragraph(),
                         f.number().numberBetween(10, 1000),
@@ -113,48 +114,60 @@ public class DataIngestion {
         }
     }
 
+    private static String generateBookName() {
+        List<String> words = new ArrayList<>();
+        IntStream.rangeClosed(0, f.number().numberBetween(2, 5))
+                .forEach(i -> words.add(f.lorem().word()));
+        Collections.shuffle(words);
+        String first = words.get(0);
+        words.set(0, first.substring(0, 1).toUpperCase() + first.substring(1));
+        return words.stream().collect(Collectors.joining(" "));
+    }
+
     private static String getAuthorJSON(long authorId, String first, String second, String nationality,
                                         String birthDate, String country, String city, String descr) {
-        return "{" +
-                    "\\\"authorId\\\":" + authorId + "," +
-                    "\\\"authorName\\\":{" +
-                        "\\\"first\\\":\\\"" + first + "\\\"," +
-                        "\\\"second\\\":\\\"" + second + "\\\"" +
-                    "}," +
-                    "\\\"nationality\\\":\\\"" + nationality + "\\\"," +
-                    "\\\"birth\\\":{" +
-                        "\\\"date\\\":\\\"" + birthDate + "\\\"," +
-                        "\\\"country\\\":\\\"" + country + "\\\"," +
-                        "\\\"city\\\":\\\"" + city + "\\\"" +
-                    "}," +
-                    "\\\"authorDescription\\\":\\\"" + descr + "\\\"" +
-               "}";
+        return new JSONObject()
+                .put("authorId", authorId)
+                .put("authorName", new JSONObject()
+                        .put("first", first)
+                        .put("second", second))
+                .put("nationality", nationality)
+                .put("birth", new JSONObject()
+                        .put("date", birthDate)
+                        .put("country", country)
+                        .put("city", city))
+                .put("authorDescription", descr)
+
+                .toString()
+                .replace("\"", "\\\"");
     }
 
     private static String getGenreJSON(long genreId, String genreName, String genreDescription) {
-        return "{" +
-                    "\\\"genreId\\\":" + genreId + "," +
-                    "\\\"genreName\\\":\\\"" + genreName + "\\\"," +
-                    "\\\"genreDescription\\\":\\\"" + genreDescription + "\\\"" +
-               "}";
+        return new JSONObject()
+                .put("genreId", genreId)
+                .put("genreName", genreName)
+                .put("genreDescription", genreDescription)
+
+                .toString()
+                .replace("\"", "\\\"");
     }
 
     private static String getBookJSON(long bookId, String bookName, String bookLang, String bookDescr, int pageCount,
                                       double height, double width, double length, int pubYear) {
-        return "{" +
-                    "\\\"bookId\\\":" + bookId + "," +
-                    "\\\"bookName\\\":\\\"" + bookName + "\\\"," +
-                    "\\\"bookLanguage\\\":\\\"" + bookLang + "\\\"," +
-                    "\\\"bookDescription\\\":\\\"" + bookDescr + "\\\"," +
-                    "\\\"additional\\\":{" +
-                        "\\\"pageCount\\\":" + pageCount + "," +
-                        "\\\"size\\\":{" +
-                            "\\\"height\\\":" + height + "," +
-                            "\\\"width\\\":" + width + "," +
-                            "\\\"length\\\":" + length +
-                        "}" +
-                    "}," +
-                    "\\\"publicationYear\\\":" + pubYear +
-               "}";
+        return new JSONObject()
+                .put("bookId", bookId)
+                .put("bookName", bookName)
+                .put("bookLanguage", bookLang)
+                .put("bookDescription", bookDescr)
+                .put("additional", new JSONObject()
+                        .put("pageCount", pageCount)
+                        .put("size", new JSONObject()
+                                .put("height", height)
+                                .put("width", width)
+                                .put("length", length)))
+                .put("publicationYear", pubYear)
+
+                .toString()
+                .replace("\"", "\\\"");
     }
 }
