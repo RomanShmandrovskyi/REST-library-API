@@ -19,6 +19,7 @@ import ua.com.epam.service.mapper.ModelToDtoMapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class BookService {
@@ -157,27 +158,15 @@ public class BookService {
     public List<BookDto> searchForExistedBooks(String searchQuery) {
         List<Book> result = new ArrayList<>();
 
-        searchQuery = searchQuery.trim(); //remove spaces
+        searchQuery = searchQuery.trim();
+        if (searchQuery.isEmpty()) throw new SearchQueryIsBlankException();
+        else if (searchQuery.length() <= 4) throw new SearchQueryIsTooShortException(searchQuery, 5);
+
         List<String> splitQuery = Arrays.asList(searchQuery.split(" "));
+        List<Book> searched = searchFor.books(searchQuery, splitQuery);
 
-        if (searchQuery.isEmpty()) {
-            throw new SearchQueryIsBlankException();
-        } else if (searchQuery.length() <= 4) {
-            throw new SearchQueryIsTooShortException(searchQuery, 5);
-        }
+        if (searched.isEmpty()) return new ArrayList<>();
 
-        //skip all words less then 5 symbols
-        List<String> keywords = splitQuery.stream()
-                .filter(e -> e.length() > 4)
-                .collect(Collectors.toList());
-
-        List<Book> searched = searchFor.books(searchQuery, keywords);
-
-        if (searched.isEmpty()) {
-            return new ArrayList<>();
-        }
-
-        //up the most relevant results to the beginning
         for (int i = splitQuery.size(); i > 0; i--) {
             String partial = splitQuery.stream()
                     .limit(i)
@@ -185,17 +174,21 @@ public class BookService {
 
             List<Book> filtered = searched.stream()
                     .filter(b -> b.getBookName().toLowerCase().startsWith(partial.toLowerCase()))
-                    .sorted(Comparator.comparing(Book::getBookName))
-                    .collect(Collectors.toList());
+                    .sorted(Comparator.comparing(Book::getBookName)).collect(Collectors.toList());
 
             result.addAll(filtered);
+
+            if (result.size() >= 5) {
+                return mapToDto(IntStream.range(0, 5).mapToObj(result::get)
+                        .collect(Collectors.toList()));
+            }
+
             searched.removeAll(filtered);
         }
 
         result.addAll(searched);
 
-        return mapToDto(result.stream()
-                .limit(5)
+        return mapToDto(result.stream().limit(5)
                 .collect(Collectors.toList()));
     }
 

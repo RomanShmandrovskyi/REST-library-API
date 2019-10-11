@@ -18,6 +18,7 @@ import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -88,23 +89,33 @@ public class AuthorService {
     }
 
     public List<AuthorDto> searchForExistedAuthors(String searchQuery) {
-        String searchQueryTrimmed = searchQuery.trim();
+        List<Author> result = new ArrayList<>();
 
-        if (searchQueryTrimmed.isEmpty()) {
-            throw new SearchQueryIsBlankException();
+        searchQuery = searchQuery.trim();
+
+        if (searchQuery.isEmpty()) throw new SearchQueryIsBlankException();
+        else if (searchQuery.length() <= 2) throw new SearchQueryIsTooShortException(searchQuery, 3);
+
+        List<String> splitQuery = Arrays.asList(searchQuery.split(" "));
+        List<Author> searched = searchFor.authors(searchQuery, splitQuery);
+
+        if (searched.isEmpty()) return new ArrayList<>();
+
+        for (String word : splitQuery) {
+            searched.stream().filter(a -> a.getFirstName().startsWith(word))
+                    .forEach(result::add);
+
+            searched.stream().filter(a -> a.getSecondName().startsWith(word))
+                    .forEach(result::add);
+
+            searched.removeAll(result);
         }
 
-        if (searchQueryTrimmed.length() <= 2) {
-            throw new SearchQueryIsTooShortException(searchQueryTrimmed, 3);
-        }
+        result.addAll(searched);
 
-        List<String> keywords = Arrays.stream(searchQuery.split(" "))
-                .filter(e -> e.length() > 2)
-                .collect(Collectors.toList());
-
-        List<Author> searched = searchFor.authors(searchQuery, keywords);
-
-        return mapToDto(searched);
+        return mapToDto(result.stream()
+                .limit(5)
+                .collect(Collectors.toList()));
     }
 
     public List<AuthorDto> findAllAuthorsInGenre(long genreId, String sortBy, String order, int page, int size, boolean pageable) {

@@ -3,10 +3,7 @@ package ua.com.epam.entity.dto.genre;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ua.com.epam.service.util.deserializer.CustomLongDeserializer;
 import ua.com.epam.service.util.deserializer.CustomStringDeserializer;
 
@@ -16,6 +13,7 @@ import javax.validation.constraints.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 @ApiModel(value = "Genre")
 public class GenreDto {
 
