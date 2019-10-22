@@ -87,21 +87,19 @@ public class GenreService {
     }
 
     public List<GenreDto> searchForExistedGenres(String searchQuery) {
-        String searchQueryTrimmed = searchQuery.trim();
+        searchQuery = searchQuery.trim();
 
-        if (searchQueryTrimmed.isEmpty()) {
+        if (searchQuery.isEmpty()) {
             throw new SearchQueryIsBlankException();
-        }
-
-        if (searchQueryTrimmed.length() <= 2) {
-            throw new SearchQueryIsTooShortException(searchQueryTrimmed, 3);
+        } else if (searchQuery.length() <= 2) {
+            throw new SearchQueryIsTooShortException(searchQuery, 3);
         }
 
         List<String> keywords = Arrays.stream(searchQuery.split(" "))
                 .filter(e -> e.length() > 2)
                 .collect(Collectors.toList());
 
-        List<Genre> searched = searchFor.genres(searchQueryTrimmed, keywords);
+        List<Genre> searched = searchFor.genres(searchQuery, keywords);
 
         return mapToDto(searched);
     }

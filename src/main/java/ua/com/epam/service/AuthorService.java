@@ -102,10 +102,12 @@ public class AuthorService {
         if (searched.isEmpty()) return new ArrayList<>();
 
         for (String word : splitQuery) {
-            searched.stream().filter(a -> a.getFirstName().startsWith(word))
+            searched.stream()
+                    .filter(a -> a.getFirstName().startsWith(word))
                     .forEach(result::add);
 
-            searched.stream().filter(a -> a.getSecondName().startsWith(word))
+            searched.stream()
+                    .filter(a -> a.getSecondName().startsWith(word))
                     .forEach(result::add);
 
             searched.removeAll(result);

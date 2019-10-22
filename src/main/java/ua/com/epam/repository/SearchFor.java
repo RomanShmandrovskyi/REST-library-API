@@ -30,11 +30,11 @@ public class SearchFor {
     }
 
     private <T> List<T> getList(String query, List<String> keywords, List<String> columns, Class<T> clazz) {
-        String contains = buildQueryContains(columns, Collections.singletonList(query));
+        String contains = buildSearchQuery(columns, Collections.singletonList(query));
         String anyMatch, full;
 
         if (!keywords.isEmpty()) {
-            anyMatch = buildQueryContains(columns, keywords);
+            anyMatch = buildSearchQuery(columns, keywords);
             full = String.join(" OR ", contains, anyMatch);
         } else {
             full = String.join(" OR ", contains);
@@ -43,7 +43,7 @@ public class SearchFor {
         return performSearch(full, clazz);
     }
 
-    private String buildQueryContains(List<String> columnNames, List<String> valuesToSearch) {
+    private String buildSearchQuery(List<String> columnNames, List<String> valuesToSearch) {
         String or = " OR ";
         String like = " LIKE ";
         String valueContains = "'%%%s%%'";

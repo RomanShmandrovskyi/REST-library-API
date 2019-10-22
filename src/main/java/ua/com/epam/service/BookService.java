@@ -159,13 +159,18 @@ public class BookService {
         List<Book> result = new ArrayList<>();
 
         searchQuery = searchQuery.trim();
-        if (searchQuery.isEmpty()) throw new SearchQueryIsBlankException();
-        else if (searchQuery.length() <= 4) throw new SearchQueryIsTooShortException(searchQuery, 5);
+        if (searchQuery.isEmpty()) {
+            throw new SearchQueryIsBlankException();
+        } else if (searchQuery.length() <= 4) {
+            throw new SearchQueryIsTooShortException(searchQuery, 5);
+        }
 
         List<String> splitQuery = Arrays.asList(searchQuery.split(" "));
         List<Book> searched = searchFor.books(searchQuery, splitQuery);
 
-        if (searched.isEmpty()) return new ArrayList<>();
+        if (searched.isEmpty()) {
+            return new ArrayList<>();
+        }
 
         for (int i = splitQuery.size(); i > 0; i--) {
             String partial = splitQuery.stream()
@@ -179,7 +184,8 @@ public class BookService {
             result.addAll(filtered);
 
             if (result.size() >= 5) {
-                return mapToDto(IntStream.range(0, 5).mapToObj(result::get)
+                return mapToDto(IntStream.range(0, 5)
+                        .mapToObj(result::get)
                         .collect(Collectors.toList()));
             }
 
@@ -188,7 +194,8 @@ public class BookService {
 
         result.addAll(searched);
 
-        return mapToDto(result.stream().limit(5)
+        return mapToDto(result.stream()
+                .limit(5)
                 .collect(Collectors.toList()));
     }
 
