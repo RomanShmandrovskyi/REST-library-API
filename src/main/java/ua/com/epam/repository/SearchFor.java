@@ -7,7 +7,6 @@ import ua.com.epam.entity.Genre;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,26 +18,23 @@ public class SearchFor {
     private EntityManager entityManager;
 
     public List<Author> authors(String query, List<String> keywordsToSearch) {
-        List<String> columns = new ArrayList<>(Collections.singletonList("fullName"));
-        return getList(query, keywordsToSearch, columns, Author.class);
+        return getList(query, keywordsToSearch, Collections.singletonList("fullName"), Author.class);
     }
 
     public List<Genre> genres(String query, List<String> keywordsToSearch) {
-        List<String> columns = Collections.singletonList("genreName");
-        return getList(query, keywordsToSearch, columns, Genre.class);
+        return getList(query, keywordsToSearch, Collections.singletonList("genreName"), Genre.class);
     }
 
     public List<Book> books(String query, List<String> keywordsToSearch) {
-        List<String> columns = Collections.singletonList("bookName");
-        return getList(query, keywordsToSearch, columns, Book.class);
+        return getList(query, keywordsToSearch, Collections.singletonList("bookName"), Book.class);
     }
 
-    private <T> List<T> getList(String query, List<String> keywords, List<String> columns, Class clazz) {
-        String contains = buildQueryContains(columns, Collections.singletonList(query));
+    private <T> List<T> getList(String query, List<String> keywords, List<String> columns, Class<T> clazz) {
+        String contains = buildSearchQuery(columns, Collections.singletonList(query));
         String anyMatch, full;
 
         if (!keywords.isEmpty()) {
-            anyMatch = buildQueryContains(columns, keywords);
+            anyMatch = buildSearchQuery(columns, keywords);
             full = String.join(" OR ", contains, anyMatch);
         } else {
             full = String.join(" OR ", contains);
@@ -47,7 +43,7 @@ public class SearchFor {
         return performSearch(full, clazz);
     }
 
-    private String buildQueryContains(List<String> columnNames, List<String> valuesToSearch) {
+    private String buildSearchQuery(List<String> columnNames, List<String> valuesToSearch) {
         String or = " OR ";
         String like = " LIKE ";
         String valueContains = "'%%%s%%'";
@@ -59,7 +55,7 @@ public class SearchFor {
                 .collect(Collectors.joining(or));
     }
 
-    private <T> List<T> performSearch(String query, Class clazz) {
+    private <T> List<T> performSearch(String query, Class<T> clazz) {
         String prefix = "SELECT t FROM " + clazz.getName() + " t WHERE ";
         String queryToExecute = prefix + query;
         return entityManager.createQuery(queryToExecute, clazz).getResultList();

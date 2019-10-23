@@ -6,11 +6,13 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import ua.com.epam.exception.entity.type.InvalidDateTypeException;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.TimeZone;
 
-public class CustomDateDeserializer extends StdDeserializer<LocalDate> {
+public class CustomDateDeserializer extends StdDeserializer<Date> {
     public CustomDateDeserializer() {
         this(null);
     }
@@ -20,15 +22,18 @@ public class CustomDateDeserializer extends StdDeserializer<LocalDate> {
     }
 
     @Override
-    public LocalDate deserialize(JsonParser jp, DeserializationContext dc) throws IOException {
+    public Date deserialize(JsonParser jp, DeserializationContext dc) throws IOException {
         String date = jp.getValueAsString();
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate parsed;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setTimeZone(TimeZone.getTimeZone(ZoneOffset.ofHours(0)));
+        sdf.setLenient(false);
+
+        Date parsed;
 
         try {
-            parsed = LocalDate.parse(date, formatter);
-        } catch (DateTimeParseException e) {
+            parsed = sdf.parse(date);
+        } catch (ParseException e) {
             throw new InvalidDateTypeException(jp.currentName(), jp.getText());
         }
 

@@ -8,7 +8,7 @@ import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -41,7 +41,7 @@ public class Author implements Serializable {
     private String nationality;
 
     @Column(name = "birth_date")
-    private LocalDate birthDate;
+    private Date birthDate;
 
     @Column(name = "birth_country", length = 60)
     private String birthCountry;

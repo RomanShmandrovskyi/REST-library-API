@@ -4,21 +4,19 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ua.com.epam.service.util.deserializer.CustomDateDeserializer;
 import ua.com.epam.service.util.deserializer.CustomStringDeserializer;
 
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode
 @ApiModel(value = "Birth")
 public class BirthDto {
 
@@ -26,7 +24,7 @@ public class BirthDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @PastOrPresent(message = "Value 'date' must be past or present!")
-    private LocalDate date;
+    private Date date;
 
     @ApiModelProperty(position = 1)
     @JsonDeserialize(using = CustomStringDeserializer.class)

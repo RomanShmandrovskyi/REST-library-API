@@ -195,7 +195,7 @@ public class BookController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "search for books by book name", tags = {"Book"})
+    @ApiOperation(value = "search for books by book name, return first 5 the most relevant results", tags = {"Book"})
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Array of Book objects",
                     responseContainer = "Set", response = BookDto.class),
@@ -204,8 +204,9 @@ public class BookController {
     @GetMapping(value = "/books/search",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> searchForExistedBooks(
-            @ApiParam(value = "Searched query. At least 4 symbols exclude spaces in each word.", required = true)
-            @RequestParam(name = "query") String query) {
+            @ApiParam(value = "Searched query. At least 5 symbols exclude spaces in each word.", required = true)
+            @RequestParam(name = "q")
+                    String query) {
         List<BookDto> response = bookService.searchForExistedBooks(query);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

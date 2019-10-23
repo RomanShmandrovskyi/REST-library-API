@@ -17,10 +17,9 @@ import ua.com.epam.repository.*;
 import ua.com.epam.service.mapper.DtoToModelMapper;
 import ua.com.epam.service.mapper.ModelToDtoMapper;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class BookService {
@@ -157,23 +156,47 @@ public class BookService {
     }
 
     public List<BookDto> searchForExistedBooks(String searchQuery) {
-        String searchQueryTrimmed = searchQuery.trim();
+        List<Book> result = new ArrayList<>();
 
-        if (searchQueryTrimmed.isEmpty()) {
+        searchQuery = searchQuery.trim();
+        if (searchQuery.isEmpty()) {
             throw new SearchQueryIsBlankException();
+        } else if (searchQuery.length() <= 4) {
+            throw new SearchQueryIsTooShortException(searchQuery, 5);
         }
 
-        if (searchQueryTrimmed.length() <= 4) {
-            throw new SearchQueryIsTooShortException(searchQueryTrimmed, 5);
+        List<String> splitQuery = Arrays.asList(searchQuery.split(" "));
+        List<Book> searched = searchFor.books(searchQuery, splitQuery);
+
+        if (searched.isEmpty()) {
+            return new ArrayList<>();
         }
 
-        List<String> keywords = Arrays.stream(searchQuery.split(" "))
-                .filter(e -> e.length() > 4)
-                .collect(Collectors.toList());
+        for (int i = splitQuery.size(); i > 0; i--) {
+            String partial = splitQuery.stream()
+                    .limit(i)
+                    .collect(Collectors.joining(" "));
 
-        List<Book> searched = searchFor.books(searchQuery, keywords);
+            List<Book> filtered = searched.stream()
+                    .filter(b -> b.getBookName().toLowerCase().startsWith(partial.toLowerCase()))
+                    .sorted(Comparator.comparing(Book::getBookName)).collect(Collectors.toList());
 
-        return mapToDto(searched);
+            result.addAll(filtered);
+
+            if (result.size() >= 5) {
+                return mapToDto(IntStream.range(0, 5)
+                        .mapToObj(result::get)
+                        .collect(Collectors.toList()));
+            }
+
+            searched.removeAll(filtered);
+        }
+
+        result.addAll(searched);
+
+        return mapToDto(result.stream()
+                .limit(5)
+                .collect(Collectors.toList()));
     }
 
     public BookDto addNewBook(long authorId, long genreId, BookDto newBook) {
