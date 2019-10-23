@@ -10,7 +10,7 @@ import ua.com.epam.service.util.deserializer.CustomStringDeserializer;
 
 import javax.validation.constraints.PastOrPresent;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Setter
 @Getter
@@ -24,7 +24,7 @@ public class BirthDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonDeserialize(using = CustomDateDeserializer.class)
     @PastOrPresent(message = "Value 'date' must be past or present!")
-    private LocalDate date;
+    private Date date;
 
     @ApiModelProperty(position = 1)
     @JsonDeserialize(using = CustomStringDeserializer.class)
