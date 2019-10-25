@@ -15,10 +15,10 @@ public class Genre implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @Column(name = "genre_id", unique = true, nullable = false)
-    private long genreId;
+    private Long genreId;
 
     @Column(name = "genre_name", length = 50, unique = true, nullable = false)
     private String genreName;
