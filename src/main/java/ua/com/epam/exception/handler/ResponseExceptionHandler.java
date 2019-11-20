@@ -22,14 +22,13 @@ import ua.com.epam.exception.entity.author.AuthorNotFoundException;
 import ua.com.epam.exception.entity.author.BooksInAuthorArePresentException;
 import ua.com.epam.exception.entity.book.BookAlreadyExistsException;
 import ua.com.epam.exception.entity.book.BookNotFoundException;
-import ua.com.epam.exception.entity.book.DimensionNotExistsException;
 import ua.com.epam.exception.entity.genre.BooksInGenreArePresentException;
 import ua.com.epam.exception.entity.genre.GenreAlreadyExistsException;
 import ua.com.epam.exception.entity.genre.GenreNameAlreadyExistsException;
 import ua.com.epam.exception.entity.genre.GenreNotFoundException;
+import ua.com.epam.exception.entity.search.SearchKeywordsIsTooShortException;
 import ua.com.epam.exception.entity.search.SearchQueryIsBlankException;
 import ua.com.epam.exception.entity.search.SearchQueryIsTooShortException;
-import ua.com.epam.exception.entity.search.SearchKeywordsIsTooShortException;
 import ua.com.epam.exception.entity.type.*;
 import ua.com.epam.exception.model.ExceptionResponse;
 
@@ -133,19 +132,6 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
                         String.format(message, nsjpe.getPropName())),
-                HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseBody
-    @ExceptionHandler(value = DimensionNotExistsException.class)
-    public ResponseEntity<ExceptionResponse> handleNoSuchJsonProperty(DimensionNotExistsException dnee) {
-        String message = "Parameter 'dimension' must be 'volume' or 'square'!";
-        return new ResponseEntity<>(
-                new ExceptionResponse(
-                        generateDate(),
-                        HttpStatus.BAD_REQUEST.value(),
-                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        message),
                 HttpStatus.BAD_REQUEST);
     }
 

@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ua.com.epam.entity.dto.book.BookDto;
 import ua.com.epam.exception.entity.NoSuchJsonKeyException;
-import ua.com.epam.exception.entity.book.DimensionNotExistsException;
 import ua.com.epam.exception.entity.type.InvalidOrderTypeException;
 import ua.com.epam.exception.entity.type.InvalidPageValueException;
 import ua.com.epam.exception.entity.type.InvalidSizeValueException;
@@ -46,12 +45,6 @@ public class BookController {
         }
         if (size <= 0) {
             throw new InvalidSizeValueException();
-        }
-    }
-
-    private void checkDimension(String dimension) {
-        if (!dimension.equals("volume") && !dimension.equals("square")) {
-            throw new DimensionNotExistsException();
         }
     }
 
