@@ -9,7 +9,6 @@ import java.nio.file.Files;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class DataIngestion {
@@ -121,7 +120,7 @@ public class DataIngestion {
         Collections.shuffle(words);
         String first = words.get(0);
         words.set(0, first.substring(0, 1).toUpperCase() + first.substring(1));
-        return words.stream().collect(Collectors.joining(" "));
+        return String.join(" ", words);
     }
 
     private static String getAuthorJSON(long authorId, String first, String second, String nationality,

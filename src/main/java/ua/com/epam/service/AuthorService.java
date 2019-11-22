@@ -6,7 +6,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Author;
 import ua.com.epam.entity.dto.author.AuthorDto;
-import ua.com.epam.exception.entity.IdMismatchException;
 import ua.com.epam.exception.entity.author.AuthorAlreadyExistsException;
 import ua.com.epam.exception.entity.author.AuthorNotFoundException;
 import ua.com.epam.exception.entity.author.BooksInAuthorArePresentException;
@@ -151,15 +150,11 @@ public class AuthorService {
         return toDtoMapper.mapAuthorToAuthorDto(response);
     }
 
-    public AuthorDto updateExistedAuthor(long authorId, AuthorDto authorDto) {
-        Optional<Author> opt = authorRepository.getOneByAuthorId(authorId);
+    public AuthorDto updateExistedAuthor(AuthorDto authorDto) {
+        Optional<Author> opt = authorRepository.getOneByAuthorId(authorDto.getAuthorId());
 
         if (!opt.isPresent()) {
-            throw new AuthorNotFoundException(authorId);
-        }
-
-        if (authorId != authorDto.getAuthorId()) {
-            throw new IdMismatchException();
+            throw new AuthorNotFoundException(authorDto.getAuthorId());
         }
 
         Author proxy = opt.get();

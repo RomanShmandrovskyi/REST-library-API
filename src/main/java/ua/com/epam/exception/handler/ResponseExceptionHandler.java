@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import ua.com.epam.exception.entity.IdMismatchException;
 import ua.com.epam.exception.entity.NoSuchJsonKeyException;
 import ua.com.epam.exception.entity.author.AuthorAlreadyExistsException;
 import ua.com.epam.exception.entity.author.AuthorNotFoundException;
@@ -194,18 +193,6 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         HttpStatus.CONFLICT.getReasonPhrase(),
                         "Book with such 'bookId' already exists!"),
                 HttpStatus.CONFLICT);
-    }
-
-    @ResponseBody
-    @ExceptionHandler(value = IdMismatchException.class)
-    public ResponseEntity<ExceptionResponse> handleIdMismatch() {
-        return new ResponseEntity<>(
-                new ExceptionResponse(
-                        generateDate(),
-                        HttpStatus.BAD_REQUEST.value(),
-                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        "Entity ID cannot be updated and must be the same as in URL!"),
-                HttpStatus.BAD_REQUEST);
     }
 
     @ResponseBody

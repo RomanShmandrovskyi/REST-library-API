@@ -6,7 +6,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Book;
 import ua.com.epam.entity.dto.book.BookDto;
-import ua.com.epam.exception.entity.IdMismatchException;
 import ua.com.epam.exception.entity.author.AuthorNotFoundException;
 import ua.com.epam.exception.entity.book.BookAlreadyExistsException;
 import ua.com.epam.exception.entity.book.BookNotFoundException;
@@ -221,15 +220,11 @@ public class BookService {
         return toDtoMapper.mapBookToBookDto(response);
     }
 
-    public BookDto updateExistedBook(long bookId, BookDto bookDto) {
-        Optional<Book> opt = bookRepository.getOneByBookId(bookId);
+    public BookDto updateExistedBook(BookDto bookDto) {
+        Optional<Book> opt = bookRepository.getOneByBookId(bookDto.getBookId());
 
         if (!opt.isPresent()) {
-            throw new BookNotFoundException(bookId);
-        }
-
-        if (bookId != bookDto.getBookId()) {
-            throw new IdMismatchException();
+            throw new BookNotFoundException(bookDto.getBookId());
         }
 
         Book proxy = opt.get();

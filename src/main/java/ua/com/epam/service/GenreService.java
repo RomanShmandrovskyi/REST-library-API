@@ -6,7 +6,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.epam.entity.Genre;
 import ua.com.epam.entity.dto.genre.GenreDto;
-import ua.com.epam.exception.entity.IdMismatchException;
 import ua.com.epam.exception.entity.author.AuthorNotFoundException;
 import ua.com.epam.exception.entity.book.BookNotFoundException;
 import ua.com.epam.exception.entity.genre.BooksInGenreArePresentException;
@@ -131,14 +130,11 @@ public class GenreService {
         return toDtoMapper.mapGenreToGenreDto(response);
     }
 
-    public GenreDto updateExistedGenre(long genreId, GenreDto genre) {
-        Optional<Genre> opt = genreRepository.getOneByGenreId(genreId);
+    public GenreDto updateExistedGenre(GenreDto genre) {
+        Optional<Genre> opt = genreRepository.getOneByGenreId(genre.getGenreId());
 
         if (!opt.isPresent()) {
-            throw new GenreNotFoundException(genreId);
-        }
-        if (genreId != genre.getGenreId()) {
-            throw new IdMismatchException();
+            throw new GenreNotFoundException(genre.getGenreId());
         }
 
         Genre proxy = opt.get();

@@ -180,18 +180,14 @@ public class GenreController {
             @ApiResponse(code = 400, message = "Something wrong..."),
             @ApiResponse(code = 404, message = "Genre to update not found")
     })
-    @PutMapping(value = "/genre/{genreId}",
+    @PutMapping(value = "/genre",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateGenre(
-            @ApiParam(required = true, value = "existed Genre ID")
-            @PathVariable
-                    Long genreId,
-
             @ApiParam(required = true, value = "Genre to update", name = "Genre object")
             @RequestBody @Valid
                     GenreDto updateGenre) {
-        GenreDto response = genreService.updateExistedGenre(genreId, updateGenre);
+        GenreDto response = genreService.updateExistedGenre(updateGenre);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

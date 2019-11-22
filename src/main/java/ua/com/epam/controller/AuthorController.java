@@ -195,18 +195,14 @@ public class AuthorController {
             @ApiResponse(code = 400, message = "Something wrong..."),
             @ApiResponse(code = 404, message = "Author to update not found")
     })
-    @PutMapping(value = "/author/{authorId}",
+    @PutMapping(value = "/author",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateAuthor(
-            @ApiParam(required = true, value = "existed Author ID")
-            @PathVariable
-                    Long authorId,
-
             @ApiParam(required = true, value = "Author to update", name = "Author object")
             @RequestBody @Valid
                     AuthorDto updatedAuthor) {
-        AuthorDto response = authorService.updateExistedAuthor(authorId, updatedAuthor);
+        AuthorDto response = authorService.updateExistedAuthor(updatedAuthor);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

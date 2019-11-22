@@ -236,18 +236,14 @@ public class BookController {
             @ApiResponse(code = 400, message = "Something wrong..."),
             @ApiResponse(code = 404, message = "Book to update not found")
     })
-    @PutMapping(value = "/book/{bookId}",
+    @PutMapping(value = "/book",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateBook(
-            @ApiParam(required = true, value = "existed Book ID")
-            @PathVariable
-                    Long bookId,
-
             @ApiParam(required = true, value = "Book to update", name = "Book object")
             @RequestBody @Valid
                     BookDto updatedBook) {
-        BookDto response = bookService.updateExistedBook(bookId, updatedBook);
+        BookDto response = bookService.updateExistedBook(updatedBook);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
