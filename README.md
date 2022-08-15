@@ -3,7 +3,7 @@ A simple REST API that represent Library.
 
 There are 3 tables: `Author`, `Genre` and `Book`.
 
-One Author has many Books (as Genres has many Books) and one Book it mandatopry to have one Author and one Genre.
+One Author has many Books (as Genres has many Books) and for Book it is mandatory to have one Author and one Genre in database.
 
 ## Getting started
 1. Clone project:
