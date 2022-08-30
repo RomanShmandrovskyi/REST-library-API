@@ -14,7 +14,7 @@ import ua.com.api.service.mapper.converter.genre.GenreDtoToGenre;
 
 @Service
 public class DtoToModelMapper {
-    private ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper = new ModelMapper();
 
     public DtoToModelMapper() {
         modelMapper.addConverter(new AuthorDtoToAuthor());

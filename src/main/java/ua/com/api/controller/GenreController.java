@@ -15,44 +15,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.com.api.entity.dto.genre.GenreDto;
-import ua.com.api.exception.entity.NoSuchJsonKeyException;
-import ua.com.api.exception.entity.type.InvalidOrderTypeException;
-import ua.com.api.exception.entity.type.InvalidPageValueException;
-import ua.com.api.exception.entity.type.InvalidSizeValueException;
 import ua.com.api.exception.model.ExceptionResponse;
-import ua.com.api.repository.JsonKeysConformity;
 import ua.com.api.service.GenreService;
+import ua.com.api.service.util.annotation.AllowableValues;
 
+import javax.validation.constraints.Min;
 import java.util.List;
+
+import static ua.com.api.service.constants.Constants.*;
 
 @RestController
 @RequestMapping("${server.base.url}")
+@Validated
+
 @Tag(name = "Genre", description = "Genre table endpoints")
 public class GenreController {
 
     @Autowired
     private GenreService genreService;
-
-    private void checkOrdering(String orderType) {
-        if (!orderType.equals("asc") && !orderType.equals("desc")) {
-            throw new InvalidOrderTypeException(orderType);
-        }
-    }
-
-    private void checkSortByKeyInGroup(String sortBy) {
-        if (!JsonKeysConformity.ifJsonKeyExistsInGroup(sortBy, JsonKeysConformity.Group.GENRE)) {
-            throw new NoSuchJsonKeyException(sortBy);
-        }
-    }
-
-    private void checkPaginateParams(int page, int size) {
-        if (page <= 0) {
-            throw new InvalidPageValueException();
-        }
-        if (size <= 0) {
-            throw new InvalidSizeValueException();
-        }
-    }
 
     @Operation(description = "get Genre object by 'genreId'")
     @ApiResponses(value = {
@@ -92,7 +72,7 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(description = "get all Genres")
+    @Operation(description = "Get all Genres. Sorted by genre name only")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Array of Genre objects",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = GenreDto.class)))),
@@ -103,28 +83,28 @@ public class GenreController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllGenres(
             @Parameter(description = "paginate response")
-            @RequestParam(name = "pagination", defaultValue = "true")
+            @RequestParam(name = "pagination", defaultValue = TRUE)
             Boolean pagination,
 
-            @Parameter(description = "custom sort parameter")
-            @RequestParam(name = "sortBy", defaultValue = "genreId")
-            String sortBy,
-
-            @Schema(allowableValues = {"asc", "desc"})
+            @Schema(allowableValues = {ASC, DESC})
             @Parameter(description = "sorting order")
-            @RequestParam(name = "orderType", defaultValue = "asc")
+            @RequestParam(name = ORDER_TYPE, defaultValue = ASC)
+            @AllowableValues(values = {ASC, DESC}, message = "Value of '" + ORDER_TYPE + "' parameter must be '" + ASC + "' or '" + DESC + "'")
             String orderType,
 
+            @Parameter(description = "custom sort parameter")
+            @RequestParam(name = SORT_BY, defaultValue = NAME)
+            String sortBy,
+
             @Parameter(description = "page number")
-            @RequestParam(name = "page", defaultValue = "1")
+            @RequestParam(name = PAGE, defaultValue = "1")
+            @Min(value = 1, message = "Value of 'page' parameter must be positive and greater than zero!")
             Integer page,
 
             @Parameter(description = "count of objects per one page")
-            @RequestParam(name = "size", defaultValue = "10")
+            @RequestParam(name = SIZE, defaultValue = DEFAULT_SIZE)
+            @Min(value = 1, message = "Value of '" + SIZE + "' parameter must be positive and greater than zero!")
             Integer size) {
-        checkSortByKeyInGroup(sortBy);
-        checkOrdering(orderType);
-        checkPaginateParams(page, size);
 
         List<GenreDto> response = genreService.findAllGenres(sortBy, orderType, page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -140,7 +120,7 @@ public class GenreController {
     @GetMapping(value = "/genres/search", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> searchForExistedGenres(
             @Parameter(description = "Searched query. At least 3 symbols exclude spaces in each word.", required = true)
-            @RequestParam(name = "query")
+            @RequestParam(name = QUERY)
             String query) {
         List<GenreDto> response = genreService.searchForExistedGenres(query);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -161,16 +141,15 @@ public class GenreController {
             @PathVariable
             Long authorId,
 
-            @Parameter(description = "custom sort parameter")
-            @RequestParam(name = "sortBy", defaultValue = "genreId")
-            String sortBy,
-
-            @Schema(allowableValues = {"asc", "desc"})
+            @Schema(allowableValues = {ASC, DESC})
             @Parameter(description = "sorting order")
-            @RequestParam(name = "orderType", defaultValue = "asc")
-            String orderType) {
-        checkSortByKeyInGroup(sortBy);
-        checkOrdering(orderType);
+            @RequestParam(name = ORDER_TYPE, defaultValue = ASC)
+            @AllowableValues(values = {ASC, DESC}, message = "Value of '" + ORDER_TYPE + "' parameter must be '" + ASC + "' or '" + DESC + "'")
+            String orderType,
+
+            @Parameter(description = "custom sort parameter")
+            @RequestParam(name = SORT_BY, defaultValue = NAME)
+            String sortBy) {
 
         List<GenreDto> response = genreService.findAllGenresOfAuthor(authorId, sortBy, orderType);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -234,7 +213,7 @@ public class GenreController {
             Long genreId,
 
             @Parameter(description = "if false and Author has related Books, it will produce fault")
-            @RequestParam(name = "forcibly", defaultValue = "false")
+            @RequestParam(name = FORCIBLY, defaultValue = FALSE)
             Boolean forcibly) {
         genreService.deleteExistedGenre(genreId, forcibly);
         return new ResponseEntity<>("", HttpStatus.NO_CONTENT);

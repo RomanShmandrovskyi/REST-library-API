@@ -1,6 +1,5 @@
 package ua.com.api.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -14,9 +13,6 @@ import ua.com.api.exception.entity.genre.GenreNameAlreadyExistsException;
 import ua.com.api.exception.entity.genre.GenreNotFoundException;
 import ua.com.api.exception.entity.search.SearchQueryIsBlankException;
 import ua.com.api.exception.entity.search.SearchQueryIsTooShortException;
-import ua.com.api.repository.*;
-import ua.com.api.service.mapper.DtoToModelMapper;
-import ua.com.api.service.mapper.ModelToDtoMapper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,29 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class GenreService {
-
-    @Autowired
-    private GenreRepository genreRepository;
-
-    @Autowired
-    private AuthorRepository authorRepository;
-
-    @Autowired
-    private BookRepository bookRepository;
-
-    @Autowired
-    private SearchFor searchFor;
-
-    @Autowired
-    private ModelToDtoMapper toDtoMapper;
-
-    @Autowired
-    private DtoToModelMapper toModelMapper;
-
-    private Sort.Direction resolveDirection(String order) {
-        return Sort.Direction.fromString(order);
-    }
+public class GenreService extends BaseService {
 
     private List<GenreDto> mapToDto(List<Genre> genres) {
         return genres.stream()
@@ -70,8 +44,8 @@ public class GenreService {
     }
 
     public List<GenreDto> findAllGenres(String sortBy, String order, int page, int size, boolean pageable) {
+        String sortParam = convertAndValidateSortBy(sortBy, Genre.class);
         Sort.Direction direction = resolveDirection(order);
-        String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
         Sort sorter = Sort.by(direction, sortParam);
 
         List<Genre> genres;
@@ -104,12 +78,13 @@ public class GenreService {
     }
 
     public List<GenreDto> findAllGenresOfAuthor(long authorId, String sortBy, String order) {
+        String sortParam = convertAndValidateSortBy(sortBy, Genre.class);
+
         if (!authorRepository.existsByAuthorId(authorId)) {
             throw new AuthorNotFoundException(authorId);
         }
 
         Sort.Direction direction = resolveDirection(order);
-        String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
         Sort sorter = Sort.by(direction, sortParam);
 
         return mapToDto(genreRepository.getAllGenresOfAuthorOrdered(authorId, sorter));

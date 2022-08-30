@@ -5,16 +5,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Formula;
+import ua.com.api.service.util.annotation.ForSort;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"author", "genre"})
 @NoArgsConstructor
 
 @Entity
+@Table(name = "book")
 public class Book implements Serializable {
 
     @Id
@@ -24,15 +26,17 @@ public class Book implements Serializable {
     @Column(name = "book_id", unique = true, nullable = false)
     private Long bookId;
 
+    @ForSort(values = {"name", "bookName"})
     @Column(name = "book_name", nullable = false)
     private String bookName;
 
     @Column(name = "book_language", nullable = false, length = 50)
-    private String bookLang;
+    private String bookLanguage;
 
-    @Column(name = "book_descr", length = 1000)
-    private String description;
+    @Column(name = "book_description", length = 1000)
+    private String bookDescription;
 
+    @ForSort(values = {"pagesCount", "pageCount", "pagesNumber", "numberOfPages"})
     @Column(name = "page_count")
     private Integer pageCount;
 
@@ -45,18 +49,23 @@ public class Book implements Serializable {
     @Column(name = "book_length")
     private Double bookLength;
 
+    @ForSort(values = {"volume", "bookVolume"})
     @Formula(value = "book_height * book_width * book_length")
     private Double volume;
 
+    @ForSort(values = {"square", "bookSquare"})
     @Formula(value = "book_width * book_length")
     private Double square;
 
+    @ForSort(values = {"publicationYear", "publication", "year", "pubYear"})
     @Column(name = "publication_year")
     private Integer publicationYear;
 
-    @Column(name = "author_id")
-    private Long authorId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "authorId")
+    private Author author;
 
-    @Column(name = "genre_id")
-    private Long genreId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "genreId")
+    private Genre genre;
 }

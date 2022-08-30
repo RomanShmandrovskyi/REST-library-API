@@ -16,9 +16,9 @@ public class BookToBookDto implements Converter<Book, BookDto> {
         BookDto dto = new BookDto();
         dto.setBookId(source.getBookId());
         dto.setBookName(source.getBookName());
-        dto.setBookLanguage(source.getBookLang());
+        dto.setBookLanguage(source.getBookLanguage());
         dto.setPublicationYear(source.getPublicationYear());
-        dto.setBookDescription(source.getDescription());
+        dto.setBookDescription(source.getBookDescription());
 
         AdditionalDto adds = new AdditionalDto();
         SizeDto size = new SizeDto();

@@ -15,46 +15,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.com.api.entity.dto.book.BookDto;
-import ua.com.api.exception.entity.NoSuchJsonKeyException;
-import ua.com.api.exception.entity.type.InvalidOrderTypeException;
-import ua.com.api.exception.entity.type.InvalidPageValueException;
-import ua.com.api.exception.entity.type.InvalidSizeValueException;
 import ua.com.api.exception.model.ExceptionResponse;
-import ua.com.api.repository.JsonKeysConformity;
 import ua.com.api.service.BookService;
+import ua.com.api.service.util.annotation.AllowableValues;
 
+import javax.validation.constraints.Min;
 import java.util.List;
+
+import static ua.com.api.service.constants.Constants.*;
 
 @RestController
 @RequestMapping("${server.base.url}")
+@Validated
+
 @Tag(name = "Book", description = "Book table endpoints")
 public class BookController {
 
     @Autowired
     private BookService bookService;
-
-    private void checkOrdering(String orderType) {
-        if (!orderType.equals("asc") && !orderType.equals("desc")) {
-            throw new InvalidOrderTypeException(orderType);
-        }
-    }
-
-    private void checkSortByKeyInGroup(String sortBy) {
-        if (!JsonKeysConformity.ifJsonKeyExistsInGroup(sortBy, JsonKeysConformity.Group.BOOK)
-                && !sortBy.equalsIgnoreCase("volume")
-                && !sortBy.equalsIgnoreCase("square")) {
-            throw new NoSuchJsonKeyException(sortBy);
-        }
-    }
-
-    private void checkPaginateParams(int page, int size) {
-        if (page <= 0) {
-            throw new InvalidPageValueException();
-        }
-        if (size <= 0) {
-            throw new InvalidSizeValueException();
-        }
-    }
 
     @Operation(summary = "get Book by 'bookId'")
     @ApiResponses(value = {
@@ -85,29 +63,28 @@ public class BookController {
     @GetMapping(value = "/books", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllBooks(
             @Parameter(description = "paginate response")
-            @RequestParam(name = "pagination", defaultValue = "true")
+            @RequestParam(name = PAGINATION, defaultValue = TRUE)
             Boolean pagination,
 
             @Parameter(description = "page number")
-            @RequestParam(name = "page", defaultValue = "1")
+            @RequestParam(name = PAGE, defaultValue = "1")
+            @Min(value = 1, message = "Value of 'page' parameter must be positive and greater than zero!")
             Integer page,
 
             @Parameter(description = "count of objects per one page")
-            @RequestParam(name = "size", defaultValue = "10")
+            @RequestParam(name = SIZE, defaultValue = DEFAULT_SIZE)
+            @Min(value = 1, message = "Value of 'size' parameter must be positive and greater than zero!")
             Integer size,
 
             @Parameter(description = "custom sort parameter, can also assume 'square' and 'volume' parameters")
-            @RequestParam(name = "sortBy", defaultValue = "bookId")
+            @RequestParam(name = SORT_BY, defaultValue = NAME)
             String sortBy,
 
-            @Schema(allowableValues = {"asc", "desc"})
+            @Schema(allowableValues = {ASC, DESC})
             @Parameter(description = "sorting order")
-            @RequestParam(name = "orderType", defaultValue = "asc")
+            @RequestParam(name = ORDER_TYPE, defaultValue = ASC)
+            @AllowableValues(values = {ASC, DESC}, message = "Value of 'orderType' parameter must be '" + ASC + "' or '"+ DESC + "'")
             String orderType) {
-        checkSortByKeyInGroup(sortBy);
-        checkOrdering(orderType);
-        checkPaginateParams(page, size);
-
         List<BookDto> response = bookService.findAllBooks(sortBy, orderType, page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -127,29 +104,29 @@ public class BookController {
             Long genreId,
 
             @Parameter(description = "paginate response")
-            @RequestParam(name = "pagination", defaultValue = "true")
+            @RequestParam(name = PAGINATION, defaultValue = TRUE)
             Boolean pagination,
 
             @Parameter(description = "page number")
-            @RequestParam(name = "page", defaultValue = "1")
+            @RequestParam(name = PAGE, defaultValue = "1")
+            @Min(value = 1, message = "Value of 'page' parameter must be positive and greater than zero!")
             Integer page,
 
             @Parameter(description = "count of objects per one page")
-            @RequestParam(name = "size", defaultValue = "10")
+            @RequestParam(name = SIZE, defaultValue = DEFAULT_SIZE)
+            @Min(value = 1, message = "Value of 'size' parameter must be positive and greater than zero!")
             Integer size,
 
-            @Schema(example = "additional.size.width")
+            @Schema(example = NAME)
             @Parameter(description = "custom sort parameter")
-            @RequestParam(name = "sortBy", defaultValue = "bookId")
+            @RequestParam(name = SORT_BY, defaultValue = NAME)
             String sortBy,
 
-            @Schema(allowableValues = {"asc", "desc"})
+            @Schema(allowableValues = {ASC, DESC})
             @Parameter(description = "sorting order")
-            @RequestParam(name = "orderType", defaultValue = "asc")
+            @RequestParam(name = ORDER_TYPE, defaultValue = ASC)
+            @AllowableValues(values = {ASC, DESC}, message = "Value of 'orderType' parameter must be '" + ASC + "' or '"+ DESC + "'")
             String orderType) {
-        checkSortByKeyInGroup(sortBy);
-        checkOrdering(orderType);
-        checkPaginateParams(page, size);
 
         List<BookDto> response = bookService.findBooksInGenre(genreId, sortBy, orderType, page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -170,15 +147,14 @@ public class BookController {
             Long authorId,
 
             @Parameter(description = "custom sort parameter")
-            @RequestParam(name = "sortBy", defaultValue = "bookId")
+            @RequestParam(name = SORT_BY, defaultValue = NAME)
             String sortBy,
 
-            @Schema(allowableValues = {"asc", "desc"})
+            @Schema(allowableValues = {ASC, DESC})
             @Parameter(description = "sorting order")
-            @RequestParam(name = "orderType", defaultValue = "asc")
+            @RequestParam(name = ORDER_TYPE, defaultValue = ASC)
+            @AllowableValues(values = {ASC, DESC}, message = "Value of 'orderType' parameter must be '" + ASC + "' or '"+ DESC + "'")
             String orderType) {
-        checkSortByKeyInGroup(sortBy);
-        checkOrdering(orderType);
 
         List<BookDto> response = bookService.findAuthorBooks(authorId, sortBy, orderType);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -218,7 +194,7 @@ public class BookController {
     @GetMapping(value = "/books/search", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> searchForExistedBooks(
             @Parameter(description = "Searched query. At least 5 symbols exclude spaces in each word.", required = true)
-            @RequestParam(name = "q")
+            @RequestParam(name = QUERY)
             String query) {
         List<BookDto> response = bookService.searchForExistedBooks(query);
         return new ResponseEntity<>(response, HttpStatus.OK);

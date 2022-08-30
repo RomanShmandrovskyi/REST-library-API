@@ -5,17 +5,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Formula;
+import ua.com.api.service.util.annotation.ForSort;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"books"})
 @NoArgsConstructor
 
 @Entity
+@Table(name = "author")
 public class Author implements Serializable {
 
     @Id
@@ -31,15 +34,17 @@ public class Author implements Serializable {
     @Column(name = "second_name", nullable = false, length = 50)
     private String secondName;
 
+    @ForSort(values = {"name", "authorName", "fullName", "authorFullName"})
     @Formula("CONCAT(first_name, ' ', second_name)")
     private String fullName;
 
-    @Column(name = "author_descr", length = 1000)
+    @Column(name = "description", length = 1000)
     private String description;
 
-    @Column(length = 30)
+    @Column(name = "nationality", length = 30)
     private String nationality;
 
+    @ForSort(values = {"birth", "birthDate", "authorBirthDate"})
     @Column(name = "birth_date")
     private LocalDate birthDate;
 
@@ -48,4 +53,7 @@ public class Author implements Serializable {
 
     @Column(name = "birth_city", length = 50)
     private String birthCity;
+
+    @OneToMany(mappedBy = "author", orphanRemoval = true)
+    private List<Book> books;
 }

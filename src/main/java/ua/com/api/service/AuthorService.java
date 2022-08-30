@@ -1,6 +1,5 @@
 package ua.com.api.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -13,9 +12,6 @@ import ua.com.api.exception.entity.book.BookNotFoundException;
 import ua.com.api.exception.entity.genre.GenreNotFoundException;
 import ua.com.api.exception.entity.search.SearchQueryIsBlankException;
 import ua.com.api.exception.entity.search.SearchQueryIsTooShortException;
-import ua.com.api.repository.*;
-import ua.com.api.service.mapper.DtoToModelMapper;
-import ua.com.api.service.mapper.ModelToDtoMapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,29 +20,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class AuthorService {
-
-    @Autowired
-    private AuthorRepository authorRepository;
-
-    @Autowired
-    private GenreRepository genreRepository;
-
-    @Autowired
-    private BookRepository bookRepository;
-
-    @Autowired
-    private SearchFor searchFor;
-
-    @Autowired
-    private ModelToDtoMapper toDtoMapper;
-
-    @Autowired
-    private DtoToModelMapper toModelMapper;
-
-    private Sort.Direction resolveDirection(String order) {
-        return Sort.Direction.fromString(order);
-    }
+public class AuthorService extends BaseService {
 
     private List<AuthorDto> mapToDto(List<Author> authors) {
         return authors.stream()
@@ -71,9 +45,11 @@ public class AuthorService {
         return toDtoMapper.mapAuthorToAuthorDto(toGet);
     }
 
+    // define sort by params
+
     public List<AuthorDto> findAllAuthors(String sortBy, String order, int page, int size, boolean pageable) {
+        String sortParam = convertAndValidateSortBy(sortBy, Author.class);
         Sort.Direction direction = resolveDirection(order);
-        String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
         Sort sorter = Sort.by(direction, sortParam);
 
         List<Author> authors;
@@ -120,12 +96,13 @@ public class AuthorService {
     }
 
     public List<AuthorDto> findAllAuthorsInGenre(long genreId, String sortBy, String order, int page, int size, boolean pageable) {
+        String sortParam = convertAndValidateSortBy(sortBy, Author.class);
+
         if (!genreRepository.existsByGenreId(genreId)) {
             throw new GenreNotFoundException(genreId);
         }
 
         Sort.Direction direction = resolveDirection(order);
-        String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
         Sort sorter = Sort.by(direction, sortParam);
 
         List<Author> authors;
