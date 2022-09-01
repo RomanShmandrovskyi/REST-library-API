@@ -18,12 +18,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import ua.com.api.exception.entity.author.AuthorAlreadyExistsException;
 import ua.com.api.exception.entity.author.AuthorNotFoundException;
 import ua.com.api.exception.entity.author.BooksInAuthorArePresentException;
-import ua.com.api.exception.entity.author.InvalidSortByParameterValueException;
+import ua.com.api.exception.entity.InvalidSortByParameterValueException;
 import ua.com.api.exception.entity.book.BookAlreadyExistsException;
 import ua.com.api.exception.entity.book.BookNotFoundException;
 import ua.com.api.exception.entity.genre.BooksInGenreArePresentException;
 import ua.com.api.exception.entity.genre.GenreAlreadyExistsException;
-import ua.com.api.exception.entity.genre.GenreNameAlreadyExistsException;
 import ua.com.api.exception.entity.genre.GenreNotFoundException;
 import ua.com.api.exception.entity.search.SearchKeywordsIsTooShortException;
 import ua.com.api.exception.entity.search.SearchQueryIsBlankException;
@@ -131,7 +130,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         generateDate(),
                         HttpStatus.CONFLICT.value(),
                         HttpStatus.CONFLICT.getReasonPhrase(),
-                        "Author with such 'authorId' already exists!"),
+                        "Author with such name already exists!"),
                 HttpStatus.CONFLICT);
     }
 

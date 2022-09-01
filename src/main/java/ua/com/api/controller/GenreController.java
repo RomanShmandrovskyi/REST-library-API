@@ -14,7 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ua.com.api.entity.dto.SortByPropertiesDto;
 import ua.com.api.entity.dto.genre.GenreDto;
+import ua.com.api.entity.dto.genre.GenreWithoutIdDto;
 import ua.com.api.exception.model.ExceptionResponse;
 import ua.com.api.service.GenreService;
 import ua.com.api.service.util.annotation.AllowableValues;
@@ -92,8 +94,8 @@ public class GenreController {
             @AllowableValues(values = {ASC, DESC}, message = "Value of '" + ORDER_TYPE + "' parameter must be '" + ASC + "' or '" + DESC + "'")
             String orderType,
 
-            @Parameter(description = "custom sort parameter")
-            @RequestParam(name = SORT_BY, defaultValue = NAME)
+            @Parameter(description = "Custom sort parameter. Try '/genre/sortBy'")
+            @RequestParam(name = SORT_BY, defaultValue = GENRE_ID)
             String sortBy,
 
             @Parameter(description = "page number")
@@ -147,11 +149,18 @@ public class GenreController {
             @AllowableValues(values = {ASC, DESC}, message = "Value of '" + ORDER_TYPE + "' parameter must be '" + ASC + "' or '" + DESC + "'")
             String orderType,
 
-            @Parameter(description = "custom sort parameter")
-            @RequestParam(name = SORT_BY, defaultValue = NAME)
+            @Parameter(description = "Custom sort parameter. Try '/genre/sortBy'")
+            @RequestParam(name = SORT_BY, defaultValue = GENRE_ID)
             String sortBy) {
 
         List<GenreDto> response = genreService.findAllGenresOfAuthor(authorId, sortBy, orderType);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @GetMapping(value = "/genre/sortBy", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getSortByValues() {
+        List<SortByPropertiesDto> response = genreService.getSortByParameterValues();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -171,7 +180,7 @@ public class GenreController {
     public ResponseEntity<?> addNewGenre(
             @Parameter(required = true, description = "Genre to add", name = "Genre object")
             @RequestBody @Validated
-            GenreDto postGenre) {
+            GenreWithoutIdDto postGenre) {
         GenreDto response = genreService.addNewGenre(postGenre);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

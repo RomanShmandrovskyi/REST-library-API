@@ -5,28 +5,28 @@ import org.springframework.stereotype.Service;
 import ua.com.api.entity.Author;
 import ua.com.api.entity.Book;
 import ua.com.api.entity.Genre;
-import ua.com.api.entity.dto.author.AuthorDto;
+import ua.com.api.entity.dto.author.AuthorWithoutIdDto;
 import ua.com.api.entity.dto.book.BookDto;
-import ua.com.api.entity.dto.genre.GenreDto;
-import ua.com.api.service.mapper.converter.author.AuthorDtoToAuthor;
+import ua.com.api.entity.dto.genre.GenreWithoutIdDto;
+import ua.com.api.service.mapper.converter.author.AuthorWithoutIdDto_to_Author;
 import ua.com.api.service.mapper.converter.book.BookDtoToBook;
-import ua.com.api.service.mapper.converter.genre.GenreDtoToGenre;
+import ua.com.api.service.mapper.converter.genre.GenreWithoutIdDto_to_Genre;
 
 @Service
 public class DtoToModelMapper {
     private final ModelMapper modelMapper = new ModelMapper();
 
     public DtoToModelMapper() {
-        modelMapper.addConverter(new AuthorDtoToAuthor());
-        modelMapper.addConverter(new GenreDtoToGenre());
         modelMapper.addConverter(new BookDtoToBook());
+        modelMapper.addConverter(new AuthorWithoutIdDto_to_Author());
+        modelMapper.addConverter(new GenreWithoutIdDto_to_Genre());
     }
 
-    public Author mapAuthorDtoToAuthor(AuthorDto author) {
+    public Author mapAuthorWithoutIdDtoToAuthor(AuthorWithoutIdDto author) {
         return modelMapper.map(author, Author.class);
     }
 
-    public Genre mapGenreDtoToGenre(GenreDto genre) {
+    public Genre mapGenreWithoutIdToGenre(GenreWithoutIdDto genre) {
         return modelMapper.map(genre, Genre.class);
     }
 

@@ -3,7 +3,10 @@ package ua.com.api.service;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ua.com.api.entity.Author;
 import ua.com.api.entity.Book;
+import ua.com.api.entity.Genre;
+import ua.com.api.entity.dto.SortByPropertiesDto;
 import ua.com.api.entity.dto.book.BookDto;
 import ua.com.api.exception.entity.author.AuthorNotFoundException;
 import ua.com.api.exception.entity.book.BookAlreadyExistsException;
@@ -94,6 +97,10 @@ public class BookService extends BaseService {
         return mapToDto(bookRepository.getAllAuthorBooksInGenre(authorId, genreId));
     }
 
+    public List<SortByPropertiesDto> getSortByParameterValues() {
+        return getSortByParameterValues(Book.class);
+    }
+
     public List<BookDto> searchForExistedBooks(String searchQuery) {
         List<Book> result = new ArrayList<>();
 
@@ -140,22 +147,19 @@ public class BookService extends BaseService {
     }
 
     public BookDto addNewBook(long authorId, long genreId, BookDto newBook) {
-        if (!authorRepository.existsByAuthorId(authorId)) {
-            throw new AuthorNotFoundException(authorId);
-        }
+        Author author = authorRepository.getOneByAuthorId(authorId)
+                .orElseThrow(() -> new AuthorNotFoundException(authorId));
+        Genre genre = genreRepository.getOneByGenreId(genreId)
+                .orElseThrow(() -> new GenreNotFoundException(genreId));
 
-        if (!genreRepository.existsByGenreId(genreId)) {
-            throw new GenreNotFoundException(genreId);
-        }
-
-        if (bookRepository.existsByBookId(newBook.getBookId())) {
+        if (bookRepository.existsByBookNameAndBookDescription(newBook.getBookName(), newBook.getBookDescription())) {
             throw new BookAlreadyExistsException();
         }
 
         Book toPost = toModelMapper.mapBookDtoToBook(newBook);
-
+        toPost.setAuthor(author);
+        toPost.setGenre(genre);
         Book response = bookRepository.save(toPost);
-
         return toDtoMapper.mapBookToBookDto(response);
     }
 
@@ -172,7 +176,7 @@ public class BookService extends BaseService {
         proxy.setBookLanguage(bookDto.getBookLanguage());
         proxy.setBookDescription(bookDto.getBookDescription());
         proxy.setPublicationYear(bookDto.getPublicationYear());
-        proxy.setPageCount(bookDto.getAdditional().getPageCount());
+        proxy.setPagesCount(bookDto.getAdditional().getPageCount());
         proxy.setBookWidth(bookDto.getAdditional().getSize().getWidth());
         proxy.setBookLength(bookDto.getAdditional().getSize().getLength());
         proxy.setBookHeight(bookDto.getAdditional().getSize().getHeight());

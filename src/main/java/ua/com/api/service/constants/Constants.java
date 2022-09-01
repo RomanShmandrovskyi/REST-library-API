@@ -15,5 +15,7 @@ public interface Constants {
     String FORCIBLY = "forcibly";
     String SORT_BY = "sortBy";
 
-    String NAME = "name";
+    String BOOK_ID = "bookId";
+    String AUTHOR_ID = "authorId";
+    String GENRE_ID = "genreId";
 }

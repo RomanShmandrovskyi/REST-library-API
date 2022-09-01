@@ -4,12 +4,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.api.entity.Genre;
+import ua.com.api.entity.dto.SortByPropertiesDto;
 import ua.com.api.entity.dto.genre.GenreDto;
+import ua.com.api.entity.dto.genre.GenreWithoutIdDto;
 import ua.com.api.exception.entity.author.AuthorNotFoundException;
 import ua.com.api.exception.entity.book.BookNotFoundException;
 import ua.com.api.exception.entity.genre.BooksInGenreArePresentException;
 import ua.com.api.exception.entity.genre.GenreAlreadyExistsException;
-import ua.com.api.exception.entity.genre.GenreNameAlreadyExistsException;
 import ua.com.api.exception.entity.genre.GenreNotFoundException;
 import ua.com.api.exception.entity.search.SearchQueryIsBlankException;
 import ua.com.api.exception.entity.search.SearchQueryIsTooShortException;
@@ -90,16 +91,16 @@ public class GenreService extends BaseService {
         return mapToDto(genreRepository.getAllGenresOfAuthorOrdered(authorId, sorter));
     }
 
-    public GenreDto addNewGenre(GenreDto genre) {
-        if (genreRepository.existsByGenreId(genre.getGenreId())) {
+    public List<SortByPropertiesDto> getSortByParameterValues() {
+        return getSortByParameterValues(Genre.class);
+    }
+
+    public GenreDto addNewGenre(GenreWithoutIdDto genre) {
+        if (genreRepository.existsByGenreName(genre.getName())) {
             throw new GenreAlreadyExistsException();
         }
 
-        if (genreRepository.existsByGenreName(genre.getGenreName())) {
-            throw new GenreNameAlreadyExistsException();
-        }
-
-        Genre toPost = toModelMapper.mapGenreDtoToGenre(genre);
+        Genre toPost = toModelMapper.mapGenreWithoutIdToGenre(genre);
         Genre response = genreRepository.save(toPost);
 
         return toDtoMapper.mapGenreToGenreDto(response);
@@ -115,8 +116,8 @@ public class GenreService extends BaseService {
         Genre proxy = opt.get();
 
         proxy.setGenreId(genre.getGenreId());
-        proxy.setGenreName(genre.getGenreName());
-        proxy.setDescription(genre.getGenreDescription());
+        proxy.setGenreName(genre.getName());
+        proxy.setDescription(genre.getDescription());
 
         Genre updated = genreRepository.save(proxy);
         return toDtoMapper.mapGenreToGenreDto(updated);

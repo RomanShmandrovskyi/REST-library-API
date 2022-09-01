@@ -14,6 +14,10 @@ public interface AuthorRepository extends JpaRepository<Author, Long> {
 
     boolean existsByAuthorId(long authorId);
 
+    boolean existsByFullNameAndAuthorIdNotLike(String fullName, long authorId);
+
+    boolean existsByFullName(String fullName);
+
     Optional<Author> getOneByAuthorId(long authorId);
 
     @Query(value = "SELECT a FROM Author a JOIN Book b ON b.author.authorId = a.authorId AND b.bookId = ?1")

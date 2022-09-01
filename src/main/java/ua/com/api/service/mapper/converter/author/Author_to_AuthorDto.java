@@ -7,7 +7,7 @@ import ua.com.api.entity.dto.author.AuthorDto;
 import ua.com.api.entity.dto.author.nested.BirthDto;
 import ua.com.api.entity.dto.author.nested.NameDto;
 
-public class AuthorToAuthorDto implements Converter<Author, AuthorDto> {
+public class Author_to_AuthorDto implements Converter<Author, AuthorDto> {
 
     @Override
     public AuthorDto convert(MappingContext<Author, AuthorDto> mappingContext) {
@@ -15,10 +15,10 @@ public class AuthorToAuthorDto implements Converter<Author, AuthorDto> {
 
         AuthorDto authorDto = new AuthorDto();
         authorDto.setAuthorId(source.getAuthorId());
-        authorDto.setAuthorName(new NameDto(source.getFirstName(), source.getSecondName()));
+        authorDto.setName(new NameDto(source.getFirstName(), source.getLastName()));
         authorDto.setNationality(source.getNationality());
         authorDto.setBirth(new BirthDto(source.getBirthDate(), source.getBirthCountry(), source.getBirthCity()));
-        authorDto.setAuthorDescription(source.getDescription());
+        authorDto.setDescription(source.getDescription());
         return authorDto;
     }
 }

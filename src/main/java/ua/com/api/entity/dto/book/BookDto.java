@@ -4,15 +4,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import ua.com.api.entity.dto.book.nested.AdditionalDto;
-import ua.com.api.service.util.deserializer.CustomLongDeserializer;
 import ua.com.api.service.util.deserializer.CustomStringDeserializer;
 import ua.com.api.service.util.deserializer.CustomYearDeserializer;
 
 import javax.validation.Valid;
 import javax.validation.constraints.*;
-import java.time.Year;
-import java.util.Calendar;
-import java.util.Date;
 
 @Setter
 @Getter
@@ -22,9 +18,6 @@ import java.util.Date;
 @Schema(name = "Book")
 public class BookDto {
 
-    @JsonDeserialize(using = CustomLongDeserializer.class)
-    @NotNull(message = "Value 'bookId' is required!")
-    @PositiveOrZero(message = "Value 'bookId' must be positive!")
     private Long bookId;
 
     @JsonDeserialize(using = CustomStringDeserializer.class)

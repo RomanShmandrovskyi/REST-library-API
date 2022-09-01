@@ -14,7 +14,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ua.com.api.entity.dto.SortByPropertiesDto;
 import ua.com.api.entity.dto.author.AuthorDto;
+import ua.com.api.entity.dto.author.AuthorWithoutIdDto;
 import ua.com.api.exception.model.ExceptionResponse;
 import ua.com.api.service.AuthorService;
 import ua.com.api.service.util.annotation.AllowableValues;
@@ -96,13 +98,13 @@ public class AuthorController {
             @Min(value = 1, message = "Value of 'size' parameter must be positive and greater than zero!")
             Integer size,
 
-            @Parameter(description = "custom sort parameter")
-            @RequestParam(name = SORT_BY, defaultValue = NAME)
+            @Parameter(description = "Custom sort parameter. Try ${server.base.url}/author/sortBy")
+            @RequestParam(name = SORT_BY, defaultValue = AUTHOR_ID)
             String sortBy,
 
             @Parameter(description = "sorting order")
             @RequestParam(name = ORDER_TYPE, defaultValue = ASC)
-            @AllowableValues(values = {ASC, DESC}, message = "Value of 'orderType' parameter must be '" + ASC + "' or '"+ DESC + "'")
+            @AllowableValues(values = {ASC, DESC}, message = "Value of " + ORDER_TYPE + " parameter must be '" + ASC + "' or '" + DESC + "'")
             String orderType) {
         List<AuthorDto> response = authorService.findAllAuthors(sortBy, orderType, page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -155,21 +157,28 @@ public class AuthorController {
             @Min(value = 1, message = "Value of 'size' parameter must be positive and greater than zero!")
             Integer size,
 
-            @Parameter(description = "custom sort parameter")
-            @RequestParam(name = SORT_BY, defaultValue = NAME)
+            @Parameter(description = "Custom sort parameter. Try ${server.base.url}/author/sortBy")
+            @RequestParam(name = SORT_BY, defaultValue = AUTHOR_ID)
             String sortBy,
 
             @Schema(allowableValues = {ASC, DESC})
             @Parameter(description = "sorting order")
             @RequestParam(name = ORDER_TYPE, defaultValue = ASC)
-            @AllowableValues(values = {ASC, DESC}, message = "Value of 'orderType' parameter must be '" + ASC + "' or '"+ DESC + "'")
+            @AllowableValues(values = {ASC, DESC}, message = "Value of 'orderType' parameter must be '" + ASC + "' or '" + DESC + "'")
             String orderType) {
         List<AuthorDto> response = authorService.findAllAuthorsInGenre(genreId, sortBy, orderType, page, size, pagination);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @ResponseStatus(value = HttpStatus.OK)
+    @GetMapping(value = "/author/sortBy", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getSortByValues() {
+        List<SortByPropertiesDto> response = authorService.getSortByParameterValues();
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
-    @Operation(summary = "create new Author")
+
+    @Operation(summary = "create new Author", description = "Author must have unique first and last names")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "newly created Author",
                     content = @Content(schema = @Schema(implementation = AuthorDto.class))),
@@ -182,7 +191,7 @@ public class AuthorController {
     @PostMapping(value = "/author", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewAuthor(
             @Parameter(required = true, description = "Author to add", name = "Author object")
-            @Valid @RequestBody AuthorDto postAuthor) {
+            @Valid @RequestBody AuthorWithoutIdDto postAuthor) {
         AuthorDto response = authorService.addNewAuthor(postAuthor);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -197,11 +206,15 @@ public class AuthorController {
             @ApiResponse(responseCode = "404", description = "Author to update not found",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    @PutMapping(value = "/author", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/author/{authorId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateAuthor(
+            @Parameter(description = "existed Author ID", required = true)
+            @PathVariable
+            Long authorId,
+
             @Parameter(required = true, description = "Author to update", name = "Author object")
-            @Valid @RequestBody AuthorDto updatedAuthor) {
-        AuthorDto response = authorService.updateExistedAuthor(updatedAuthor);
+            @Valid @RequestBody AuthorWithoutIdDto updatedAuthor) {
+        AuthorDto response = authorService.updateExistedAuthor(authorId, updatedAuthor);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

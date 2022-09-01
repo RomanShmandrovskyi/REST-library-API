@@ -1,4 +1,4 @@
-package ua.com.api.exception.entity.author;
+package ua.com.api.exception.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Formula;
 import ua.com.api.service.util.annotation.ForSort;
 
 import javax.persistence.*;
@@ -23,19 +22,20 @@ public class Author implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "author_id", unique = true, nullable = false)
+    @Column(name = "author_id", unique = true)
+    @ForSort(defaultValue = "id",
+            aliases = {"authorId"})
     private Long authorId;
 
     @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
 
-    @Column(name = "second_name", nullable = false, length = 50)
-    private String secondName;
+    @Column(name = "last_name", nullable = false, length = 50)
+    private String lastName;
 
-    @ForSort(values = {"name", "authorName", "fullName", "authorFullName"})
-    @Formula("CONCAT(first_name, ' ', second_name)")
+    @Column(name = "full_name", unique = true)
+    @ForSort(defaultValue = "name",
+            aliases = {"authorName", "fullName", "authorFullName"})
     private String fullName;
 
     @Column(name = "description", length = 1000)
@@ -44,8 +44,9 @@ public class Author implements Serializable {
     @Column(name = "nationality", length = 30)
     private String nationality;
 
-    @ForSort(values = {"birth", "birthDate", "authorBirthDate"})
     @Column(name = "birth_date")
+    @ForSort(defaultValue = "birthDate",
+            aliases = {"birth", "authorBirthDate", "authorBirth"})
     private LocalDate birthDate;
 
     @Column(name = "birth_country", length = 60)

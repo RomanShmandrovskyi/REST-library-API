@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ua.com.api.entity.dto.SortByPropertiesDto;
 import ua.com.api.entity.dto.book.BookDto;
 import ua.com.api.exception.model.ExceptionResponse;
 import ua.com.api.service.BookService;
@@ -76,8 +77,8 @@ public class BookController {
             @Min(value = 1, message = "Value of 'size' parameter must be positive and greater than zero!")
             Integer size,
 
-            @Parameter(description = "custom sort parameter, can also assume 'square' and 'volume' parameters")
-            @RequestParam(name = SORT_BY, defaultValue = NAME)
+            @Parameter(description = "Custom sort parameter. Try '/book/sortBy'")
+            @RequestParam(name = SORT_BY, defaultValue = BOOK_ID)
             String sortBy,
 
             @Schema(allowableValues = {ASC, DESC})
@@ -117,9 +118,8 @@ public class BookController {
             @Min(value = 1, message = "Value of 'size' parameter must be positive and greater than zero!")
             Integer size,
 
-            @Schema(example = NAME)
-            @Parameter(description = "custom sort parameter")
-            @RequestParam(name = SORT_BY, defaultValue = NAME)
+            @Parameter(description = "Custom sort parameter. Try '/book/sortBy'")
+            @RequestParam(name = SORT_BY, defaultValue = BOOK_ID)
             String sortBy,
 
             @Schema(allowableValues = {ASC, DESC})
@@ -146,8 +146,8 @@ public class BookController {
             @PathVariable
             Long authorId,
 
-            @Parameter(description = "custom sort parameter")
-            @RequestParam(name = SORT_BY, defaultValue = NAME)
+            @Parameter(description = "Custom sort parameter. Try '/book/sortBy'")
+            @RequestParam(name = SORT_BY, defaultValue = BOOK_ID)
             String sortBy,
 
             @Schema(allowableValues = {ASC, DESC})
@@ -197,6 +197,14 @@ public class BookController {
             @RequestParam(name = QUERY)
             String query) {
         List<BookDto> response = bookService.searchForExistedBooks(query);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+
+    @ResponseStatus(value = HttpStatus.OK)
+    @GetMapping(value = "/book/sortBy", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> getSortByValues() {
+        List<SortByPropertiesDto> response = bookService.getSortByParameterValues();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -22,7 +22,7 @@ public class BookToBookDto implements Converter<Book, BookDto> {
 
         AdditionalDto adds = new AdditionalDto();
         SizeDto size = new SizeDto();
-        adds.setPageCount(source.getPageCount());
+        adds.setPageCount(source.getPagesCount());
         size.setHeight(source.getBookHeight());
         size.setLength(source.getBookLength());
         size.setWidth(source.getBookWidth());

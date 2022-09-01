@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.LazyCollection;
 import ua.com.api.service.util.annotation.ForSort;
 
 import javax.persistence.*;
@@ -16,18 +17,18 @@ import java.io.Serializable;
 @NoArgsConstructor
 
 @Entity
-@Table(name = "book")
 public class Book implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(name = "book_id", unique = true, nullable = false)
+    @Column(name = "book_id", unique = true)
+    @ForSort(defaultValue = "bookId",
+            aliases = {"id"})
     private Long bookId;
 
-    @ForSort(values = {"name", "bookName"})
     @Column(name = "book_name", nullable = false)
+    @ForSort(defaultValue = "bookName",
+            aliases = {"name", "nameOfBook"})
     private String bookName;
 
     @Column(name = "book_language", nullable = false, length = 50)
@@ -36,9 +37,10 @@ public class Book implements Serializable {
     @Column(name = "book_description", length = 1000)
     private String bookDescription;
 
-    @ForSort(values = {"pagesCount", "pageCount", "pagesNumber", "numberOfPages"})
     @Column(name = "page_count")
-    private Integer pageCount;
+    @ForSort(defaultValue = "pagesCount",
+            aliases = {"pageCount", "countOfPages", "pagesNumber", "numberOfPages"})
+    private Integer pagesCount;
 
     @Column(name = "book_height")
     private Double bookHeight;
@@ -49,16 +51,19 @@ public class Book implements Serializable {
     @Column(name = "book_length")
     private Double bookLength;
 
-    @ForSort(values = {"volume", "bookVolume"})
     @Formula(value = "book_height * book_width * book_length")
+    @ForSort(defaultValue = "volume",
+            aliases = {"bookVolume", "volumeOfBook"})
     private Double volume;
 
-    @ForSort(values = {"square", "bookSquare"})
     @Formula(value = "book_width * book_length")
+    @ForSort(defaultValue = "square",
+            aliases = {"squareOfBook", "bookSquare"})
     private Double square;
 
-    @ForSort(values = {"publicationYear", "publication", "year", "pubYear"})
     @Column(name = "publication_year")
+    @ForSort(defaultValue = "publicationYear",
+            aliases = {"publication", "year", "pubYear"})
     private Integer publicationYear;
 
     @ManyToOne(fetch = FetchType.LAZY)

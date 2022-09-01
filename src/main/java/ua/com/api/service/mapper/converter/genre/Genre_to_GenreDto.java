@@ -5,15 +5,15 @@ import org.modelmapper.spi.MappingContext;
 import ua.com.api.entity.Genre;
 import ua.com.api.entity.dto.genre.GenreDto;
 
-public class GenreToGenreDto implements Converter<Genre, GenreDto> {
+public class Genre_to_GenreDto implements Converter<Genre, GenreDto> {
     @Override
     public GenreDto convert(MappingContext<Genre, GenreDto> mappingContext) {
         Genre g = mappingContext.getSource();
 
         GenreDto gt = new GenreDto();
         gt.setGenreId(g.getGenreId());
-        gt.setGenreName(g.getGenreName());
-        gt.setGenreDescription(g.getDescription());
+        gt.setName(g.getGenreName());
+        gt.setDescription(g.getDescription());
 
         return gt;
     }

@@ -10,7 +10,8 @@ import java.lang.annotation.Target;
 public @interface ForSort {
 
     /**
-     * Different 'sortBy' parameter values. Use this anno for field to enable sort by this field
+     * Different 'sortBy' parameter values. Use this anno for field to enable sorting by this field
      */
-    String[] values() default "";
+    String defaultValue();
+    String[] aliases();
 }

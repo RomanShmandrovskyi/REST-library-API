@@ -21,13 +21,14 @@ public class Genre implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "genre_id", unique = true, nullable = false)
+    @ForSort(defaultValue = "id",
+            aliases = {"genreId"})
     private Long genreId;
 
-    @ForSort(values = {"name", "genreName", "nameOfGenre"})
-    @Column(name = "genre_name", length = 50, unique = true, nullable = false)
+    @Column(name = "genre_name", unique = true, nullable = false, length = 50)
+    @ForSort(defaultValue = "name",
+            aliases = {"genreName", "nameOfGenre"})
     private String genreName;
 
     @Column(name = "genre_description", length = 1000)

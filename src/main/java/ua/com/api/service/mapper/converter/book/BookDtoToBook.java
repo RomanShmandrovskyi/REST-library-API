@@ -11,11 +11,10 @@ public class BookDtoToBook implements Converter<BookDto, Book> {
         BookDto source = mappingContext.getSource();
 
         Book b = new Book();
-        b.setBookId(source.getBookId());
         b.setBookName(source.getBookName());
         b.setBookLanguage(source.getBookLanguage());
         b.setBookDescription(source.getBookDescription());
-        b.setPageCount(source.getAdditional().getPageCount());
+        b.setPagesCount(source.getAdditional().getPageCount());
         b.setBookHeight(source.getAdditional().getSize().getHeight());
         b.setBookLength(source.getAdditional().getSize().getLength());
         b.setBookWidth(source.getAdditional().getSize().getWidth());

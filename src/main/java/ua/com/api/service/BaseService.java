@@ -2,7 +2,8 @@ package ua.com.api.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
-import ua.com.api.exception.entity.author.InvalidSortByParameterValueException;
+import ua.com.api.entity.dto.SortByPropertiesDto;
+import ua.com.api.exception.entity.InvalidSortByParameterValueException;
 import ua.com.api.repository.AuthorRepository;
 import ua.com.api.repository.BookRepository;
 import ua.com.api.repository.GenreRepository;
@@ -13,6 +14,7 @@ import ua.com.api.service.util.annotation.ForSort;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.List;
 
 public class BaseService {
 
@@ -41,9 +43,18 @@ public class BaseService {
     protected String convertAndValidateSortBy(String sortBy, Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredFields())
                 .filter(f -> f.isAnnotationPresent(ForSort.class))
-                .filter(f -> Arrays.asList(f.getAnnotation(ForSort.class).values()).contains(sortBy))
+                .filter(f -> Arrays.asList(f.getAnnotation(ForSort.class).aliases()).contains(sortBy) ||
+                        f.getAnnotation(ForSort.class).defaultValue().equals(sortBy))
                 .map(Field::getName)
                 .findFirst()
                 .orElseThrow(() -> new InvalidSortByParameterValueException(sortBy, "Value '" + sortBy + "' is not allowed for sorting! Try other value!"));
+    }
+
+    protected List<SortByPropertiesDto> getSortByParameterValues(Class<?> clazz) {
+        return Arrays.stream(clazz.getDeclaredFields())
+                .filter(f -> f.isAnnotationPresent(ForSort.class))
+                .map(f -> f.getAnnotation(ForSort.class))
+                .map(a -> new SortByPropertiesDto(a.defaultValue(), Arrays.asList(a.aliases())))
+                .toList();
     }
 }
