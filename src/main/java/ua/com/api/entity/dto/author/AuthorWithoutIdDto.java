@@ -18,23 +18,21 @@ import javax.validation.constraints.Size;
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode
-@Schema(name = "Author")
-public class AuthorDto {
-
-    private Long authorId;
+@Schema(name = "AuthorToCreate")
+public class AuthorWithoutIdDto {
 
     @Valid
     @NotNull(message = "Object 'name' is required!")
     private NameDto name;
 
     @JsonDeserialize(using = CustomStringDeserializer.class)
-    @Size(max = 30, message = "Value 'nationality' must not be longer than 30 characters!")
+    @Size(max = 30, message = "Value 'nationality' cannot be longer than 30 characters!")
     private String nationality = "";
 
     @Valid
     private BirthDto birth = new BirthDto();
 
     @JsonDeserialize(using = CustomStringDeserializer.class)
-    @Size(max = 1000, message = "Value 'description' must not be longer than 1000 characters!")
+    @Size(max = 1000, message = "Value 'description' cannot be longer than 1000 characters!")
     private String description = "";
 }

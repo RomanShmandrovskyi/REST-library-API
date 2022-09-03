@@ -4,9 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 @AllArgsConstructor
-public class NoSuchJsonKeyException extends RuntimeException {
-    private String propName;
+public class InvalidSortByParameterValueException extends RuntimeException {
+    private String sortBy;
+    private String errorMessage;
 }

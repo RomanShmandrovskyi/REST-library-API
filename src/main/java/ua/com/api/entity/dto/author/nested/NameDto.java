@@ -22,7 +22,7 @@ public class NameDto {
     private String first;
 
     @JsonDeserialize(using = CustomStringDeserializer.class)
-    @NotBlank(message = "Value 'second' is required and can't be blank!!")
-    @Size(max = 50, message = "Value 'second' cannot be longer than 50 characters!")
-    private String second;
+    @NotBlank(message = "Value 'last' is required and can't be blank!!")
+    @Size(max = 50, message = "Value 'last' cannot be longer than 50 characters!")
+    private String last;
 }

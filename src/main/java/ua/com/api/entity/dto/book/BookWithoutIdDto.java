@@ -8,17 +8,17 @@ import ua.com.api.service.util.deserializer.CustomStringDeserializer;
 import ua.com.api.service.util.deserializer.CustomYearDeserializer;
 
 import javax.validation.Valid;
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode
 @AllArgsConstructor
-@Schema(name = "Book")
-public class BookDto {
-
-    private Long bookId;
+@Schema(name = "BookToCreate")
+public class BookWithoutIdDto {
 
     @JsonDeserialize(using = CustomStringDeserializer.class)
     @NotBlank(message = "Value 'bookName' is required!")

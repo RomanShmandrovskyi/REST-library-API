@@ -5,17 +5,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import ua.com.api.service.util.deserializer.CustomStringDeserializer;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Schema(name = "Genre")
-public class GenreDto {
-
-    private Long genreId;
+@Schema(name = "GenreToCreate")
+public class GenreWithoutIdDto {
 
     @JsonDeserialize(using = CustomStringDeserializer.class)
     @NotBlank(message = "Value 'name' is required!")

@@ -1,11 +1,12 @@
 package ua.com.api.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ua.com.api.entity.Author;
+import ua.com.api.entity.dto.SortByPropertiesDto;
 import ua.com.api.entity.dto.author.AuthorDto;
+import ua.com.api.entity.dto.author.AuthorWithoutIdDto;
 import ua.com.api.exception.entity.author.AuthorAlreadyExistsException;
 import ua.com.api.exception.entity.author.AuthorNotFoundException;
 import ua.com.api.exception.entity.author.BooksInAuthorArePresentException;
@@ -13,40 +14,14 @@ import ua.com.api.exception.entity.book.BookNotFoundException;
 import ua.com.api.exception.entity.genre.GenreNotFoundException;
 import ua.com.api.exception.entity.search.SearchQueryIsBlankException;
 import ua.com.api.exception.entity.search.SearchQueryIsTooShortException;
-import ua.com.api.repository.*;
-import ua.com.api.service.mapper.DtoToModelMapper;
-import ua.com.api.service.mapper.ModelToDtoMapper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-public class AuthorService {
-
-    @Autowired
-    private AuthorRepository authorRepository;
-
-    @Autowired
-    private GenreRepository genreRepository;
-
-    @Autowired
-    private BookRepository bookRepository;
-
-    @Autowired
-    private SearchFor searchFor;
-
-    @Autowired
-    private ModelToDtoMapper toDtoMapper;
-
-    @Autowired
-    private DtoToModelMapper toModelMapper;
-
-    private Sort.Direction resolveDirection(String order) {
-        return Sort.Direction.fromString(order);
-    }
+public class AuthorService extends BaseService {
 
     private List<AuthorDto> mapToDto(List<Author> authors) {
         return authors.stream()
@@ -71,9 +46,13 @@ public class AuthorService {
         return toDtoMapper.mapAuthorToAuthorDto(toGet);
     }
 
+    public List<SortByPropertiesDto> getSortByParameterValues() {
+        return getSortByParameterValues(Author.class);
+    }
+
     public List<AuthorDto> findAllAuthors(String sortBy, String order, int page, int size, boolean pageable) {
+        String sortParam = convertAndValidateSortBy(sortBy, Author.class);
         Sort.Direction direction = resolveDirection(order);
-        String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
         Sort sorter = Sort.by(direction, sortParam);
 
         List<Author> authors;
@@ -106,7 +85,7 @@ public class AuthorService {
                     .forEach(result::add);
 
             searched.stream()
-                    .filter(a -> a.getSecondName().startsWith(word))
+                    .filter(a -> a.getLastName().startsWith(word))
                     .forEach(result::add);
 
             searched.removeAll(result);
@@ -120,12 +99,13 @@ public class AuthorService {
     }
 
     public List<AuthorDto> findAllAuthorsInGenre(long genreId, String sortBy, String order, int page, int size, boolean pageable) {
+        String sortParam = convertAndValidateSortBy(sortBy, Author.class);
+
         if (!genreRepository.existsByGenreId(genreId)) {
             throw new GenreNotFoundException(genreId);
         }
 
         Sort.Direction direction = resolveDirection(order);
-        String sortParam = JsonKeysConformity.getPropNameByJsonKey(sortBy);
         Sort sorter = Sort.by(direction, sortParam);
 
         List<Author> authors;
@@ -139,36 +119,37 @@ public class AuthorService {
         return mapToDto(authors);
     }
 
-    public AuthorDto addNewAuthor(AuthorDto author) {
-        if (authorRepository.existsByAuthorId(author.getAuthorId())) {
+    public AuthorDto addNewAuthor(AuthorWithoutIdDto author) {
+        if (authorRepository.existsByFullName(author.getName().getFirst() + " " + author.getName().getLast())) {
             throw new AuthorAlreadyExistsException();
         }
 
-        Author toPost = toModelMapper.mapAuthorDtoToAuthor(author);
+        Author toPost = toModelMapper.mapAuthorWithoutIdDtoToAuthor(author);
         Author response = authorRepository.save(toPost);
 
         return toDtoMapper.mapAuthorToAuthorDto(response);
     }
 
-    public AuthorDto updateExistedAuthor(AuthorDto authorDto) {
-        Optional<Author> opt = authorRepository.getOneByAuthorId(authorDto.getAuthorId());
+    public AuthorDto updateExistedAuthor(long authorId, AuthorWithoutIdDto authorDto) {
+        Author proxy = authorRepository.getOneByAuthorId(authorId)
+                .orElseThrow(() -> new AuthorNotFoundException(authorId));
 
-        if (opt.isEmpty()) {
-            throw new AuthorNotFoundException(authorDto.getAuthorId());
+        String fullNameToUpd = authorDto.getName().getFirst() + " " + authorDto.getName().getLast();
+
+        if (authorRepository.existsByFullNameAndAuthorIdNotLike(fullNameToUpd, authorId)) {
+            throw new AuthorAlreadyExistsException();
         }
 
-        Author proxy = opt.get();
-
-        proxy.setFirstName(authorDto.getAuthorName().getFirst());
-        proxy.setSecondName(authorDto.getAuthorName().getSecond());
-        proxy.setDescription(authorDto.getAuthorDescription());
+        proxy.setFirstName(authorDto.getName().getFirst());
+        proxy.setLastName(authorDto.getName().getLast());
+        proxy.setFullName(fullNameToUpd);
+        proxy.setDescription(authorDto.getDescription());
         proxy.setNationality(authorDto.getNationality());
         proxy.setBirthDate(authorDto.getBirth().getDate());
         proxy.setBirthCity(authorDto.getBirth().getCity());
         proxy.setBirthCountry(authorDto.getBirth().getCountry());
 
         Author updated = authorRepository.save(proxy);
-
         return toDtoMapper.mapAuthorToAuthorDto(updated);
     }
 

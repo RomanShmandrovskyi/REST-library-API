@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import ua.com.api.exception.entity.NoSuchJsonKeyException;
+import ua.com.api.exception.entity.InvalidSortByParameterValueException;
 import ua.com.api.exception.entity.author.AuthorAlreadyExistsException;
 import ua.com.api.exception.entity.author.AuthorNotFoundException;
 import ua.com.api.exception.entity.author.BooksInAuthorArePresentException;
@@ -23,18 +23,22 @@ import ua.com.api.exception.entity.book.BookAlreadyExistsException;
 import ua.com.api.exception.entity.book.BookNotFoundException;
 import ua.com.api.exception.entity.genre.BooksInGenreArePresentException;
 import ua.com.api.exception.entity.genre.GenreAlreadyExistsException;
-import ua.com.api.exception.entity.genre.GenreNameAlreadyExistsException;
 import ua.com.api.exception.entity.genre.GenreNotFoundException;
 import ua.com.api.exception.entity.search.SearchKeywordsIsTooShortException;
 import ua.com.api.exception.entity.search.SearchQueryIsBlankException;
 import ua.com.api.exception.entity.search.SearchQueryIsTooShortException;
-import ua.com.api.exception.entity.type.*;
+import ua.com.api.exception.entity.type.InvalidDateTypeException;
+import ua.com.api.exception.entity.type.InvalidTypeException;
+import ua.com.api.exception.entity.type.InvalidYearValueException;
 import ua.com.api.exception.model.ExceptionResponse;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.text.SimpleDateFormat;
 import java.time.Year;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 @ControllerAdvice
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
@@ -45,9 +49,10 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler(value = InvalidSizeValueException.class)
-    public ResponseEntity<ExceptionResponse> handleInvalidSizeValue() {
-        String message = "Value of 'size' parameter must be positive and greater than zero!";
+    @ExceptionHandler(value = ConstraintViolationException.class)
+    public ResponseEntity<ExceptionResponse> handleConstrainViolationError(ConstraintViolationException cve) {
+        Optional<ConstraintViolation<?>> err = cve.getConstraintViolations().stream().findAny();
+        String message = err.isPresent() ? err.get().getMessage() : cve.getLocalizedMessage();
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
@@ -58,15 +63,14 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler(value = InvalidPageValueException.class)
-    public ResponseEntity<ExceptionResponse> handleInvalidPageValue() {
-        String message = "Value of 'page' parameter must be positive and greater than zero!";
+    @ExceptionHandler(value = InvalidSortByParameterValueException.class)
+    public ResponseEntity<ExceptionResponse> handleNoSuchSortByParam(InvalidSortByParameterValueException nssbpe) {
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        message),
+                        nssbpe.getErrorMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 
@@ -123,32 +127,6 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ResponseBody
-    @ExceptionHandler(value = NoSuchJsonKeyException.class)
-    public ResponseEntity<ExceptionResponse> handleNoSuchJsonProperty(NoSuchJsonKeyException nsjpe) {
-        String message = "No such JSON property - '%s'!";
-        return new ResponseEntity<>(
-                new ExceptionResponse(
-                        generateDate(),
-                        HttpStatus.BAD_REQUEST.value(),
-                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        String.format(message, nsjpe.getPropName())),
-                HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseBody
-    @ExceptionHandler(value = InvalidOrderTypeException.class)
-    public ResponseEntity<ExceptionResponse> handleInvalidOrderType(InvalidOrderTypeException iote) {
-        String message = "Order type must be 'asc' or 'desc' instead '%s'!";
-        return new ResponseEntity<>(
-                new ExceptionResponse(
-                        generateDate(),
-                        HttpStatus.BAD_REQUEST.value(),
-                        HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        String.format(message, iote.getInvalidOrder())),
-                HttpStatus.BAD_REQUEST);
-    }
-
-    @ResponseBody
     @ExceptionHandler(value = AuthorAlreadyExistsException.class)
     public ResponseEntity<ExceptionResponse> handleAuthorConflict() {
         return new ResponseEntity<>(
@@ -156,7 +134,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         generateDate(),
                         HttpStatus.CONFLICT.value(),
                         HttpStatus.CONFLICT.getReasonPhrase(),
-                        "Author with such 'authorId' already exists!"),
+                        "Author with such name already exists!"),
                 HttpStatus.CONFLICT);
     }
 
@@ -168,19 +146,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         generateDate(),
                         HttpStatus.CONFLICT.value(),
                         HttpStatus.CONFLICT.getReasonPhrase(),
-                        "Genre with such 'genreId' already exists!"),
-                HttpStatus.CONFLICT);
-    }
-
-    @ResponseBody
-    @ExceptionHandler(value = GenreNameAlreadyExistsException.class)
-    public ResponseEntity<ExceptionResponse> handleGenreNameConflict() {
-        return new ResponseEntity<>(
-                new ExceptionResponse(
-                        generateDate(),
-                        HttpStatus.CONFLICT.value(),
-                        HttpStatus.CONFLICT.getReasonPhrase(),
-                        "Genre with such 'genreName' already exists!"),
+                        "Genre with such name already exists!"),
                 HttpStatus.CONFLICT);
     }
 
@@ -192,7 +158,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         generateDate(),
                         HttpStatus.CONFLICT.value(),
                         HttpStatus.CONFLICT.getReasonPhrase(),
-                        "Book with such 'bookId' already exists!"),
+                        "Book with such name and description already exists!"),
                 HttpStatus.CONFLICT);
     }
 
@@ -290,11 +256,9 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
 
         if (cause instanceof JsonParseException) {
             message = "Request JSON is invalid!";
-        } else if (cause instanceof InvalidDateTypeException) {
-            InvalidDateTypeException e = (InvalidDateTypeException) cause;
+        } else if (cause instanceof InvalidDateTypeException e) {
             message = "Value '" + e.getValue() + "' in '" + e.getKey() + "' is invalid! Valid format is: yyyy-MM-dd!";
-        } else if (cause instanceof InvalidTypeException) {
-            InvalidTypeException e = (InvalidTypeException) cause;
+        } else if (cause instanceof InvalidTypeException e) {
             message = "'" + e.getKey() + "' is require to be of '" + e.getClazz().getSimpleName() + "' type!";
         } else if (cause instanceof InvalidYearValueException) {
             message = "Year value can't be grater then " + Year.now().getValue();

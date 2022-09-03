@@ -1,49 +1,27 @@
 package ua.com.api.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ua.com.api.entity.Author;
 import ua.com.api.entity.Book;
+import ua.com.api.entity.Genre;
+import ua.com.api.entity.dto.SortByPropertiesDto;
 import ua.com.api.entity.dto.book.BookDto;
+import ua.com.api.entity.dto.book.BookWithoutIdDto;
 import ua.com.api.exception.entity.author.AuthorNotFoundException;
 import ua.com.api.exception.entity.book.BookAlreadyExistsException;
 import ua.com.api.exception.entity.book.BookNotFoundException;
 import ua.com.api.exception.entity.genre.GenreNotFoundException;
 import ua.com.api.exception.entity.search.SearchQueryIsBlankException;
 import ua.com.api.exception.entity.search.SearchQueryIsTooShortException;
-import ua.com.api.repository.*;
-import ua.com.api.service.mapper.DtoToModelMapper;
-import ua.com.api.service.mapper.ModelToDtoMapper;
 
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Service
-public class BookService {
-
-    @Autowired
-    private BookRepository bookRepository;
-
-    @Autowired
-    private AuthorRepository authorRepository;
-
-    @Autowired
-    private GenreRepository genreRepository;
-
-    @Autowired
-    private SearchFor searchFor;
-
-    @Autowired
-    private ModelToDtoMapper toDtoMapper;
-
-    @Autowired
-    private DtoToModelMapper toModelMapper;
-
-    private Sort.Direction resolveDirection(String order) {
-        return Sort.Direction.fromString(order);
-    }
+public class BookService extends BaseService {
 
     private List<BookDto> mapToDto(List<Book> books) {
         return books.stream()
@@ -59,45 +37,9 @@ public class BookService {
     }
 
     public List<BookDto> findAllBooks(String sortBy, String order, int page, int size, boolean pageable) {
-        if (sortBy.equalsIgnoreCase("square")) {
-            return findAllBooksSortedBySquare(order, page, size, pageable);
-        } else if (sortBy.equalsIgnoreCase("volume")) {
-            return findAllBooksSortedByVolume(order, page, size, pageable);
-        }
-
-        String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
+        String sortParam = convertAndValidateSortBy(sortBy, Book.class);
         Sort.Direction direction = resolveDirection(order);
-        Sort sorter = Sort.by(direction, sortParameter);
-
-        List<Book> books;
-
-        if (!pageable) {
-            books = bookRepository.findAll(sorter);
-        } else {
-            books = bookRepository.getAllBooks(PageRequest.of(page - 1, size, sorter));
-        }
-
-        return mapToDto(books);
-    }
-
-    private List<BookDto> findAllBooksSortedBySquare(String order, int page, int size, boolean pageable) {
-        Sort.Direction direction = resolveDirection(order);
-        Sort sorter = Sort.by(direction, "square");
-
-        List<Book> books;
-
-        if (!pageable) {
-            books = bookRepository.findAll(sorter);
-        } else {
-            books = bookRepository.getAllBooks(PageRequest.of(page - 1, size, sorter));
-        }
-
-        return mapToDto(books);
-    }
-
-    private List<BookDto> findAllBooksSortedByVolume(String order, int page, int size, boolean pageable) {
-        Sort.Direction direction = resolveDirection(order);
-        Sort sorter = Sort.by(direction, "volume");
+        Sort sorter = Sort.by(direction, sortParam);
 
         List<Book> books;
 
@@ -111,13 +53,14 @@ public class BookService {
     }
 
     public List<BookDto> findBooksInGenre(long genreId, String sortBy, String order, int page, int size, boolean pageable) {
+        String sortParam = convertAndValidateSortBy(sortBy, Book.class);
+
         if (!genreRepository.existsByGenreId(genreId)) {
             throw new GenreNotFoundException(genreId);
         }
 
         Sort.Direction direction = resolveDirection(order);
-        String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
-        Sort sorter = Sort.by(direction, sortParameter);
+        Sort sorter = Sort.by(direction, sortParam);
 
         List<Book> books;
 
@@ -131,13 +74,14 @@ public class BookService {
     }
 
     public List<BookDto> findAuthorBooks(long authorId, String sortBy, String order) {
+        String sortParam = convertAndValidateSortBy(sortBy, Book.class);
+
         if (!authorRepository.existsByAuthorId(authorId)) {
             throw new AuthorNotFoundException(authorId);
         }
 
         Sort.Direction direction = resolveDirection(order);
-        String sortParameter = JsonKeysConformity.getPropNameByJsonKey(sortBy);
-        Sort sorter = Sort.by(direction, sortParameter);
+        Sort sorter = Sort.by(direction, sortParam);
 
         return mapToDto(bookRepository.getAllAuthorBooksOrdered(authorId, sorter));
     }
@@ -152,6 +96,10 @@ public class BookService {
         }
 
         return mapToDto(bookRepository.getAllAuthorBooksInGenre(authorId, genreId));
+    }
+
+    public List<SortByPropertiesDto> getSortByParameterValues() {
+        return getSortByParameterValues(Book.class);
     }
 
     public List<BookDto> searchForExistedBooks(String searchQuery) {
@@ -199,47 +147,41 @@ public class BookService {
                 .collect(Collectors.toList()));
     }
 
-    public BookDto addNewBook(long authorId, long genreId, BookDto newBook) {
-        if (!authorRepository.existsByAuthorId(authorId)) {
-            throw new AuthorNotFoundException(authorId);
-        }
+    public BookDto addNewBook(long authorId, long genreId, BookWithoutIdDto newBook) {
+        Author author = authorRepository.getOneByAuthorId(authorId)
+                .orElseThrow(() -> new AuthorNotFoundException(authorId));
+        Genre genre = genreRepository.getOneByGenreId(genreId)
+                .orElseThrow(() -> new GenreNotFoundException(genreId));
 
-        if (!genreRepository.existsByGenreId(genreId)) {
-            throw new GenreNotFoundException(genreId);
-        }
-
-        if (bookRepository.existsByBookId(newBook.getBookId())) {
+        if (bookRepository.existsByBookNameAndBookDescription(newBook.getBookName(), newBook.getBookDescription())) {
             throw new BookAlreadyExistsException();
         }
 
-        Book toPost = toModelMapper.mapBookDtoToBook(newBook);
-        toPost.setAuthorId(authorId);
-        toPost.setGenreId(genreId);
-
+        Book toPost = toModelMapper.mapBookWithoutIdToBook(newBook);
+        toPost.setAuthor(author);
+        toPost.setGenre(genre);
         Book response = bookRepository.save(toPost);
-
         return toDtoMapper.mapBookToBookDto(response);
     }
 
-    public BookDto updateExistedBook(BookDto bookDto) {
-        Optional<Book> opt = bookRepository.getOneByBookId(bookDto.getBookId());
+    public BookDto updateExistedBook(long bookId, BookWithoutIdDto bookDto) {
+        Book book = bookRepository.getOneByBookId(bookId)
+                .orElseThrow(() -> new BookNotFoundException(bookId));
 
-        if (opt.isEmpty()) {
-            throw new BookNotFoundException(bookDto.getBookId());
+        if (bookRepository.existsByBookNameAndBookDescriptionAndBookIdNotLike(bookDto.getBookName(), bookDto.getBookDescription(), bookId)) {
+            throw new BookAlreadyExistsException();
         }
 
-        Book proxy = opt.get();
+        book.setBookName(bookDto.getBookName());
+        book.setBookLanguage(bookDto.getBookLanguage());
+        book.setBookDescription(bookDto.getBookDescription());
+        book.setPublicationYear(bookDto.getPublicationYear());
+        book.setPagesCount(bookDto.getAdditional().getPagesCount());
+        book.setBookWidth(bookDto.getAdditional().getSize().getWidth());
+        book.setBookLength(bookDto.getAdditional().getSize().getLength());
+        book.setBookHeight(bookDto.getAdditional().getSize().getHeight());
 
-        proxy.setBookName(bookDto.getBookName());
-        proxy.setBookLang(bookDto.getBookLanguage());
-        proxy.setDescription(bookDto.getBookDescription());
-        proxy.setPublicationYear(bookDto.getPublicationYear());
-        proxy.setPageCount(bookDto.getAdditional().getPageCount());
-        proxy.setBookWidth(bookDto.getAdditional().getSize().getWidth());
-        proxy.setBookLength(bookDto.getAdditional().getSize().getLength());
-        proxy.setBookHeight(bookDto.getAdditional().getSize().getHeight());
-
-        Book updated = bookRepository.save(proxy);
+        Book updated = bookRepository.save(book);
 
         return toDtoMapper.mapBookToBookDto(updated);
     }

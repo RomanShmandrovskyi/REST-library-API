@@ -18,10 +18,10 @@ import javax.validation.constraints.PositiveOrZero;
 public class AdditionalDto {
 
     @JsonDeserialize(using = CustomIntegerDeserializer.class)
-    @PositiveOrZero(message = "Value 'pageCount' must be positive!")
-    @Max(value = 10_000, message = "Value 'pageCount' must be lower than 10,000")
+    @PositiveOrZero(message = "Value 'pagesCount' must be positive!")
+    @Max(value = 10_000, message = "Value 'pagesCount' must be lower than 10,000")
     @Schema(defaultValue = "1")
-    private Integer pageCount = 1;
+    private Integer pagesCount;
 
     @Valid
     private SizeDto size = new SizeDto();

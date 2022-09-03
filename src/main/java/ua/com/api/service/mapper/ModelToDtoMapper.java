@@ -8,18 +8,18 @@ import ua.com.api.entity.Genre;
 import ua.com.api.entity.dto.author.AuthorDto;
 import ua.com.api.entity.dto.book.BookDto;
 import ua.com.api.entity.dto.genre.GenreDto;
-import ua.com.api.service.mapper.converter.author.AuthorToAuthorDto;
-import ua.com.api.service.mapper.converter.book.BookToBookDto;
-import ua.com.api.service.mapper.converter.genre.GenreToGenreDto;
+import ua.com.api.service.mapper.converter.author.Author_to_AuthorDto;
+import ua.com.api.service.mapper.converter.book.Book_to_BookDto;
+import ua.com.api.service.mapper.converter.genre.Genre_to_GenreDto;
 
 @Service
 public class ModelToDtoMapper {
-    private ModelMapper modelMapper = new ModelMapper();
+    private final ModelMapper modelMapper = new ModelMapper();
 
     public ModelToDtoMapper() {
-        modelMapper.addConverter(new AuthorToAuthorDto());
-        modelMapper.addConverter(new GenreToGenreDto());
-        modelMapper.addConverter(new BookToBookDto());
+        modelMapper.addConverter(new Author_to_AuthorDto());
+        modelMapper.addConverter(new Genre_to_GenreDto());
+        modelMapper.addConverter(new Book_to_BookDto());
     }
 
     public AuthorDto mapAuthorToAuthorDto(Author author) {
