@@ -7,7 +7,7 @@ import ua.com.api.entity.dto.book.BookDto;
 import ua.com.api.entity.dto.book.nested.AdditionalDto;
 import ua.com.api.entity.dto.book.nested.SizeDto;
 
-public class BookToBookDto implements Converter<Book, BookDto> {
+public class Book_to_BookDto implements Converter<Book, BookDto> {
 
     @Override
     public BookDto convert(MappingContext<Book, BookDto> mappingContext) {
@@ -22,7 +22,7 @@ public class BookToBookDto implements Converter<Book, BookDto> {
 
         AdditionalDto adds = new AdditionalDto();
         SizeDto size = new SizeDto();
-        adds.setPageCount(source.getPagesCount());
+        adds.setPagesCount(source.getPagesCount());
         size.setHeight(source.getBookHeight());
         size.setLength(source.getBookLength());
         size.setWidth(source.getBookWidth());

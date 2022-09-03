@@ -37,7 +37,7 @@ public class Book implements Serializable {
     @Column(name = "book_description", length = 1000)
     private String bookDescription;
 
-    @Column(name = "page_count")
+    @Column(name = "pages_count")
     @ForSort(defaultValue = "pagesCount",
             aliases = {"pageCount", "countOfPages", "pagesNumber", "numberOfPages"})
     private Integer pagesCount;

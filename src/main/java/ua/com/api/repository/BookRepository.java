@@ -19,6 +19,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
 
     boolean existsByBookNameAndBookDescription(String bookName, String bookDescription);
 
+    boolean existsByBookNameAndBookDescriptionAndBookIdNotLike(String bookName, String bookDescription, long bookId);
+
     @Query(value = "SELECT b FROM Book b")
     List<Book> getAllBooks(PageRequest page);
 

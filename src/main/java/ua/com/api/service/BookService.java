@@ -8,6 +8,7 @@ import ua.com.api.entity.Book;
 import ua.com.api.entity.Genre;
 import ua.com.api.entity.dto.SortByPropertiesDto;
 import ua.com.api.entity.dto.book.BookDto;
+import ua.com.api.entity.dto.book.BookWithoutIdDto;
 import ua.com.api.exception.entity.author.AuthorNotFoundException;
 import ua.com.api.exception.entity.book.BookAlreadyExistsException;
 import ua.com.api.exception.entity.book.BookNotFoundException;
@@ -146,7 +147,7 @@ public class BookService extends BaseService {
                 .collect(Collectors.toList()));
     }
 
-    public BookDto addNewBook(long authorId, long genreId, BookDto newBook) {
+    public BookDto addNewBook(long authorId, long genreId, BookWithoutIdDto newBook) {
         Author author = authorRepository.getOneByAuthorId(authorId)
                 .orElseThrow(() -> new AuthorNotFoundException(authorId));
         Genre genre = genreRepository.getOneByGenreId(genreId)
@@ -156,32 +157,31 @@ public class BookService extends BaseService {
             throw new BookAlreadyExistsException();
         }
 
-        Book toPost = toModelMapper.mapBookDtoToBook(newBook);
+        Book toPost = toModelMapper.mapBookWithoutIdToBook(newBook);
         toPost.setAuthor(author);
         toPost.setGenre(genre);
         Book response = bookRepository.save(toPost);
         return toDtoMapper.mapBookToBookDto(response);
     }
 
-    public BookDto updateExistedBook(BookDto bookDto) {
-        Optional<Book> opt = bookRepository.getOneByBookId(bookDto.getBookId());
+    public BookDto updateExistedBook(long bookId, BookWithoutIdDto bookDto) {
+        Book book = bookRepository.getOneByBookId(bookId)
+                .orElseThrow(() -> new BookNotFoundException(bookId));
 
-        if (opt.isEmpty()) {
-            throw new BookNotFoundException(bookDto.getBookId());
+        if (bookRepository.existsByBookNameAndBookDescriptionAndBookIdNotLike(bookDto.getBookName(), bookDto.getBookDescription(), bookId)) {
+            throw new BookAlreadyExistsException();
         }
 
-        Book proxy = opt.get();
+        book.setBookName(bookDto.getBookName());
+        book.setBookLanguage(bookDto.getBookLanguage());
+        book.setBookDescription(bookDto.getBookDescription());
+        book.setPublicationYear(bookDto.getPublicationYear());
+        book.setPagesCount(bookDto.getAdditional().getPagesCount());
+        book.setBookWidth(bookDto.getAdditional().getSize().getWidth());
+        book.setBookLength(bookDto.getAdditional().getSize().getLength());
+        book.setBookHeight(bookDto.getAdditional().getSize().getHeight());
 
-        proxy.setBookName(bookDto.getBookName());
-        proxy.setBookLanguage(bookDto.getBookLanguage());
-        proxy.setBookDescription(bookDto.getBookDescription());
-        proxy.setPublicationYear(bookDto.getPublicationYear());
-        proxy.setPagesCount(bookDto.getAdditional().getPageCount());
-        proxy.setBookWidth(bookDto.getAdditional().getSize().getWidth());
-        proxy.setBookLength(bookDto.getAdditional().getSize().getLength());
-        proxy.setBookHeight(bookDto.getAdditional().getSize().getHeight());
-
-        Book updated = bookRepository.save(proxy);
+        Book updated = bookRepository.save(book);
 
         return toDtoMapper.mapBookToBookDto(updated);
     }

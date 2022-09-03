@@ -45,8 +45,7 @@ public class GenreController {
             @ApiResponse(responseCode = "404", description = "Genre not found",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    @GetMapping(value = "/genre/{genreId}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/genre/{genreId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getGenre(
             @Parameter(required = true, description = "existed Genre ID")
             @PathVariable
@@ -64,11 +63,11 @@ public class GenreController {
             @ApiResponse(responseCode = "404", description = "Book not found",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    @GetMapping(value = "book/{bookId}/genre",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "book/{bookId}/genre", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getBookGenre(
             @Parameter(required = true, description = "existed Book ID")
             @PathVariable
+            @Min(value = 0, message = "Value of 'bookId' parameter must be positive!")
             Long bookId) {
         GenreDto response = genreService.findGenreOfBook(bookId);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -81,8 +80,7 @@ public class GenreController {
             @ApiResponse(responseCode = "400", description = "Something wrong...",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    @GetMapping(value = "/genres",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/genres", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllGenres(
             @Parameter(description = "paginate response")
             @RequestParam(name = "pagination", defaultValue = TRUE)
@@ -157,12 +155,18 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @Operation(description = "get 'sortBy' property values for Genre")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "array with 'sortBy' values and some aliases",
+                    content = @Content(schema = @Schema(implementation = SortByPropertiesDto.class)))
+    })
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping(value = "/genre/sortBy", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSortByValues() {
         List<SortByPropertiesDto> response = genreService.getSortByParameterValues();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     @Operation(description = "create new Genre")
     @ApiResponses(value = {
@@ -174,9 +178,7 @@ public class GenreController {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping(value = "/genre",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/genre", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewGenre(
             @Parameter(required = true, description = "Genre to add", name = "Genre object")
             @RequestBody @Validated
@@ -194,14 +196,16 @@ public class GenreController {
             @ApiResponse(responseCode = "404", description = "Genre to update not found",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    @PutMapping(value = "/genre",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/genre/{genreId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateGenre(
+            @Parameter(description = "existed Genre ID", required = true)
+            @PathVariable
+            Long genreId,
+
             @Parameter(required = true, description = "Genre to update", name = "Genre object")
             @RequestBody @Validated
-            GenreDto updateGenre) {
-        GenreDto response = genreService.updateExistedGenre(updateGenre);
+            GenreWithoutIdDto updateGenre) {
+        GenreDto response = genreService.updateExistedGenre(genreId, updateGenre);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -214,8 +218,7 @@ public class GenreController {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    @DeleteMapping(value = "/genre/{genreId}",
-            produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/genre/{genreId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> deleteGenre(
             @Parameter(required = true, description = "existed Genre ID")
             @PathVariable

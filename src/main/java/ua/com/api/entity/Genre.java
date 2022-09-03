@@ -21,9 +21,9 @@ public class Genre implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "genre_id", unique = true, nullable = false)
-    @ForSort(defaultValue = "id",
-            aliases = {"genreId"})
+    @Column(name = "genre_id", unique = true)
+    @ForSort(defaultValue = "genreId",
+            aliases = {"id"})
     private Long genreId;
 
     @Column(name = "genre_name", unique = true, nullable = false, length = 50)

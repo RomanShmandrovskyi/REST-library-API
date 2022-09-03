@@ -17,13 +17,13 @@ public class SizeDto {
 
     @JsonDeserialize(using = CustomDoubleDeserializer.class)
     @PositiveOrZero(message = "Value 'height' must be positive!")
-    private Double height = 0.0;
+    private Double height;
 
     @JsonDeserialize(using = CustomDoubleDeserializer.class)
     @PositiveOrZero(message = "Value 'width' must be positive!")
-    private Double width = 0.0;
+    private Double width;
 
     @JsonDeserialize(using = CustomDoubleDeserializer.class)
     @PositiveOrZero(message = "Value 'length' must be positive!")
-    private Double length = 0.0;
+    private Double length;
 }

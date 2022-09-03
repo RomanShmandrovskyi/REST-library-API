@@ -23,8 +23,8 @@ public class Author implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "author_id", unique = true)
-    @ForSort(defaultValue = "id",
-            aliases = {"authorId"})
+    @ForSort(defaultValue = "authorId",
+            aliases = {"id"})
     private Long authorId;
 
     @Column(name = "first_name", nullable = false, length = 50)
@@ -33,7 +33,7 @@ public class Author implements Serializable {
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 
-    @Column(name = "full_name", unique = true)
+    @Column(name = "full_name", unique = true, length = 101)
     @ForSort(defaultValue = "name",
             aliases = {"authorName", "fullName", "authorFullName"})
     private String fullName;

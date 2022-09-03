@@ -106,16 +106,14 @@ public class GenreService extends BaseService {
         return toDtoMapper.mapGenreToGenreDto(response);
     }
 
-    public GenreDto updateExistedGenre(GenreDto genre) {
-        Optional<Genre> opt = genreRepository.getOneByGenreId(genre.getGenreId());
+    public GenreDto updateExistedGenre(long genreId, GenreWithoutIdDto genre) {
+        Genre proxy = genreRepository.getOneByGenreId(genreId)
+                .orElseThrow(() -> new GenreNotFoundException(genreId));
 
-        if (opt.isEmpty()) {
-            throw new GenreNotFoundException(genre.getGenreId());
+        if (genreRepository.existsByGenreNameAndGenreIdNotLike(genre.getName(), genreId)) {
+            throw new GenreAlreadyExistsException();
         }
 
-        Genre proxy = opt.get();
-
-        proxy.setGenreId(genre.getGenreId());
         proxy.setGenreName(genre.getName());
         proxy.setDescription(genre.getDescription());
 

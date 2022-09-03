@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import ua.com.api.exception.entity.InvalidSortByParameterValueException;
 import ua.com.api.exception.entity.author.AuthorAlreadyExistsException;
 import ua.com.api.exception.entity.author.AuthorNotFoundException;
 import ua.com.api.exception.entity.author.BooksInAuthorArePresentException;
-import ua.com.api.exception.entity.InvalidSortByParameterValueException;
 import ua.com.api.exception.entity.book.BookAlreadyExistsException;
 import ua.com.api.exception.entity.book.BookNotFoundException;
 import ua.com.api.exception.entity.genre.BooksInGenreArePresentException;
@@ -32,11 +32,13 @@ import ua.com.api.exception.entity.type.InvalidTypeException;
 import ua.com.api.exception.entity.type.InvalidYearValueException;
 import ua.com.api.exception.model.ExceptionResponse;
 
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.text.SimpleDateFormat;
 import java.time.Year;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 
 @ControllerAdvice
 public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
@@ -49,12 +51,14 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
     @ResponseBody
     @ExceptionHandler(value = ConstraintViolationException.class)
     public ResponseEntity<ExceptionResponse> handleConstrainViolationError(ConstraintViolationException cve) {
+        Optional<ConstraintViolation<?>> err = cve.getConstraintViolations().stream().findAny();
+        String message = err.isPresent() ? err.get().getMessage() : cve.getLocalizedMessage();
         return new ResponseEntity<>(
                 new ExceptionResponse(
                         generateDate(),
                         HttpStatus.BAD_REQUEST.value(),
                         HttpStatus.BAD_REQUEST.getReasonPhrase(),
-                        cve.getLocalizedMessage().split(": ")[1]),
+                        message),
                 HttpStatus.BAD_REQUEST);
     }
 
@@ -142,19 +146,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         generateDate(),
                         HttpStatus.CONFLICT.value(),
                         HttpStatus.CONFLICT.getReasonPhrase(),
-                        "Genre with such 'genreId' already exists!"),
-                HttpStatus.CONFLICT);
-    }
-
-    @ResponseBody
-    @ExceptionHandler(value = GenreNameAlreadyExistsException.class)
-    public ResponseEntity<ExceptionResponse> handleGenreNameConflict() {
-        return new ResponseEntity<>(
-                new ExceptionResponse(
-                        generateDate(),
-                        HttpStatus.CONFLICT.value(),
-                        HttpStatus.CONFLICT.getReasonPhrase(),
-                        "Genre with such 'genreName' already exists!"),
+                        "Genre with such name already exists!"),
                 HttpStatus.CONFLICT);
     }
 
@@ -166,7 +158,7 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
                         generateDate(),
                         HttpStatus.CONFLICT.value(),
                         HttpStatus.CONFLICT.getReasonPhrase(),
-                        "Book with such 'bookId' already exists!"),
+                        "Book with such name and description already exists!"),
                 HttpStatus.CONFLICT);
     }
 

@@ -157,7 +157,7 @@ public class AuthorController {
             @Min(value = 1, message = "Value of 'size' parameter must be positive and greater than zero!")
             Integer size,
 
-            @Parameter(description = "Custom sort parameter. Try ${server.base.url}/author/sortBy")
+            @Parameter(description = "Custom sort parameter. Try '/author/sortBy' endpoint")
             @RequestParam(name = SORT_BY, defaultValue = AUTHOR_ID)
             String sortBy,
 
@@ -170,6 +170,12 @@ public class AuthorController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
+    @Operation(summary = "get 'sortBy' property values for Author")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "array with 'sortBy' values and some aliases",
+                    content = @Content(schema = @Schema(implementation = SortByPropertiesDto.class)))
+    })
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping(value = "/author/sortBy", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSortByValues() {

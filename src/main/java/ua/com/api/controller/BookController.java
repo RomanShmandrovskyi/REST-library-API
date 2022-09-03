@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ua.com.api.entity.dto.SortByPropertiesDto;
 import ua.com.api.entity.dto.book.BookDto;
+import ua.com.api.entity.dto.book.BookWithoutIdDto;
 import ua.com.api.exception.model.ExceptionResponse;
 import ua.com.api.service.BookService;
 import ua.com.api.service.util.annotation.AllowableValues;
@@ -201,6 +202,11 @@ public class BookController {
     }
 
 
+    @Operation(summary = "get 'sortBy' property values for Book")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "array with 'sortBy' values and some aliases",
+                    content = @Content(schema = @Schema(implementation = SortByPropertiesDto.class)))
+    })
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping(value = "/book/sortBy", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSortByValues() {
@@ -219,19 +225,19 @@ public class BookController {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     @ResponseStatus(value = HttpStatus.CREATED)
-    @PostMapping(value = "/book/{authorId}/{genreId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/book", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> addNewBook(
             @Parameter(description = "existed Author ID", required = true)
-            @PathVariable
+            @RequestParam
             Long authorId,
 
             @Parameter(description = "existed Genre ID", required = true)
-            @PathVariable
+            @RequestParam
             Long genreId,
 
             @Parameter(description = "Book to add", name = "Book object", required = true)
             @RequestBody @Validated
-            BookDto newBook) {
+            BookWithoutIdDto newBook) {
         BookDto response = bookService.addNewBook(authorId, genreId, newBook);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -246,11 +252,15 @@ public class BookController {
             @ApiResponse(responseCode = "404", description = "Book to update not found",
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
-    @PutMapping(value = "/book", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/book/{bookId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> updateBook(
+            @Parameter(description = "existed Book ID", required = true)
+            @PathVariable
+            Long bookId,
+
             @Parameter(description = "Book to update", name = "Book object", required = true)
-            @RequestBody @Validated BookDto updatedBook) {
-        BookDto response = bookService.updateExistedBook(updatedBook);
+            @RequestBody @Validated BookWithoutIdDto updatedBook) {
+        BookDto response = bookService.updateExistedBook(bookId, updatedBook);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 

@@ -131,7 +131,7 @@ public class AuthorService extends BaseService {
     }
 
     public AuthorDto updateExistedAuthor(long authorId, AuthorWithoutIdDto authorDto) {
-        Author author = authorRepository.getOneByAuthorId(authorId)
+        Author proxy = authorRepository.getOneByAuthorId(authorId)
                 .orElseThrow(() -> new AuthorNotFoundException(authorId));
 
         String fullNameToUpd = authorDto.getName().getFirst() + " " + authorDto.getName().getLast();
@@ -140,16 +140,16 @@ public class AuthorService extends BaseService {
             throw new AuthorAlreadyExistsException();
         }
 
-        author.setFirstName(authorDto.getName().getFirst());
-        author.setLastName(authorDto.getName().getLast());
-        author.setFullName(fullNameToUpd);
-        author.setDescription(authorDto.getDescription());
-        author.setNationality(authorDto.getNationality());
-        author.setBirthDate(authorDto.getBirth().getDate());
-        author.setBirthCity(authorDto.getBirth().getCity());
-        author.setBirthCountry(authorDto.getBirth().getCountry());
+        proxy.setFirstName(authorDto.getName().getFirst());
+        proxy.setLastName(authorDto.getName().getLast());
+        proxy.setFullName(fullNameToUpd);
+        proxy.setDescription(authorDto.getDescription());
+        proxy.setNationality(authorDto.getNationality());
+        proxy.setBirthDate(authorDto.getBirth().getDate());
+        proxy.setBirthCity(authorDto.getBirth().getCity());
+        proxy.setBirthCountry(authorDto.getBirth().getCountry());
 
-        Author updated = authorRepository.save(author);
+        Author updated = authorRepository.save(proxy);
         return toDtoMapper.mapAuthorToAuthorDto(updated);
     }
 

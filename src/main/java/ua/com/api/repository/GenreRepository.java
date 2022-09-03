@@ -17,6 +17,8 @@ public interface GenreRepository extends JpaRepository<Genre, Long> {
 
     boolean existsByGenreName(String genreName);
 
+    boolean existsByGenreNameAndGenreIdNotLike(String genreName, long genreId);
+
     Optional<Genre> getOneByGenreId(long genreId);
 
     @Query(value = "SELECT g FROM Genre g")
