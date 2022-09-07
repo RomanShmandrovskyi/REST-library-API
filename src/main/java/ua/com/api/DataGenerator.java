@@ -5,6 +5,7 @@ import com.github.javafaker.Faker;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Year;
@@ -16,7 +17,7 @@ import java.util.stream.Stream;
 
 public class DataGenerator {
     private final static String fileName = "fillDB.sql";
-    private final static String fileLocation = "src/main/resources";
+    private final static String fileLocation = "src/main/resources/scripts";
 
     private final static int authorsCount = 150; // 9999 - is maximum (if set to max it greatly increase generation time)
     private final static int genresCount = 30;   // 30 is maximum; if set more, will work endlessly!!!
@@ -106,7 +107,7 @@ public class DataGenerator {
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
 
-        File script = new File(fileLocation + "/" + fileName);
+        File script = new File(Path.of(fileLocation, fileName).toString());
         try {
             script.createNewFile();
             Files.write(script.toPath(), inserts);
