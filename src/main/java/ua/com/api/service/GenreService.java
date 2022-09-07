@@ -17,7 +17,6 @@ import ua.com.api.exception.entity.search.SearchQueryIsTooShortException;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service

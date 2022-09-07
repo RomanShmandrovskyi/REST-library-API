@@ -36,7 +36,7 @@ public class GenreController {
     @Autowired
     private GenreService genreService;
 
-    @Operation(description = "get Genre object by 'genreId'")
+    @Operation(description = "Get one Genre object by it 'genreId'")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Special Genre object in JSON",
                     content = @Content(schema = @Schema(implementation = GenreDto.class))),
@@ -54,7 +54,7 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(description = "get Genre of special Book")
+    @Operation(description = "Get Genre of special Book")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Genre object of special Book in JSON",
                     content = @Content(schema = @Schema(implementation = GenreDto.class))),
@@ -73,7 +73,7 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(description = "Get all Genres. Sorted by genre name only")
+    @Operation(description = "Get all Genres with pagination and sorting")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Array of Genre objects",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = GenreDto.class)))),
@@ -92,7 +92,7 @@ public class GenreController {
             @AllowableValues(values = {ASC, DESC}, message = "Value of '" + ORDER_TYPE + "' parameter must be '" + ASC + "' or '" + DESC + "'")
             String orderType,
 
-            @Parameter(description = "Custom sort parameter. Try '/genre/sortBy'")
+            @Parameter(description = "Custom sort parameter. Try '/genre/sorters' endpoint")
             @RequestParam(name = SORT_BY, defaultValue = GENRE_ID)
             String sortBy,
 
@@ -110,7 +110,7 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(description = "search for genre by it genre name")
+    @Operation(description = "Search for Genre by it name")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Array of Genre objects",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = GenreDto.class)))),
@@ -126,7 +126,7 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(description = "get all Genres of special Author")
+    @Operation(description = "Get all Genres of special Author")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Array of Genre objects",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = GenreDto.class)))),
@@ -147,7 +147,7 @@ public class GenreController {
             @AllowableValues(values = {ASC, DESC}, message = "Value of '" + ORDER_TYPE + "' parameter must be '" + ASC + "' or '" + DESC + "'")
             String orderType,
 
-            @Parameter(description = "Custom sort parameter. Try '/genre/sortBy'")
+            @Parameter(description = "custom sort parameter, try '/genre/sorters' endpoint")
             @RequestParam(name = SORT_BY, defaultValue = GENRE_ID)
             String sortBy) {
 
@@ -155,20 +155,20 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(description = "get 'sortBy' property values for Genre")
+    @Operation(description = "Get available sorters for Genre")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "array with 'sortBy' values and some aliases",
+            @ApiResponse(responseCode = "200", description = "array with 'sortBy' parameter values and some aliases",
                     content = @Content(schema = @Schema(implementation = SortByPropertiesDto.class)))
     })
     @ResponseStatus(value = HttpStatus.OK)
-    @GetMapping(value = "/genre/sortBy", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/genre/sorters", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSortByValues() {
         List<SortByPropertiesDto> response = genreService.getSortByParameterValues();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
-    @Operation(description = "create new Genre")
+    @Operation(description = "Create new Genre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "newly created Genre",
                     content = @Content(schema = @Schema(implementation = GenreDto.class))),
@@ -187,7 +187,7 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @Operation(description = "update existed Genre")
+    @Operation(description = "Update existed Genre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "updated Genre object",
                     content = @Content(schema = @Schema(implementation = GenreDto.class))),
@@ -209,7 +209,7 @@ public class GenreController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(description = "delete existed Genre")
+    @Operation(description = "Delete existed Genre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Genre deleted successfully"),
             @ApiResponse(responseCode = "400", description = "Something wrong...",

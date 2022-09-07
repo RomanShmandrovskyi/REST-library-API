@@ -1,4 +1,4 @@
-package ua.com.api.exception.handler;
+package ua.com.api.exception;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import org.springframework.context.support.DefaultMessageSourceResolvable;

@@ -36,7 +36,7 @@ public class BookController {
     @Autowired
     private BookService bookService;
 
-    @Operation(summary = "get Book by 'bookId'")
+    @Operation(summary = "Get one Book object by it 'bookId'")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Special Book object in JSON",
                     content = @Content(schema = @Schema(implementation = BookDto.class))),
@@ -55,7 +55,7 @@ public class BookController {
     }
 
 
-    @Operation(summary = "get all Books")
+    @Operation(summary = "Get Books with pagination and sorting")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Array of Book objects",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = BookDto.class)))),
@@ -78,7 +78,7 @@ public class BookController {
             @Min(value = 1, message = "Value of 'size' parameter must be positive and greater than zero!")
             Integer size,
 
-            @Parameter(description = "Custom sort parameter. Try '/book/sortBy'")
+            @Parameter(description = "Custom sort parameter. Try '/book/sorters' endpoint")
             @RequestParam(name = SORT_BY, defaultValue = BOOK_ID)
             String sortBy,
 
@@ -92,7 +92,7 @@ public class BookController {
     }
 
 
-    @Operation(summary = "get all Books in special Genre")
+    @Operation(summary = "Get Books in special Genre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Array of Book objects",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = BookDto.class)))),
@@ -119,7 +119,7 @@ public class BookController {
             @Min(value = 1, message = "Value of 'size' parameter must be positive and greater than zero!")
             Integer size,
 
-            @Parameter(description = "Custom sort parameter. Try '/book/sortBy'")
+            @Parameter(description = "Custom sort parameter. Try '/book/sorters' endpoint")
             @RequestParam(name = SORT_BY, defaultValue = BOOK_ID)
             String sortBy,
 
@@ -134,7 +134,7 @@ public class BookController {
     }
 
 
-    @Operation(summary = "get all Books of special Author")
+    @Operation(summary = "Get Books of special Author")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Array of Book objects",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = BookDto.class)))),
@@ -147,7 +147,7 @@ public class BookController {
             @PathVariable
             Long authorId,
 
-            @Parameter(description = "Custom sort parameter. Try '/book/sortBy'")
+            @Parameter(description = "Custom sort parameter. Try '/book/sorters' endpoint")
             @RequestParam(name = SORT_BY, defaultValue = BOOK_ID)
             String sortBy,
 
@@ -162,7 +162,7 @@ public class BookController {
     }
 
 
-    @Operation(summary = "get all Books of special Author in special Genre")
+    @Operation(summary = "Get Books of special Author in special Genre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Array of Book objects",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = BookDto.class)))),
@@ -185,7 +185,7 @@ public class BookController {
     }
 
 
-    @Operation(summary = "search for books by book name, return first 5 the most relevant results")
+    @Operation(summary = "Search for Books by name, return first 5 the most relevant results")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Array of Book objects",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = BookDto.class)))),
@@ -202,20 +202,20 @@ public class BookController {
     }
 
 
-    @Operation(summary = "get 'sortBy' property values for Book")
+    @Operation(summary = "Get available sorters for for Book")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "array with 'sortBy' values and some aliases",
+            @ApiResponse(responseCode = "200", description = "array with 'sortBy' parameter values and some aliases",
                     content = @Content(schema = @Schema(implementation = SortByPropertiesDto.class)))
     })
     @ResponseStatus(value = HttpStatus.OK)
-    @GetMapping(value = "/book/sortBy", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/book/sorters", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSortByValues() {
         List<SortByPropertiesDto> response = bookService.getSortByParameterValues();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
-    @Operation(summary = "create new Book")
+    @Operation(summary = "Create new Book")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "newly created Book",
                     content = @Content(schema = @Schema(implementation = BookDto.class))),
@@ -243,7 +243,7 @@ public class BookController {
     }
 
 
-    @Operation(summary = "update existed Book")
+    @Operation(summary = "Update existed Book")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "updated Book object",
                     content = @Content(schema = @Schema(implementation = BookDto.class))),
@@ -265,7 +265,7 @@ public class BookController {
     }
 
 
-    @Operation(summary = "delete existed Book")
+    @Operation(summary = "Delete existed Book")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Book deleted successfully"),
             @ApiResponse(responseCode = "400", description = "Something wrong...",

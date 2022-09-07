@@ -15,6 +15,7 @@ import ua.com.api.service.util.annotation.ForSort;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BaseService {
 
@@ -47,7 +48,7 @@ public class BaseService {
                         f.getAnnotation(ForSort.class).defaultValue().equals(sortBy))
                 .map(Field::getName)
                 .findFirst()
-                .orElseThrow(() -> new InvalidSortByParameterValueException(sortBy, "Value '" + sortBy + "' is not allowed for sorting! Try other value!"));
+                .orElseThrow(() -> new InvalidSortByParameterValueException(sortBy, "Sorter with value '" + sortBy + "' not found! Try other value!"));
     }
 
     protected List<SortByPropertiesDto> getSortByParameterValues(Class<?> clazz) {
@@ -55,6 +56,6 @@ public class BaseService {
                 .filter(f -> f.isAnnotationPresent(ForSort.class))
                 .map(f -> f.getAnnotation(ForSort.class))
                 .map(a -> new SortByPropertiesDto(a.defaultValue(), Arrays.asList(a.aliases())))
-                .toList();
+                .collect(Collectors.toList());
     }
 }

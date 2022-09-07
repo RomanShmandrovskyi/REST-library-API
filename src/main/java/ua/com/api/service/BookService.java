@@ -127,7 +127,7 @@ public class BookService extends BaseService {
             List<Book> filtered = searched.stream()
                     .filter(b -> b.getBookName().toLowerCase().startsWith(partial.toLowerCase()))
                     .sorted(Comparator.comparing(Book::getBookName))
-                    .toList();
+                    .collect(Collectors.toList());
 
             result.addAll(filtered);
 

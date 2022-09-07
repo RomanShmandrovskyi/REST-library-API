@@ -37,7 +37,7 @@ public class AuthorController {
     @Autowired
     private AuthorService authorService;
 
-    @Operation(summary = "get Author object by 'authorId'")
+    @Operation(summary = "Get one Author object by it 'authorId'")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Special Author object in JSON",
                     content = @Content(schema = @Schema(implementation = AuthorDto.class))),
@@ -56,7 +56,7 @@ public class AuthorController {
     }
 
 
-    @Operation(summary = "get Author of special Book")
+    @Operation(summary = "Get Author of Book")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Author object of special Book",
                     content = @Content(schema = @Schema(implementation = AuthorDto.class))),
@@ -75,7 +75,7 @@ public class AuthorController {
     }
 
 
-    @Operation(summary = "get all Authors")
+    @Operation(summary = "Get Authors with pagination and sorting")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Array of Author objects",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuthorDto.class)))),
@@ -84,21 +84,21 @@ public class AuthorController {
     })
     @GetMapping(value = "/authors", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getAllAuthors(
-            @Parameter(description = "paginate response")
+            @Parameter(description = "use pagination or not")
             @RequestParam(name = PAGINATION, defaultValue = TRUE)
             Boolean pagination,
 
-            @Parameter(description = "page number")
+            @Parameter(description = "number of page")
             @RequestParam(name = PAGE, defaultValue = "1")
             @Min(value = 1, message = "Value of 'page' parameter must be positive and greater than zero!")
             Integer page,
 
-            @Parameter(description = "count of objects per one page")
+            @Parameter(description = "count of objects per page")
             @RequestParam(name = SIZE, defaultValue = DEFAULT_SIZE)
             @Min(value = 1, message = "Value of 'size' parameter must be positive and greater than zero!")
             Integer size,
 
-            @Parameter(description = "Custom sort parameter. Try ${server.base.url}/author/sortBy")
+            @Parameter(description = "custom sort parameter, try '/author/sorters' endpoint")
             @RequestParam(name = SORT_BY, defaultValue = AUTHOR_ID)
             String sortBy,
 
@@ -111,7 +111,7 @@ public class AuthorController {
     }
 
 
-    @Operation(summary = "search for author by it name and surname")
+    @Operation(summary = "Search for Author by it name")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Array of Authors objects",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuthorDto.class)))),
@@ -128,7 +128,7 @@ public class AuthorController {
     }
 
 
-    @Operation(summary = "get all Authors in special Genre")
+    @Operation(summary = "Get Authors that writes in special Genre")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Array of Authors objects",
                     content = @Content(array = @ArraySchema(schema = @Schema(implementation = AuthorDto.class)))),
@@ -138,12 +138,12 @@ public class AuthorController {
                     content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
     })
     @GetMapping(value = "/genre/{genreId}/authors", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> getAllAuthorsOfGenre(
+    public ResponseEntity<?> getAllAuthorsInGenre(
             @Parameter(description = "existed Genre ID", required = true)
             @PathVariable
             Long genreId,
 
-            @Parameter(description = "paginate response")
+            @Parameter(description = "use pagination or not")
             @RequestParam(name = PAGINATION, defaultValue = TRUE)
             Boolean pagination,
 
@@ -171,20 +171,20 @@ public class AuthorController {
     }
 
 
-    @Operation(summary = "get 'sortBy' property values for Author")
+    @Operation(summary = "Get available sorters for Author")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "array with 'sortBy' values and some aliases",
+            @ApiResponse(responseCode = "200", description = "array with 'sortBy' parameter values and some aliases",
                     content = @Content(schema = @Schema(implementation = SortByPropertiesDto.class)))
     })
     @ResponseStatus(value = HttpStatus.OK)
-    @GetMapping(value = "/author/sortBy", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/author/sorters", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> getSortByValues() {
         List<SortByPropertiesDto> response = authorService.getSortByParameterValues();
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 
-    @Operation(summary = "create new Author", description = "Author must have unique first and last names")
+    @Operation(summary = "Create new Author", description = "Author must have unique first and last names")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "newly created Author",
                     content = @Content(schema = @Schema(implementation = AuthorDto.class))),
@@ -203,7 +203,7 @@ public class AuthorController {
     }
 
 
-    @Operation(summary = "update existed Author")
+    @Operation(summary = "Update existed Author")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "updated Author object",
                     content = @Content(schema = @Schema(implementation = AuthorDto.class))),
@@ -225,7 +225,7 @@ public class AuthorController {
     }
 
 
-    @Operation(summary = "delete existed Author")
+    @Operation(summary = "Remove existed Author with it books")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Author deleted successfully"),
             @ApiResponse(responseCode = "400", description = "Something wrong...",
