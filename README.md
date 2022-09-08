@@ -20,7 +20,7 @@ and run command:
 ```
 mvn spring-boot:run
 ```
-or import project as Maven project and just run main method in `App` class from `src/main/java/ua/com/api/app` package;
+or import project as Maven project and just run main method in `App` class from `src/main/java/ua/com/api/app` package;  
 5. Swagger with documentation will be available on:
 ```
 http://localhost:8080/swagger-ui.html
@@ -39,10 +39,10 @@ If you use built in H2 database, you can reach something like SQL Workbench by l
 ```
 http://localhost:8080/h2-workbench
 ```
-In opened web-page all inputs must be filled rightly. Click `Connect` button there. You are in!
+On opened web-page all inputs must be filled rightly. Click `Connect` button there. You are in!
 
 ### Using MySQL 
-There is also opportunity to Use MySQL DB. Follow next steps:
+There is also opportunity to use MySQL DB. Follow next steps:
 1. Open `src/main/resources/application.properties` file and enter credentials that will be suitable for your database:
 ```
 spring.datasource.username=<db_user>
@@ -62,8 +62,7 @@ and comment the same properties for `H2` database:
 ```
 
 ## Authorization
-In REST-library-API implemented simple basic authorization with next credentials: `admin` and `password`.  
-Authorization is also implemented 
+In REST-library-API implemented simple basic authorization with next credentials: username:`admin` and pasword:`password`.
 
 ## Database filling
 1. Go to `src/main/resources/scripts`;
