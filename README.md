@@ -7,21 +7,20 @@ One Author has many Books (as Genres has many Books) and for Book it is mandator
 
 ## Getting started
 1. Install latest Java version;
-2. Install maven;
-3. Clone project:
+2. Clone project:
 ```
 git clone https://github.com/RoshS/REST-library.git
 ```
-4. Load root project folder in terminal
+3. Load root project folder in terminal
 ```
 cd REST-library-API
 ```
 and run command:
 ```
-mvn spring-boot:run
+./mvnw spring-boot:run
 ```
 or import project as Maven project and just run main method in `App` class from `src/main/java/ua/com/api/app` package;  
-5. Swagger with documentation will be available on:
+4. Swagger with documentation will be available on:
 ```
 http://localhost:8080/swagger-ui.html
 ```
